@@ -41,8 +41,16 @@
  * @brief   Enables the ADC subsystem.
  */
 #if !defined(HAL_USE_ADC) || defined(__DOXYGEN__)
-#define HAL_USE_ADC                 FALSE
+#define HAL_USE_ADC                 TRUE
 #endif
+
+/**
+ * @brief   Enables the DAC subsystem.
+ */
+#if !defined(HAL_USE_DAC) || defined(__DOXYGEN__)
+#define HAL_USE_DAC                 FALSE
+#endif
+
 
 /**
  * @brief   Enables the CAN subsystem.

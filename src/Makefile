@@ -135,6 +135,7 @@ INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
          $(HALINC) $(OSALINC) $(PLATFORMINC) $(BOARDINC) \
          $(CHIBIOS)/os/various
 
+# $(STM32DRIVERINC)
 #
 # Project, sources and paths
 ##############################################################################
@@ -204,4 +205,5 @@ ULIBS =
 RULESPATH = $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC
 include $(RULESPATH)/rules.mk
 include ./acs.mk
+
 
