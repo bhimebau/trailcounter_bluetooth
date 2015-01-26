@@ -101,6 +101,10 @@ CSRC = $(PORTSRC) \
        $(OSALSRC) \
        $(PLATFORMSRC) \
        $(BOARDSRC) \
+       ${CHIBIOS}/os/various/shell.c \
+       ${CHIBIOS}/os/various/memstreams.c \
+       $(CHIBIOS)/os/various/evtimer.c \
+       $(CHIBIOS)/os/various/syscalls.c \
        $(CHIBIOS)/os/various/chprintf.c \
        main.c
 
@@ -135,7 +139,6 @@ INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
          $(HALINC) $(OSALINC) $(PLATFORMINC) $(BOARDINC) \
          $(CHIBIOS)/os/various
 
-# $(STM32DRIVERINC)
 #
 # Project, sources and paths
 ##############################################################################
@@ -205,5 +208,4 @@ ULIBS =
 RULESPATH = $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC
 include $(RULESPATH)/rules.mk
 include ./acs.mk
-
 

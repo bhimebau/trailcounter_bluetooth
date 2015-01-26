@@ -17,30 +17,19 @@
 #include "ch.h"
 #include "hal.h"
 #include "test.h"
+#include "shell.h" 
 #include "chprintf.h"
 #include <chstreams.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdarg.h>
 
-// https://github.com/fpoussin/ChibiOS-Examples/blob/master/STM32F4-DAC/main.c
-
 #define UNUSED(x) (void)(x)
+static THD_WORKING_AREA(waShell,2048);
 
-static const DACConfig daccfg1 = {
-  DAC_MODE_CONTINUOUS,
-  960*DAC_BUFFER_SIZE, /* Multiply the buffer size to the desired frequency in Hz */
-  dac_buffer, /* Pointer to the first buffer */
-  NULL, /* Pointer to the second buffer */
-  DAC_BUFFER_SIZE, /* Buffers size */
-  daccb, /* End of transfer callback */
-  dacerrcb, /* Error callback */
-  /* STM32 specific config starts here */
-  DAC_DHRM_12BIT_RIGHT, /* data holding register mode */
-  0 /* CR flags */
-};
+static thread_t *shelltp1;
 
-/* Thread that blinks North LED */
+/* Thread that blinks North LED as an "alive" indicator */
 static THD_WORKING_AREA(waCounterThread,128);
 static THD_FUNCTION(counterThread,arg) {
   UNUSED(arg);
@@ -53,38 +42,49 @@ static THD_FUNCTION(counterThread,arg) {
   return 0;
 }
 
-/* Thread that write the status of the user button to the south LED */
-static THD_WORKING_AREA(waButtonThread,128);
-static THD_FUNCTION(buttonThread,arg) {
-  UNUSED(arg);
-  while (TRUE) {
-    if (palReadPad(GPIOA, GPIOA_BUTTON)) { 
-      palSetPad(GPIOE, GPIOE_LED10_RED); 
-    }
-    else {
-      palClearPad(GPIOE, GPIOE_LED10_RED); 
-    }
-    chThdSleepMilliseconds(10);
+static void cmd_myecho(BaseSequentialStream *chp, int argc, char *argv[]) {
+  int32_t i;
+
+  (void)argv;
+
+  for (i=0;i<argc;i++) {
+    chprintf(chp, "%s\n\r", argv[i]);
   }
-  return 0;
 }
 
-/* Thread that echos characters received from the console */
-static THD_WORKING_AREA(waEchoThread,128);
-static THD_FUNCTION(echoThread,arg) {
-  UNUSED(arg);
-  uint8_t ch;
-  while (TRUE) {
-    chnRead((BaseSequentialStream*)&SD1,&ch,1);
-    chnWrite((BaseSequentialStream*)&SD1,&ch,1);
+static const ShellCommand commands[] = {
+  {"myecho", cmd_myecho},
+  {NULL, NULL}
+};
+
+static const ShellConfig shell_cfg1 = {
+  (BaseSequentialStream *)&SD1,
+  commands
+};
+
+static void termination_handler(eventid_t id) {
+
+  (void)id;
+  chprintf((BaseSequentialStream*)&SD1, "Shell Died\n\r");
+
+  if (shelltp1 && chThdTerminatedX(shelltp1)) {
+    chThdWait(shelltp1);
+    chprintf((BaseSequentialStream*)&SD1, "Restarting from termination handler\n\r");
+    chThdSleepMilliseconds(100);
+    shelltp1 = shellCreate(&shell_cfg1, sizeof(waShell), NORMALPRIO);
   }
-  return 0;
 }
+
+static evhandler_t fhandlers[] = {
+  termination_handler
+};
 
 /*
  * Application entry point.
  */
+
 int main(void) {
+  event_listener_t tel;
   /*
    * System initializations.
    * - HAL initialization, this also initializes the configured device drivers
@@ -94,6 +94,7 @@ int main(void) {
    */
   halInit();
   chSysInit();
+  dacStart(&DACD1, &daccfg1);
 
   /*
    * Activates the serial driver 1 using the driver default configuration.
@@ -104,25 +105,20 @@ int main(void) {
   palSetPadMode(GPIOC, 5, PAL_MODE_ALTERNATE(7));
   chprintf((BaseSequentialStream*)&SD1, "\n\rUp and Running\n\r");
 
+  /* Initialize the command shell */ 
+  shellInit();
 
-  /*  
-   *
-   *
+  /* 
+   *  setup to listen for the shell_terminated event. This setup will be stored in the tel  * event listner structure in item 0
    */
-  palSetPadMode(GPIOC, 4, PAL_MODE_ALTERNATE(7));
-  palSetPadMode(GPIOC, 5, PAL_MODE_ALTERNATE(7));
+  chEvtRegister(&shell_terminated, &tel, 0);
 
-
-
-  /*
-   * Creates the threads.
-   */
+  shelltp1 = shellCreate(&shell_cfg1, sizeof(waShell), NORMALPRIO);
   chThdCreateStatic(waCounterThread, sizeof(waCounterThread), NORMALPRIO+1, counterThread, NULL);
-  chThdCreateStatic(waButtonThread, sizeof(waButtonThread), NORMALPRIO+1, buttonThread, NULL);
-  chThdCreateStatic(waEchoThread, sizeof(waEchoThread), NORMALPRIO+1, echoThread, NULL);
 
-  /*
-    Main spins here while the threads do all of the work. 
-  */ 
-  while (TRUE);
-}
+  while (TRUE) {
+    chEvtDispatch(fhandlers, chEvtWaitOne(ALL_EVENTS));
+  }
+ }
+
+
