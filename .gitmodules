@@ -1,3 +1,7 @@
 [submodule "ChibiOS"]
 	path = ChibiOS
 	url = git@github.com:ChibiOS/ChibiOS.git
+
+[submodule "ChibiOS-Drivers"]
+	path = ChibiOS-Drivers
+	url = git@github.com:ChibiOS/ChibiOS-Drivers.git

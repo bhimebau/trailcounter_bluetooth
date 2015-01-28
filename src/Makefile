@@ -77,7 +77,7 @@ endif
 #
 
 # Define project name here
-PROJECT = lab1
+PROJECT = annsynth
 
 # Imported source files and paths
 CHIBIOS = ../ChibiOS
@@ -88,6 +88,7 @@ include $(CHIBIOS)/os/hal/osal/rt/osal.mk
 include $(CHIBIOS)/os/rt/rt.mk
 include $(CHIBIOS)/os/rt/ports/ARMCMx/compilers/GCC/mk/port_stm32f3xx.mk
 include $(CHIBIOS)/test/rt/test.mk
+include $(CHIBIOS)/../ChibiOS-Drivers/drivers.mk
 
 # Define linker script file here
 LDSCRIPT= $(PORTLD)/STM32F303xC.ld
@@ -101,6 +102,7 @@ CSRC = $(PORTSRC) \
        $(OSALSRC) \
        $(PLATFORMSRC) \
        $(BOARDSRC) \
+       $(STM32DRIVERSRC) \
        ${CHIBIOS}/os/various/shell.c \
        ${CHIBIOS}/os/various/memstreams.c \
        $(CHIBIOS)/os/various/evtimer.c \
@@ -137,7 +139,7 @@ ASMSRC = $(PORTASM)
 
 INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
          $(HALINC) $(OSALINC) $(PLATFORMINC) $(BOARDINC) \
-         $(CHIBIOS)/os/various
+         $(STM32DRIVERINC) $(CHIBIOS)/os/various
 
 #
 # Project, sources and paths

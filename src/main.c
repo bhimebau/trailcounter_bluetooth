@@ -19,6 +19,7 @@
 #include "test.h"
 #include "shell.h" 
 #include "chprintf.h"
+#include "drivers.h"
 #include <chstreams.h>
 #include <string.h>
 #include <stdio.h>
@@ -79,6 +80,11 @@ static evhandler_t fhandlers[] = {
   termination_handler
 };
 
+static const DACConfig daccfg1 = {
+  DAC_DHRM_12BIT_RIGHT,
+  0
+};
+
 /*
  * Application entry point.
  */
@@ -93,8 +99,11 @@ int main(void) {
    *   RTOS is active.
    */
   halInit();
+  driversInit();
   chSysInit();
+
   dacStart(&DACD1, &daccfg1);
+  dacConvertOne(&DACD1,0x7FF);
 
   /*
    * Activates the serial driver 1 using the driver default configuration.

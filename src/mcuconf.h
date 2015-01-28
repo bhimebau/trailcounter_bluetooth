@@ -27,6 +27,7 @@
  * DMA priorities:
  * 0...3        Lowest...Highest.
  */
+#include "drivers_conf.h"
 
 #define STM32F3xx_MCUCONF
 
@@ -66,7 +67,7 @@
 /*
  * ADC driver system settings.
  */
-#define STM32_ADC_USE_ADC1                  FALSE
+#define STM32_ADC_USE_ADC1                  TRUE
 #define STM32_ADC_USE_ADC3                  FALSE
 #define STM32_ADC_ADC12_DMA_PRIORITY        2
 #define STM32_ADC_ADC34_DMA_PRIORITY        2
