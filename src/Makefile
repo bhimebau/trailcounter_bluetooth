@@ -108,6 +108,7 @@ CSRC = $(PORTSRC) \
        $(CHIBIOS)/os/various/evtimer.c \
        $(CHIBIOS)/os/various/syscalls.c \
        $(CHIBIOS)/os/various/chprintf.c \
+       ../atoh/atoh.c \
        main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
@@ -139,7 +140,7 @@ ASMSRC = $(PORTASM)
 
 INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
          $(HALINC) $(OSALINC) $(PLATFORMINC) $(BOARDINC) \
-         $(STM32DRIVERINC) $(CHIBIOS)/os/various
+         $(STM32DRIVERINC) $(CHIBIOS)/os/various ../atoh 
 
 #
 # Project, sources and paths
