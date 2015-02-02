@@ -20,6 +20,7 @@
 #include "shell.h" 
 #include "chprintf.h"
 #include "drivers.h"
+#include <NNet.h>
 #include <atoh.h>
 #include <chstreams.h>
 #include <string.h>
@@ -70,10 +71,9 @@ static const ADCConversionGroup adcgrpcfg = {
 
 static void gpt_adc_trigger(GPTDriver *gpt_ptr)  { 
   UNUSED(*gpt_ptr);
-  
-  dacConvertOne(&DACD1,samples_buf[0]);
+  EvaluateNet(samples_buf[0]);
+  dacConvertOne(&DACD1,outputs[0]);
   adcStartConversion(&ADCD1, &adcgrpcfg, samples_buf, ADC_BUF_DEPTH);
-
   palTogglePad(GPIOE, GPIOE_LED4_BLUE);
 }
 

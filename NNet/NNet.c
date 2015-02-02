@@ -31,16 +31,16 @@ int weights_ho[NUM_HIDDEN_NODE][NUM_OUTPUT_NODE]
 = {{1, 1, 0}, {0, 0, 0}};
 
 // pointer to Index at input array: keep track of circular array
-static int p_input = 0;
+// static int p_input = 0;
 //*********************** end of INITIALIZATION *****************/
 
 
 //*********************** HELPING FUNCTIONS *********************/
-void InitializeWeights(){
-	//FILE* input = fopen("input_weights.txt");	
-}
+/* void InitializeWeights(){ */
+/* 	//FILE* input = fopen("input_weights.txt");	 */
+/* } */
 
-void resetOutput(){
+void resetOutput(void) {
   // reset Hidden layer and Output layer to 0;
   int i = 0;
   for (i = 0; i < NUM_HIDDEN_NODE; i++){
@@ -67,7 +67,7 @@ void UpdateInput(int next_input){
 void EvaluateNet(int next_input){
   int i = 0;
   int j = 0;
-  int count = 0;
+
   // update the input circular array
   UpdateInput(next_input);
   resetOutput();
