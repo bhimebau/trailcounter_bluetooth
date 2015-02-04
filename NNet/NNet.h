@@ -32,16 +32,25 @@
  */
 
 /* Code: */
-#define NUM_INPUT_NODE 3
-#define NUM_HIDDEN_NODE 2
-#define NUM_OUTPUT_NODE 3
 
-extern int inputs[NUM_INPUT_NODE];
-extern int hiddens[NUM_HIDDEN_NODE];
-extern int outputs[NUM_OUTPUT_NODE];
-extern int weights_ih[NUM_INPUT_NODE][NUM_HIDDEN_NODE];
-extern int weights_ho[NUM_HIDDEN_NODE][NUM_OUTPUT_NODE];
+#define MAX_INPUTS 32
+#define MAX_HIDDEN 32
+#define MAX_OUTPUTS 8
 
-void EvaluateNet(int);
+extern int inputs[MAX_INPUTS];
+extern int hiddens[MAX_HIDDEN];
+extern int outputs[MAX_OUTPUTS];
+extern int weights_ih[MAX_INPUTS][MAX_HIDDEN];
+extern int weights_ho[MAX_HIDDEN][MAX_OUTPUTS];
+
+typedef struct {
+  int numInputs;
+  int numHidden;
+  int numOutput;
+} nncfg_t;
+
+void EvaluateNet(nncfg_t *, int);
+int setWeightHidden(nncfg_t *, int, int, int);
+int setWeightOutput(nncfg_t *, int, int, int);
 
 /* NNet.h ends here */

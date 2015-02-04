@@ -26,8 +26,11 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdarg.h>
+#include <stdlib.h>
 
 #define UNUSED(x) (void)(x)
+
+nncfg_t ann = {2, 4, 1};
 
 // ADCConfig structure for stm32 MCUs is empty
 static ADCConfig adccfg = {0};
@@ -71,7 +74,7 @@ static const ADCConversionGroup adcgrpcfg = {
 
 static void gpt_adc_trigger(GPTDriver *gpt_ptr)  { 
   UNUSED(*gpt_ptr);
-  EvaluateNet(samples_buf[0]);
+  EvaluateNet(&ann, samples_buf[0]);
   dacConvertOne(&DACD1,outputs[0]);
   adcStartConversion(&ADCD1, &adcgrpcfg, samples_buf, ADC_BUF_DEPTH);
   palTogglePad(GPIOE, GPIOE_LED4_BLUE);
@@ -132,10 +135,45 @@ static void cmd_dac(BaseSequentialStream *chp, int argc, char *argv[]) {
   }
 }
 
+static void cmd_weighth(BaseSequentialStream *chp, int argc, char *argv[]) {
+  int hidden;
+  int input;
+  int value;
+
+  (void)argv;
+  if (argc!=3) {
+    chprintf(chp, "Error: wrong number of arguments. %d provided\n\rExample: weighto hidden input value \n\r", argc);
+  }
+  
+  input = atoi(argv[0]);
+  hidden = atoi(argv[1]);
+  value = atoi(argv[2]);
+  // chprintf(chp, "Here are the values: %d %d %d\n\r", hidden, input, value);
+  setWeightHidden(&ann, input, hidden, value);
+
+}
+
+static void cmd_weighto(BaseSequentialStream *chp, int argc, char *argv[]) {
+  int output;
+  int hidden;
+  int value;
+
+  (void)argv;
+  if (argc!=3) {
+    chprintf(chp, "Error: wrong number of arguments. %d provided\n\rExample: weighto output hidden value \n\r", argc);
+  }
+  hidden = atoi(argv[0]);
+  output = atoi(argv[1]);
+  value = atoi(argv[2]);
+  //   chprintf(chp, "Here are the values: %d %d %d\n\r", hidden, output, value);
+  setWeightOutput(&ann, hidden, output, value);
+}
 
 static const ShellCommand commands[] = {
   {"myecho", cmd_myecho},
   {"dac", cmd_dac},
+  {"weighth", cmd_weighth},
+  {"weighto", cmd_weighto},
   {NULL, NULL}
 };
 
@@ -194,18 +232,11 @@ int main(void) {
   palSetPadMode(GPIOC, 5, PAL_MODE_ALTERNATE(7));
 
   gptStart(&GPTD1, &gpt_adc_config); 
-  gptStartContinuous(&GPTD1, 10);
+  gptStartContinuous(&GPTD1, 200);
 
   palSetPadMode(GPIOA, 0, PAL_MODE_INPUT_ANALOG); // this is 15th channel
   palSetPadMode(GPIOA, 1, PAL_MODE_INPUT_ANALOG); // this is 10th channel
-
-  // Following 3 functions use previously created configuration
-  // to initialize ADC block, start ADC block and start conversion.
-  // &ADCD1 is pointer to ADC driver structure, defined in the depths of HAL.
-  // Other arguments defined ourself earlier.
-  //  adcInit();
   adcStart(&ADCD1, &adccfg);
-  // adcStartConversion(&ADCD1, &adcgrpcfg, samples_buf, ADC_BUF_DEPTH);
 
   chprintf((BaseSequentialStream*)&SD1, "\n\rUp and Running\n\r");
 

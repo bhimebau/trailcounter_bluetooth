@@ -36,51 +36,33 @@
 #include "NNet.h"
 #include <stdio.h>
 
-void PrintNetwork(){
+nncfg_t ann = {3, 4, 1};
+
+void PrintNetwork(nncfg_t *cfg){
   int i = 0;
   printf("Inputs: \n");
-  for (i = 0; i < NUM_INPUT_NODE; i++){
+  for (i = 0; i < cfg->numInputs; i++){
     printf("%d\n", inputs[i]);
   }
   printf("\n");
   printf("Outputs: \n");
-  for (i = 0; i < NUM_OUTPUT_NODE; i++){
+  for (i = 0; i < cfg->numOutput; i++){
     printf("%d\n", outputs[i]);
   }
   printf("\n");
 }
 
-/* void PrintInput() { */
-/*   int i = 0; */
-/*   printf("Print input values: \n"); */
-/*   for (i = 0; i < NUM_INPUT_NODE; i++){ */
-/*     printf("%d %d\n", i, inputs[i]); */
-/*   } */
-/*   printf("\n"); */
-/* } */
-
-
 int main(){
-
-  EvaluateNet(1);
-  PrintNetwork();
-  EvaluateNet(2);
-  PrintNetwork();
-  EvaluateNet(3);
-  PrintNetwork();
-  EvaluateNet(4);
-  PrintNetwork();
-  EvaluateNet(5);
-  PrintNetwork();
-
-  /* PrintOutput(); */
-
-  /* EvaluateNet(20); */
-  /* PrintOutput(); */
-
-  /* EvaluateNet(30); */
-  /* PrintOutput(); */
+  EvaluateNet(&ann, 1);
+  PrintNetwork(&ann);
+  EvaluateNet(&ann, 2);
+  PrintNetwork(&ann);
+  EvaluateNet(&ann, 3);
+  PrintNetwork(&ann);
+  EvaluateNet(&ann, 4);
+  PrintNetwork(&ann);
+  EvaluateNet(&ann, 5);
+  PrintNetwork(&ann);
   return 0;
 }
-
 /* main.c ends here */
