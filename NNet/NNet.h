@@ -50,6 +50,7 @@ typedef struct {
 } nncfg_t;
 
 void EvaluateNet(nncfg_t *, int);
+void initNetwork(nncfg_t *);
 int setWeightHidden(nncfg_t *, int, int, int);
 int setWeightOutput(nncfg_t *, int, int, int);
 

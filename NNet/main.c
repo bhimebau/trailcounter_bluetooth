@@ -53,6 +53,8 @@ void PrintNetwork(nncfg_t *cfg){
 }
 
 int main(){
+  initNetwork(&ann);
+
   EvaluateNet(&ann, 1);
   PrintNetwork(&ann);
   EvaluateNet(&ann, 2);
