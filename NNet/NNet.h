@@ -37,7 +37,7 @@
 #define MAX_HIDDEN 32
 #define MAX_OUTPUTS 8
 
-extern int inputs[MAX_INPUTS];
+// extern int inputs[MAX_INPUTS];
 extern int hiddens[MAX_HIDDEN];
 extern int outputs[MAX_OUTPUTS];
 extern int weights_ih[MAX_INPUTS][MAX_HIDDEN];
@@ -49,9 +49,20 @@ typedef struct {
   int numOutput;
 } nncfg_t;
 
-void EvaluateNet(nncfg_t *, int);
-void initNetwork(nncfg_t *);
+typedef struct {
+  int inputIndex;
+  int inputs[MAX_INPUTS];
+} inputFifo_t;
+
+// extern inputFifo_t iFifo;
+
+void EvaluateNet(nncfg_t *, inputFifo_t *, int);
+void initNetwork(nncfg_t *, inputFifo_t *);
 int setWeightHidden(nncfg_t *, int, int, int);
 int setWeightOutput(nncfg_t *, int, int, int);
+
+void addItem(nncfg_t *, inputFifo_t *, int item);
+void printFifo(nncfg_t *, inputFifo_t *);
+
 
 /* NNet.h ends here */
