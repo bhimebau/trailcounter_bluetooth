@@ -5,9 +5,6 @@
 #include "NNet.h"
 #include <stdio.h>
 
-// values of inputs
-int inputs[MAX_INPUTS];
-
 // values of hidden layers
 int hiddens[MAX_HIDDEN];
 
@@ -21,7 +18,6 @@ int weights_ih[MAX_INPUTS][MAX_HIDDEN];
 int weights_ho[MAX_HIDDEN][MAX_OUTPUTS];
 
 int inputIndex;
-
 
 int setWeightHidden(nncfg_t *nncfg, int input, int hidden, int value) {
   if ((hidden >= nncfg->numHidden) || (input >= nncfg->numInputs)) {
@@ -69,20 +65,37 @@ void initNetwork(nncfg_t *nncfg) {
   int i;
 
   resetOutput(nncfg);
-  inputIndex = nncfg->numInputs-1;
-  i = inputIndex;
-  while (i != inputIndex) {
-    if (i == nncfg->numInputs) {
-      i = 0;
-    }
-    inputs[i++] = 0;
+  fifo->inputIndex = nncfg->numInputs-1;
+  for (i=0;i<nncfg->numInputs;i++) fifo->inputs[i]=0;
+}
+
+void addItem(nncfg_t *nncfg, inputFifo_t *fifo, int item) {
+  fifo->inputs[fifo->inputIndex] = item;
+  fifo->inputIndex--;
+  if (fifo->inputIndex < 0) {
+    fifo->inputIndex = nncfg->numInputs-1;
   }
 }
 
+void printFifo(nncfg_t *nncfg, inputFifo_t *fifo) {
+  int i; 
+  
+  i = fifo->inputIndex + 1;
+  if (i == nncfg->numInputs) {
+    i = 0;
+  }
+  do {
+    printf("%d\n", fifo->inputs[i]);
+    i++;
+    if (i == nncfg->numInputs) {
+      i = 0;
+    }
+  } while (i != fifo->inputIndex);
+  printf("%d\n\n", fifo->inputs[i]);
+}
 
-void EvaluateNet(nncfg_t *nncfg, int next_input){
+void EvaluateNet(nncfg_t *nncfg, inputFifo_t *fifo, int next_input){
 
-  /* static int inputIndex = nncfg->numInputs-1; */
   int i = 0;
   int j = 0;
 
@@ -105,9 +118,15 @@ void EvaluateNet(nncfg_t *nncfg, int next_input){
   /*     i = 0; */
   /*   } */
     for (j = 0; j < nncfg->numHidden; j++){
-      hiddens[j] += inputs[i] * weights_ih[i][j];			
+      hiddens[j] += fifo->inputs[i] * weights_ih[i][j];			
     }
     i++;
+    if (i == nncfg->numInputs) {
+      i = 0;
+    }
+  } while (i != fifo->inputIndex);
+  for (j = 0; j < nncfg->numHidden; j++){
+    hiddens[j] += fifo->inputs[i] * weights_ih[i][j];			
   }
 
   // propagate to the output layer
