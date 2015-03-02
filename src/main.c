@@ -14,19 +14,26 @@
     limitations under the License.
 */
 
+/* Analog Input PA0 
+   Analog Output PA4 
+ */
+
 #include "ch.h"
 #include "hal.h"
 #include "test.h"
 #include "shell.h" 
 #include "chprintf.h"
+#include "arm_math.h"
 #include "drivers.h"
 #include <NNet.h>
 #include <atoh.h>
+#include <dtoa.h>
 #include <chstreams.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdarg.h>
 #include <stdlib.h>
+
 
 #define UNUSED(x) (void)(x)
 
@@ -74,8 +81,15 @@ static const ADCConversionGroup adcgrpcfg = {
 
 static void gpt_adc_trigger(GPTDriver *gpt_ptr)  { 
   UNUSED(*gpt_ptr);
-  EvaluateNet(&ann, samples_buf[0]);
-  dacConvertOne(&DACD1,outputs[0]);
+  /* EvaluateNet(&ann, samples_buf[0]); */
+
+  if (outputs[0] > 0xFFF) {
+    outputs[0] = 0xFFF;
+  }
+
+  //  dacConvertOne(&DACD1,outputs[0]);
+  dacConvertOne(&DACD1,samples_buf[0]);
+  //  dacConvertOne(&DACD1,0x3ff);
   adcStartConversion(&ADCD1, &adcgrpcfg, samples_buf, ADC_BUF_DEPTH);
   palTogglePad(GPIOE, GPIOE_LED4_BLUE);
 }
@@ -148,7 +162,7 @@ static void cmd_weighth(BaseSequentialStream *chp, int argc, char *argv[]) {
   input = atoi(argv[0]);
   hidden = atoi(argv[1]);
   value = atoi(argv[2]);
-  // chprintf(chp, "Here are the values: %d %d %d\n\r", hidden, input, value);
+  chprintf(chp, "Here are the values: %d %d %d\n\r", hidden, input, value);
   setWeightHidden(&ann, input, hidden, value);
 
 }
@@ -165,7 +179,7 @@ static void cmd_weighto(BaseSequentialStream *chp, int argc, char *argv[]) {
   hidden = atoi(argv[0]);
   output = atoi(argv[1]);
   value = atoi(argv[2]);
-  //   chprintf(chp, "Here are the values: %d %d %d\n\r", hidden, output, value);
+  chprintf(chp, "Here are the values: %d %d %d\n\r", hidden, output, value);
   setWeightOutput(&ann, hidden, output, value);
 }
 
@@ -209,6 +223,11 @@ static const DACConfig daccfg1 = {
  */
 
 int main(void) {
+  char afloat[32];
+
+  float32_t myarray[4] = {1.0,2.0,6.3456,5.0};
+  float32_t max = 0.0;
+  uint32_t index = 0;
   event_listener_t tel;
   /*
    * System initializations.
@@ -223,6 +242,8 @@ int main(void) {
 
   dacStart(&DACD1, &daccfg1);
 
+  arm_max_f32(myarray, 4, &max, &index); 
+
   /*
    * Activates the serial driver 1 using the driver default configuration.
    * PC4(RX) and PC5(TX). The default baud rate is 9600.
@@ -231,14 +252,14 @@ int main(void) {
   palSetPadMode(GPIOC, 4, PAL_MODE_ALTERNATE(7));
   palSetPadMode(GPIOC, 5, PAL_MODE_ALTERNATE(7));
 
-  gptStart(&GPTD1, &gpt_adc_config); 
-  gptStartContinuous(&GPTD1, 200);
+  gptStart(&GPTD1, &gpt_adc_config);
+  gptStartContinuous(&GPTD1, 227);
 
   palSetPadMode(GPIOA, 0, PAL_MODE_INPUT_ANALOG); // this is 15th channel
   palSetPadMode(GPIOA, 1, PAL_MODE_INPUT_ANALOG); // this is 10th channel
   adcStart(&ADCD1, &adccfg);
 
-  chprintf((BaseSequentialStream*)&SD1, "\n\rUp and Running\n\r");
+  chprintf((BaseSequentialStream*)&SD1, "\n\rUp and Running %s\n\r", convFloat(afloat,max/2));
 
   /* Initialize the command shell */ 
   shellInit();

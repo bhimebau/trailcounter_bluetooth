@@ -22,6 +22,7 @@ int weights_ho[MAX_HIDDEN][MAX_OUTPUTS];
 
 int inputIndex;
 
+
 int setWeightHidden(nncfg_t *nncfg, int input, int hidden, int value) {
   if ((hidden >= nncfg->numHidden) || (input >= nncfg->numInputs)) {
     return (1);
@@ -53,15 +54,15 @@ void resetOutput(nncfg_t *nncfg) {
   }
 }
 
-/* void UpdateInput(int next_input, nncfg_t *nncfg){ */
-/*   int i; */
+void UpdateInput(int next_input, nncfg_t *nncfg){
+  int i;
 
-/*   for (i=(nncfg->numInputs-1); i>0 ;i--) { */
-/*     inputs[i] = inputs[i-1]; */
-/*   } */
+  for (i=(nncfg->numInputs-1); i>0 ;i--) {
+    inputs[i] = inputs[i-1];
+  }
 
-/*   inputs[i] = next_input; */
-/* } */
+  inputs[i] = next_input;
+}
 
 
 void initNetwork(nncfg_t *nncfg) {
@@ -86,23 +87,23 @@ void EvaluateNet(nncfg_t *nncfg, int next_input){
   int j = 0;
 
   // update the input FIFO
-  //   UpdateInput(next_input, nncfg);
+  UpdateInput(next_input, nncfg);
 
-  inputs[inputIndex--] = next_input;
-  if (inputIndex<0) {
-    inputIndex = nncfg->numInputs-1;  
-  }
+  /* inputs[inputIndex--] = next_input; */
+  /* if (inputIndex<0) { */
+  /*   inputIndex = nncfg->numInputs-1;   */
+  /* } */
 
   resetOutput(nncfg);
   
   // propagate to the hidden layer
-  /* for (i = 0; i < nncfg->numInputs; i++){ */
+  for (i = 0; i < nncfg->numInputs; i++){
   
-  i = inputIndex;
-  while (i != inputIndex) {
-    if (i == nncfg->numInputs) {
-      i = 0;
-    }
+  /* i = inputIndex; */
+  /* while (i != inputIndex) { */
+  /*   if (i == nncfg->numInputs) { */
+  /*     i = 0; */
+  /*   } */
     for (j = 0; j < nncfg->numHidden; j++){
       hiddens[j] += inputs[i] * weights_ih[i][j];			
     }

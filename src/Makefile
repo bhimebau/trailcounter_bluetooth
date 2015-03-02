@@ -65,7 +65,7 @@ endif
 
 # Enables the use of FPU on Cortex-M4 (no, softfp, hard).
 ifeq ($(USE_FPU),)
-  USE_FPU = no
+  USE_FPU = hard
 endif
 
 #
@@ -109,6 +109,7 @@ CSRC = $(PORTSRC) \
        $(CHIBIOS)/os/various/syscalls.c \
        $(CHIBIOS)/os/various/chprintf.c \
        ../atoh/atoh.c \
+       ../dtoa/dtoa.c \
        ../NNet/NNet.c \
        main.c
 
@@ -142,7 +143,7 @@ ASMSRC = $(PORTASM)
 INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
          $(HALINC) $(OSALINC) $(PLATFORMINC) $(BOARDINC) \
          $(STM32DRIVERINC) $(CHIBIOS)/os/various ../atoh \
-	 ../NNet
+	 ../dtoa ../NNet
 
 #
 # Project, sources and paths
@@ -192,7 +193,7 @@ CPPWARN = -Wall -Wextra
 #
 
 # List all user C define here, like -D_DEBUG=1
-UDEFS =
+UDEFS = -DARM_MATH_CM4
 
 # Define ASM defines here
 UADEFS =
@@ -201,10 +202,10 @@ UADEFS =
 UINCDIR =
 
 # List the user directory to look for the libraries here
-ULIBDIR =
+ULIBDIR = dsp_lib
 
 # List all user libraries here
-ULIBS =
+ULIBS = -lmath_cm4f -lm 
 
 #
 # End of user defines
