@@ -1,5 +1,5 @@
 UNIT = 1
-MATDATA = 'data/singlenet_4nodes_64bits_29-Jan-2015.mat'
+MATDATA = 'data/singlenet_8nodes_64bits_29-Jan-2015.mat'
 
 all: weights.h
 
