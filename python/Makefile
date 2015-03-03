@@ -4,4 +4,4 @@ MATDATA = 'data/singlenet_4nodes_64bits_29-Jan-2015.mat'
 all: weights.h
 
 weights.h: 
-	build_weights.py ${MATDATA} ${UNIT}
+	./build_weights.py ${MATDATA} ${UNIT}
