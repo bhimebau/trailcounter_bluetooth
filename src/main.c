@@ -82,14 +82,29 @@ static const ADCConversionGroup adcgrpcfg = {
 
 static void gpt_adc_trigger(GPTDriver *gpt_ptr)  { 
   UNUSED(*gpt_ptr);
-  /* EvaluateNet(&ann, &inFifo, samples_buf[0]); */
+  /* char float_array[32]; */
+  /* static unsigned short dac_val = 0;  */
 
-  if (outputs[0] > 0xFFF) {
-    outputs[0] = 0xFFF;
-  }
+  EvaluateNet(&ann, &inFifo, scale_input(samples_buf[0]));
+  dacConvertOne(&DACD1,scale_output(outputs[0]));
+  
+
+  /* if (dac_val) { */
+  /*   dac_val = 0x000; */
+  /* } */
+  /* else { */
+  /*   dac_val = 0xFFF; */
+  /* } */
+  /* dacConvertOne(&DACD1,dac_val); */
+
+
+
+  /* if (outputs[0] > 0xFFF) { */
+  /*   outputs[0] = 0xFFF; */
+  /* } */
 
   //  dacConvertOne(&DACD1,outputs[0]);
-  dacConvertOne(&DACD1,samples_buf[0]);
+  //  dacConvertOne(&DACD1,samples_buf[0]);
   //  dacConvertOne(&DACD1,0x3ff);
   adcStartConversion(&ADCD1, &adcgrpcfg, samples_buf, ADC_BUF_DEPTH);
   palTogglePad(GPIOE, GPIOE_LED4_BLUE);
@@ -184,11 +199,18 @@ static void cmd_weighto(BaseSequentialStream *chp, int argc, char *argv[]) {
   setWeightOutput(&ann, hidden, output, value);
 }
 
+static void cmd_sampleout(BaseSequentialStream *chp, int argc, char *argv[]) {
+  char float_array[32];
+  (void)argv;
+  chprintf((BaseSequentialStream*)&SD1, "%s\n\r", convFloat(float_array,outputs[0]));
+}
+
 static const ShellCommand commands[] = {
   {"myecho", cmd_myecho},
   {"dac", cmd_dac},
   {"weighth", cmd_weighth},
   {"weighto", cmd_weighto},
+  {"sampleout", cmd_sampleout},
   {NULL, NULL}
 };
 
@@ -254,7 +276,9 @@ int main(void) {
   palSetPadMode(GPIOC, 5, PAL_MODE_ALTERNATE(7));
 
   gptStart(&GPTD1, &gpt_adc_config);
-  gptStartContinuous(&GPTD1, 227);
+  // gptStartContinuous(&GPTD1, 227);
+  gptStartContinuous(&GPTD1, 300);
+
 
   palSetPadMode(GPIOA, 0, PAL_MODE_INPUT_ANALOG); // this is 15th channel
   palSetPadMode(GPIOA, 1, PAL_MODE_INPUT_ANALOG); // this is 10th channel

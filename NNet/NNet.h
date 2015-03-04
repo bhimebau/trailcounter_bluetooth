@@ -53,7 +53,7 @@ typedef struct {
 
 typedef struct {
   int inputIndex;
-  int inputs[MAX_INPUTS];
+  float inputs[MAX_INPUTS];
 } inputFifo_t;
 
 // extern inputFifo_t iFifo;
@@ -66,5 +66,7 @@ int setWeightOutput(nncfg_t *, int, int, int);
 void addItem(nncfg_t *, inputFifo_t *, int item);
 void printFifo(nncfg_t *, inputFifo_t *);
 
+float scale_input(int);  
+int scale_output(float);  
 
 /* NNet.h ends here */

@@ -78,22 +78,22 @@ void addItem(nncfg_t *nncfg, inputFifo_t *fifo, int item) {
   }
 }
 
-void printFifo(nncfg_t *nncfg, inputFifo_t *fifo) {
-  int i; 
+/* void printFifo(nncfg_t *nncfg, inputFifo_t *fifo) { */
+/*   int i;  */
   
-  i = fifo->inputIndex + 1;
-  if (i == nncfg->numInputs) {
-    i = 0;
-  }
-  do {
-    printf("%d\n", fifo->inputs[i]);
-    i++;
-    if (i == nncfg->numInputs) {
-      i = 0;
-    }
-  } while (i != fifo->inputIndex);
-  printf("%d\n\n", fifo->inputs[i]);
-}
+/*   i = fifo->inputIndex + 1; */
+/*   if (i == nncfg->numInputs) { */
+/*     i = 0; */
+/*   } */
+/*   do { */
+/*     printf("%f\n", fifo->inputs[i]); */
+/*     i++; */
+/*     if (i == nncfg->numInputs) { */
+/*       i = 0; */
+/*     } */
+/*   } while (i != fifo->inputIndex); */
+/*   printf("%f\n\n", fifo->inputs[i]); */
+/* } */
 
 void EvaluateNet(nncfg_t *nncfg, inputFifo_t *fifo, int next_input){
 
@@ -108,10 +108,10 @@ void EvaluateNet(nncfg_t *nncfg, inputFifo_t *fifo, int next_input){
     for (j = 0; j < nncfg->numHidden; j++){
       hiddens[j] += fifo->inputs[i] * weights_ih[i][j];			
       if (hiddens[j] > 1) {
-	hiddens[j] = 1;
+      	hiddens[j] = 1;
       }
       else if (hiddens[j] < 0) {
-	hiddens[j] = 0;
+      	hiddens[j] = 0;
       }
     }
   }
@@ -121,12 +121,24 @@ void EvaluateNet(nncfg_t *nncfg, inputFifo_t *fifo, int next_input){
     for (j = 0; j < nncfg->numOutput; j++){
       outputs[j] += hiddens[i] * weights_ho[i][j];
       if (outputs[j] > 1) {
-	outputs[j] = 1;
+      	outputs[j] = 1;
       }
       else if (outputs[j] < 0) {
-	outputs[j] = 0;
+      	outputs[j] = 0;
       }
     }
   }
+}
+
+float scale_input(int a2d_val) {
+  return(((float) a2d_val -(float) 2048.0)/(float) 1024.0);
+}
+
+int scale_output(float d2a_val) {
+  float return_val;
+  return_val = 1024.0 * d2a_val + 2048;
+  if (return_val > 4096) return_val = 4096;
+  if (return_val < 0) return_val = 0;
+  return ((int) return_val);
 }
 
