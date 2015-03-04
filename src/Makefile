@@ -104,10 +104,10 @@ CSRC = $(PORTSRC) \
        $(BOARDSRC) \
        $(STM32DRIVERSRC) \
        ${CHIBIOS}/os/various/shell.c \
-       ${CHIBIOS}/os/various/memstreams.c \
        $(CHIBIOS)/os/various/evtimer.c \
        $(CHIBIOS)/os/various/syscalls.c \
-       $(CHIBIOS)/os/various/chprintf.c \
+       ${CHIBIOS}/os/hal/lib/streams/memstreams.c \
+       $(CHIBIOS)/os/hal/lib/streams/chprintf.c \
        ../atoh/atoh.c \
        ../dtoa/dtoa.c \
        ../NNet/NNet.c \
@@ -142,8 +142,8 @@ ASMSRC = $(PORTASM)
 
 INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
          $(HALINC) $(OSALINC) $(PLATFORMINC) $(BOARDINC) \
-         $(STM32DRIVERINC) $(CHIBIOS)/os/various ../atoh \
-	 ../dtoa ../NNet
+         $(STM32DRIVERINC) $(CHIBIOS)/os/various $(CHIBIOS)/os/hal/lib/streams \
+         ../atoh ../dtoa ../NNet
 
 #
 # Project, sources and paths

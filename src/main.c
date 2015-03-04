@@ -38,6 +38,7 @@
 #define UNUSED(x) (void)(x)
 
 nncfg_t ann = {2, 4, 1};
+inputFifo_t inFifo;
 
 // ADCConfig structure for stm32 MCUs is empty
 static ADCConfig adccfg = {0};
@@ -81,7 +82,7 @@ static const ADCConversionGroup adcgrpcfg = {
 
 static void gpt_adc_trigger(GPTDriver *gpt_ptr)  { 
   UNUSED(*gpt_ptr);
-  /* EvaluateNet(&ann, samples_buf[0]); */
+  /* EvaluateNet(&ann, &inFifo, samples_buf[0]); */
 
   if (outputs[0] > 0xFFF) {
     outputs[0] = 0xFFF;

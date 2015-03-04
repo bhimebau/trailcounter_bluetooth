@@ -50,18 +50,18 @@ void resetOutput(nncfg_t *nncfg) {
   }
 }
 
-void UpdateInput(int next_input, nncfg_t *nncfg){
+void UpdateInput(int next_input, nncfg_t *nncfg, inputFifo_t *fifo){
   int i;
 
   for (i=(nncfg->numInputs-1); i>0 ;i--) {
-    inputs[i] = inputs[i-1];
+    fifo->inputs[i] = fifo->inputs[i-1];
   }
 
-  inputs[i] = next_input;
+  fifo->inputs[i] = next_input;
 }
 
 
-void initNetwork(nncfg_t *nncfg) {
+void initNetwork(nncfg_t *nncfg, inputFifo_t *fifo) {
   int i;
 
   resetOutput(nncfg);
@@ -100,7 +100,7 @@ void EvaluateNet(nncfg_t *nncfg, inputFifo_t *fifo, int next_input){
   int j = 0;
 
   // update the input FIFO
-  UpdateInput(next_input, nncfg);
+  UpdateInput(next_input, nncfg, fifo);
 
   /* inputs[inputIndex--] = next_input; */
   /* if (inputIndex<0) { */
