@@ -33,15 +33,17 @@
 
 /* Code: */
 
-#define MAX_INPUTS 32
-#define MAX_HIDDEN 32
-#define MAX_OUTPUTS 8
+#include <weights.h>
+
+/* #define MAX_INPUTS 32 */
+/* #define MAX_HIDDEN 32 */
+/* #define MAX_OUTPUTS 8 */
 
 // extern int inputs[MAX_INPUTS];
-extern int hiddens[MAX_HIDDEN];
-extern int outputs[MAX_OUTPUTS];
-extern int weights_ih[MAX_INPUTS][MAX_HIDDEN];
-extern int weights_ho[MAX_HIDDEN][MAX_OUTPUTS];
+extern float hiddens[MAX_HIDDEN];
+extern float outputs[MAX_OUTPUTS];
+extern float weights_ih[MAX_INPUTS][MAX_HIDDEN];
+extern float weights_ho[MAX_HIDDEN][MAX_OUTPUTS];
 
 typedef struct {
   int numInputs;

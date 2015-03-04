@@ -2,20 +2,21 @@
 // Author: Nhan Do
 // Date: 02/01/2015: initial commit
 
+#include <weights.h>
 #include "NNet.h"
 #include <stdio.h>
 
 // values of hidden layers
-int hiddens[MAX_HIDDEN];
+float hiddens[MAX_HIDDEN];
 
 // values of outputs
-int outputs[MAX_OUTPUTS];
+float outputs[MAX_OUTPUTS];
 
 //weights of Input layer to hidden layer
-int weights_ih[MAX_INPUTS][MAX_HIDDEN]; 
+// int weights_ih[MAX_INPUTS][MAX_HIDDEN]; 
 
 //weights of hidden layer to Output layer
-int weights_ho[MAX_HIDDEN][MAX_OUTPUTS];
+// int weights_ho[MAX_HIDDEN][MAX_OUTPUTS];
 
 int inputIndex;
 
@@ -99,40 +100,32 @@ void EvaluateNet(nncfg_t *nncfg, inputFifo_t *fifo, int next_input){
   int i = 0;
   int j = 0;
 
-  // update the input FIFO
   UpdateInput(next_input, nncfg, fifo);
-
-  /* inputs[inputIndex--] = next_input; */
-  /* if (inputIndex<0) { */
-  /*   inputIndex = nncfg->numInputs-1;   */
-  /* } */
-
   resetOutput(nncfg);
-  
+ 
   // propagate to the hidden layer
   for (i = 0; i < nncfg->numInputs; i++){
-  
-  /* i = inputIndex; */
-  /* while (i != inputIndex) { */
-  /*   if (i == nncfg->numInputs) { */
-  /*     i = 0; */
-  /*   } */
     for (j = 0; j < nncfg->numHidden; j++){
       hiddens[j] += fifo->inputs[i] * weights_ih[i][j];			
+      if (hiddens[j] > 1) {
+	hiddens[j] = 1;
+      }
+      else if (hiddens[j] < 0) {
+	hiddens[j] = 0;
+      }
     }
-    i++;
-    if (i == nncfg->numInputs) {
-      i = 0;
-    }
-  } while (i != fifo->inputIndex);
-  for (j = 0; j < nncfg->numHidden; j++){
-    hiddens[j] += fifo->inputs[i] * weights_ih[i][j];			
   }
 
   // propagate to the output layer
   for (i = 0; i < nncfg->numHidden; i++){
     for (j = 0; j < nncfg->numOutput; j++){
       outputs[j] += hiddens[i] * weights_ho[i][j];
+      if (outputs[j] > 1) {
+	outputs[j] = 1;
+      }
+      else if (outputs[j] < 0) {
+	outputs[j] = 0;
+      }
     }
   }
 }
