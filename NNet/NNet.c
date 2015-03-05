@@ -1,6 +1,37 @@
-// Neural Network in C
-// Author: Nhan Do
-// Date: 02/01/2015: initial commit
+/* NNet.h --- 
+ * 
+ * Filename: NNet.h
+ * Description: 
+ * Author: Nhan Do, Bryce Himebaugh
+ * Maintainer: 
+ * Created: Mon Feb  2 15:02:44 2015
+ * Last-Updated: 
+ *           By: 
+ *     Update #: 0
+ * Keywords: 
+ * Compatibility: 
+ * 
+ */
+
+/* Commentary: 
+ * 
+ * 
+ * 
+ */
+
+/* Change log:
+ * 
+ * 
+ */
+
+/* Copyright (c) 2014-2015 Analog Computing Solutions  
+ * 
+ * All rights reserved. 
+ * 
+ * Additional copyrights may follow 
+ */
+
+/* Code: */
 
 #include <weights.h>
 #include "NNet.h"
@@ -19,6 +50,9 @@ float outputs[MAX_OUTPUTS];
 // int weights_ho[MAX_HIDDEN][MAX_OUTPUTS];
 
 int inputIndex;
+
+nncfg_t ann = {MAX_INPUTS, MAX_HIDDEN, MAX_OUTPUTS};
+inputFifo_t inFifo;
 
 int setWeightHidden(nncfg_t *nncfg, int input, int hidden, int value) {
   if ((hidden >= nncfg->numHidden) || (input >= nncfg->numInputs)) {
@@ -66,17 +100,16 @@ void initNetwork(nncfg_t *nncfg, inputFifo_t *fifo) {
   int i;
 
   resetOutput(nncfg);
-  fifo->inputIndex = nncfg->numInputs-1;
   for (i=0;i<nncfg->numInputs;i++) fifo->inputs[i]=0;
 }
 
-void addItem(nncfg_t *nncfg, inputFifo_t *fifo, int item) {
-  fifo->inputs[fifo->inputIndex] = item;
-  fifo->inputIndex--;
-  if (fifo->inputIndex < 0) {
-    fifo->inputIndex = nncfg->numInputs-1;
-  }
-}
+/* void addItem(nncfg_t *nncfg, inputFifo_t *fifo, int item) { */
+/*   fifo->inputs[fifo->inputIndex] = item; */
+/*   fifo->inputIndex--; */
+/*   if (fifo->inputIndex < 0) { */
+/*     fifo->inputIndex = nncfg->numInputs-1; */
+/*   } */
+/* } */
 
 /* void printFifo(nncfg_t *nncfg, inputFifo_t *fifo) { */
 /*   int i;  */
@@ -130,15 +163,24 @@ void EvaluateNet(nncfg_t *nncfg, inputFifo_t *fifo, int next_input){
   }
 }
 
+#define PI 6.0
+#define NI -2.0
+#define PO 0xFFF
+#define NO 0x000
+#define SLOPE ((float) ((PO-NO)/(PI-NI)))
+
 float scale_input(int a2d_val) {
-  return(((float) a2d_val -(float) 2048.0)/(float) 1024.0);
+  //  return(((float) a2d_val -(float) 2048.0)/(float) 1024.0);
+  return (((float) (a2d_val + (SLOPE * NI) - NO))/SLOPE);
 }
 
 int scale_output(float d2a_val) {
   float return_val;
-  return_val = 1024.0 * d2a_val + 2048;
-  if (return_val > 4096) return_val = 4096;
-  if (return_val < 0) return_val = 0;
+  /* return_val = 1024.0 * d2a_val + 2048; */
+  /* if (return_val > 4096) return_val = 4096; */
+  /* if (return_val < 0) return_val = 0; */
+  /* return ((int) return_val); */
+  return_val = d2a_val * 4096.0;
   return ((int) return_val);
 }
 

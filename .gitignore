@@ -31,3 +31,6 @@
 TAGS
 st-flash.log
 cruft
+src/build
+weight.c
+weight.h

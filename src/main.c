@@ -37,9 +37,6 @@
 
 #define UNUSED(x) (void)(x)
 
-nncfg_t ann = {2, 4, 1};
-inputFifo_t inFifo;
-
 // ADCConfig structure for stm32 MCUs is empty
 static ADCConfig adccfg = {0};
 
@@ -245,6 +242,19 @@ static const DACConfig daccfg1 = {
  * Application entry point.
  */
 
+void print_arch(nncfg_t *network) {
+  char afloat[32];
+
+  chprintf((BaseSequentialStream*)&SD1, "\n\r\n\rRestart\n\r");
+  chprintf((BaseSequentialStream*)&SD1, "\n\rANNSYNTH architecture\n\r");
+  chprintf((BaseSequentialStream*)&SD1, "  Input nodes:   %d\n\r",network->numInputs);
+  chprintf((BaseSequentialStream*)&SD1, "  hidden nodes:  %d\n\r",network->numHidden);
+  chprintf((BaseSequentialStream*)&SD1, "  output nodes:  %d\n\r",network->numOutput);
+  chprintf((BaseSequentialStream*)&SD1, "  A2D Vhigh (0xFFF) = %sV\n\r", convFloat(afloat, scale_input(0xFFF)));
+  chprintf((BaseSequentialStream*)&SD1, "  A2D Vlow (0x000) = %sV\n\r", convFloat(afloat, scale_input(0x000)));
+}
+
+
 int main(void) {
   char afloat[32];
 
@@ -265,7 +275,7 @@ int main(void) {
 
   dacStart(&DACD1, &daccfg1);
 
-  arm_max_f32(myarray, 4, &max, &index); 
+  //  arm_max_f32(myarray, 4, &max, &index); 
 
   /*
    * Activates the serial driver 1 using the driver default configuration.
@@ -279,13 +289,12 @@ int main(void) {
   // gptStartContinuous(&GPTD1, 227);
   gptStartContinuous(&GPTD1, 300);
 
-
   palSetPadMode(GPIOA, 0, PAL_MODE_INPUT_ANALOG); // this is 15th channel
   palSetPadMode(GPIOA, 1, PAL_MODE_INPUT_ANALOG); // this is 10th channel
   adcStart(&ADCD1, &adccfg);
 
-  chprintf((BaseSequentialStream*)&SD1, "\n\rUp and Running %s\n\r", convFloat(afloat,max/2));
-
+  // chprintf((BaseSequentialStream*)&SD1, "\n\rUp and Running %s\n\r", convFloat(afloat,max/2));
+  print_arch(&ann);
   /* Initialize the command shell */ 
   shellInit();
 
