@@ -144,7 +144,7 @@ ASMSRC = $(PORTASM)
 INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
          $(HALINC) $(OSALINC) $(PLATFORMINC) $(BOARDINC) \
          $(STM32DRIVERINC) $(CHIBIOS)/os/various $(CHIBIOS)/os/hal/lib/streams \
-         ../weights ../atoh ../dtoa ../NNet
+         ../weights ../atoh ../dtoa ../NNet ../STM32F30x_StdPeriph_Driver/inc
 
 #
 # Project, sources and paths
