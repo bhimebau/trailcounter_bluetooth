@@ -43,7 +43,7 @@ def evaluate_network(waveform_data_sampled):
     for neuron in range(hidden_neurons):
         sum = 0
         for ninput in range(hidden_neuron_inputs):
-            sum = sum + waveform_data_sampled[ninput,unit_num] * weights_ih[neuron,ninput] 
+            sum = sum + waveform_data_sampled[ninput,unit_num] * weights_ih[neuron,ninput]      
         if (sum > 1):
             sum = 1
         if (sum < 0):
@@ -59,9 +59,9 @@ def evaluate_network(waveform_data_sampled):
         network_output = 0
     return network_output
 
-unit_num = int(sys.argv[1]) - 1 
-weightdat = scipy.io.loadmat(sys.argv[2])
-template = scipy.io.loadmat(sys.argv[3])
+# unit_num = int(sys.argv[1]) - 1 
+weightdat = scipy.io.loadmat(sys.argv[1])
+template = scipy.io.loadmat(sys.argv[2])
 wf = template['TIME_sampled']
 
 increment = .1
@@ -94,8 +94,8 @@ for key in final_result.keys():
             wf = template['TIME_sampled']
             sf = scale_wave(wf, key)       
             wo = evaluate_network(sf)
-            waves.append((unit_num,wo))
-        print final_result[key], key, waves
+            waves.append(wo)
+        print key, waves
 
 
 
