@@ -81,6 +81,8 @@ while (high <= maximum):
             sf = scale_wave(wf, tr)       
             output = evaluate_network(sf)
             if (output >= tolerance):
+                if (unit_num == 1) or (unit_num == 2):
+                    print "found ",unit_num,low, high, output 
                 try:
                     final_result[(low,high)] += 1;
                 except KeyError:
