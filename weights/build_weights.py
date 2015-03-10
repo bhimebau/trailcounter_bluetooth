@@ -51,17 +51,17 @@ for neuron in range(output_neurons):
     for ninput in range(output_neuron_inputs):
         if (total_count < (output_neuron_inputs * output_neurons - 1)):
             if (row_count == 0):
-                print >>weight_file, "   %+2.10Le,"%(weights_ih[neuron,ninput]),
+                print >>weight_file, "   %+2.10Le,"%(weights_ho[neuron,ninput]),
                 row_count = row_count + 1
             elif (row_count < 3):
-                print >>weight_file, "%+2.10Le,"%(weights_ih[neuron,ninput]),
+                print >>weight_file, "%+2.10Le,"%(weights_ho[neuron,ninput]),
                 row_count = row_count + 1
             else:
-                print >>weight_file, "%+2.10Le,\\"%(weights_ih[neuron,ninput])
+                print >>weight_file, "%+2.10Le,\\"%(weights_ho[neuron,ninput])
                 row_count = 0
             total_count = total_count + 1
         else:
-            print >>weight_file, "%+2.10Le};"%(weights_ih[neuron,ninput])
+            print >>weight_file, "%+2.10Le};"%(weights_ho[neuron,ninput])
 
 
 
