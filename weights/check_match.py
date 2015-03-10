@@ -75,7 +75,6 @@ final_result = {}
 while (high <= maximum): 
     low = minimum
     while (low <= (high-increment)):
-        print low, high
         for unit_num in range(7):
             wf = template['TIME_sampled']
             tr = (low,high)
