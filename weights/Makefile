@@ -5,8 +5,8 @@ CONSTANT_FILE = 'weights.h'
 
 WAVDATA = 'data/TIME_set_auto.mat'
 ARBFILE = 'arb.csv'
-NNTEST_DATA = 'nntest.c'
-NNTEST_INCLUDE = 'nntest.h'
+NNTEST_DATA = 'arb.c'
+NNTEST_INCLUDE = 'arb.h'
 
 all: weights.h arbfile.csv 
 
