@@ -62,7 +62,11 @@ def evaluate_network(waveform_data_sampled):
 # unit_num = int(sys.argv[1]) - 1 
 weightdat = scipy.io.loadmat(sys.argv[1])
 template = scipy.io.loadmat(sys.argv[2])
-wf = template['TIME_sampled']
+wf = template['TIME_sampled_auto']
+for unit_num in range(1,7,1):
+    output = evaluate_network(wf)
+    print unit_num, output
+sys.exit()
 
 increment = .1
 minimum = -5

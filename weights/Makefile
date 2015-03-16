@@ -3,7 +3,7 @@ MATDATA = 'data/singlenet_4nodes_64bits_04-Mar-2015.mat'
 WEIGHT_FILE = 'weights.c'
 CONSTANT_FILE = 'weights.h'
 
-WAVDATA = 'data/TIME_set.mat'
+WAVDATA = 'data/TIME_set_auto.mat'
 ARBFILE = 'arb.csv'
 NNTEST_DATA = 'nntest.c'
 NNTEST_INCLUDE = 'nntest.h'
@@ -18,5 +18,9 @@ arbfile.csv:
 
 check:
 	./check_match.py ${MATDATA} ${WAVDATA}
+
+verify:
+	./verify.py ${MATDATA} ${WAVDATA} 1
+
 clean: 
 	rm ${WEIGHT_FILE} ${CONSTANT_FILE} ${NNTEST_DATA} ${NNTEST_INCLUDE} ${ARBFILE}
