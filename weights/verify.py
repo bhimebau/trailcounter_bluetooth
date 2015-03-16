@@ -17,13 +17,16 @@ weights_ho = weightsLW[0,unit_num]
 (hidden_neurons, hidden_neuron_inputs) = weights_ih.shape
 (output_neurons, output_neuron_inputs) = weights_ho.shape
 
+shifted_wf = []
+shifted_wf.append(wf[31,unit_num])
+for i in range(hidden_neuron_inputs-1):
+    shifted_wf.append(wf[i,unit_num])
+
 hidden_output = []
 for neuron in range(hidden_neurons):
     sum = 0
-    rc = hidden_neuron_inputs - 1
     for ninput in range(hidden_neuron_inputs):
-        sum = sum + wf[rc,unit_num] * weights_ih[neuron,ninput]      
-        rc = rc - 1 
+        sum = sum + shifted_wf[ninput] * weights_ih[neuron,ninput]      
     if (sum > 1):
         sum = 1
     if (sum < 0):
@@ -33,7 +36,6 @@ for neuron in range(hidden_neurons):
 network_output = 0
 for ninput in range(output_neuron_inputs):
     network_output = network_output + hidden_output[ninput] * weights_ho[0,ninput]
-print network_output
 if (network_output > 1):
     network_output = 1
 elif (network_output < 0):
