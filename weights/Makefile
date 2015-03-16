@@ -8,7 +8,7 @@ ARBFILE = 'arb.csv'
 NNTEST_DATA = 'nntest.c'
 NNTEST_INCLUDE = 'nntest.h'
 
-all: weights.h arbfile.csv check
+all: weights.h arbfile.csv 
 
 weights.h: 
 	./build_weights.py ${MATDATA} ${UNIT} ${WEIGHT_FILE} ${CONSTANT_FILE}
@@ -20,7 +20,13 @@ check:
 	./check_match.py ${MATDATA} ${WAVDATA}
 
 verify:
+	./verify.py ${MATDATA} ${WAVDATA} 0	
 	./verify.py ${MATDATA} ${WAVDATA} 1
+	./verify.py ${MATDATA} ${WAVDATA} 2
+	./verify.py ${MATDATA} ${WAVDATA} 3
+	./verify.py ${MATDATA} ${WAVDATA} 4
+	./verify.py ${MATDATA} ${WAVDATA} 5
+	./verify.py ${MATDATA} ${WAVDATA} 6
 
 clean: 
 	rm ${WEIGHT_FILE} ${CONSTANT_FILE} ${NNTEST_DATA} ${NNTEST_INCLUDE} ${ARBFILE}

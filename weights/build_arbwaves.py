@@ -11,11 +11,19 @@ arbfile=open(sys.argv[3], 'w+')
 nntest_data = open(sys.argv[4], 'w+')
 nntest_include = open(sys.argv[5], 'w+')
 
-waveform_data = matdata['TIME']
-waveform_data_sampled = matdata['TIME_sampled']
+waveform_data = matdata['TIME_auto']
+waveform_data_sampled = matdata['TIME_sampled_auto']
 
 wavearrlen = waveform_data.shape[0]
 wavearrsampled = waveform_data_sampled.shape[0]
+
+wf_sampled_shifted = []
+wf_sampled_shifted.append(waveform_data_sampled[31,unit_num])
+for i in range(wavearrsampled-1):
+    wf_sampled_shifted.append(waveform_data_sampled[i,unit_num])
+
+for i in range(wavearrsampled):
+    waveform_data_sampled[i,unit_num] = wf_sampled_shifted[i] 
 
 min = 3
 for i in range(wavearrsampled):
@@ -34,6 +42,11 @@ for i in range(wavearrsampled):
 scale_factor = 3/max
 for i in range(wavearrsampled):
     waveform_data_sampled[i,unit_num] = waveform_data_sampled[i,unit_num] * scale_factor
+
+print >>nntest_data, "float scale_factor = %f;"%(1/scale_factor)
+print >>nntest_data, "float offset = %f;"%(min)
+print >>nntest_include, "extern float scale_factor;"
+print >>nntest_include, "extern float offset;"
 
 print >>nntest_data, "float nntest_data_sampled[] = {\\"
 for i in range(wavearrsampled-1):
