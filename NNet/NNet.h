@@ -35,33 +35,11 @@
 
 #include <weights.h>
 
-typedef struct {
-  int numInputs;
-  int numHidden;
-  int numOutput;
-} nncfg_t;
+void EvaluateNet(float);
+void initNetwork(void);
 
-typedef struct {
-  int inputIndex;
-  float inputs[MAX_INPUTS];
-} inputFifo_t;
-
+extern float inputs[MAX_INPUTS];
 extern float hiddens[MAX_HIDDEN];
 extern float outputs[MAX_OUTPUTS];
-extern float weights_ih[MAX_INPUTS][MAX_HIDDEN];
-extern float weights_ho[MAX_HIDDEN][MAX_OUTPUTS];
-extern nncfg_t ann;
-extern inputFifo_t inFifo;
-
-void EvaluateNet(nncfg_t *, inputFifo_t *, int);
-void initNetwork(nncfg_t *, inputFifo_t *);
-int setWeightHidden(nncfg_t *, int, int, int);
-int setWeightOutput(nncfg_t *, int, int, int);
-
-void addItem(nncfg_t *, inputFifo_t *, int item);
-void printFifo(nncfg_t *, inputFifo_t *);
-
-float scale_input(int);  
-int scale_output(float);  
 
 /* NNet.h ends here */

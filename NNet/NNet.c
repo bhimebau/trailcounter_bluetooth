@@ -37,109 +37,30 @@
 #include "NNet.h"
 #include <stdio.h>
 
-// values of hidden layers
+float inputs[MAX_INPUTS];
 float hiddens[MAX_HIDDEN];
-
-// values of outputs
 float outputs[MAX_OUTPUTS];
 
-//weights of Input layer to hidden layer
-// int weights_ih[MAX_INPUTS][MAX_HIDDEN]; 
-
-//weights of hidden layer to Output layer
-// int weights_ho[MAX_HIDDEN][MAX_OUTPUTS];
-
-int inputIndex;
-
-nncfg_t ann = {MAX_INPUTS, MAX_HIDDEN, MAX_OUTPUTS};
-inputFifo_t inFifo;
-
-int setWeightHidden(nncfg_t *nncfg, int input, int hidden, int value) {
-  if ((hidden >= nncfg->numHidden) || (input >= nncfg->numInputs)) {
-    return (1);
-  }
-  else {
-    weights_ih[input][hidden] = value;
-  }
-  return (0);
-}
-
-int setWeightOutput(nncfg_t *nncfg, int hidden, int output, int value) {
-  if ((hidden >= nncfg->numHidden) || (output >= nncfg->numOutput)) {
-    return (1);
-  }
-  else {
-    weights_ho[hidden][output] = value;
-  }
-  return (0);
-}
-
-void resetOutput(nncfg_t *nncfg) {
-  // reset Hidden layer and Output layer to 0;
-  int i;
-  for (i = 0; i < nncfg->numHidden; i++){
-    hiddens[i] = 0;
-  }
-  for (i = 0; i < nncfg->numOutput; i++){
-    outputs[i] = 0;
-  }
-}
-
-void UpdateInput(int next_input, nncfg_t *nncfg, inputFifo_t *fifo){
-  int i;
-
-  for (i=(nncfg->numInputs-1); i>0 ;i--) {
-    fifo->inputs[i] = fifo->inputs[i-1];
-  }
-
-  fifo->inputs[i] = next_input;
-}
-
-
-void initNetwork(nncfg_t *nncfg, inputFifo_t *fifo) {
-  int i;
-
-  resetOutput(nncfg);
-  for (i=0;i<nncfg->numInputs;i++) fifo->inputs[i]=0;
-}
-
-/* void addItem(nncfg_t *nncfg, inputFifo_t *fifo, int item) { */
-/*   fifo->inputs[fifo->inputIndex] = item; */
-/*   fifo->inputIndex--; */
-/*   if (fifo->inputIndex < 0) { */
-/*     fifo->inputIndex = nncfg->numInputs-1; */
-/*   } */
-/* } */
-
-/* void printFifo(nncfg_t *nncfg, inputFifo_t *fifo) { */
-/*   int i;  */
-  
-/*   i = fifo->inputIndex + 1; */
-/*   if (i == nncfg->numInputs) { */
-/*     i = 0; */
-/*   } */
-/*   do { */
-/*     printf("%f\n", fifo->inputs[i]); */
-/*     i++; */
-/*     if (i == nncfg->numInputs) { */
-/*       i = 0; */
-/*     } */
-/*   } while (i != fifo->inputIndex); */
-/*   printf("%f\n\n", fifo->inputs[i]); */
-/* } */
-
-void EvaluateNet(nncfg_t *nncfg, inputFifo_t *fifo, int next_input){
+void EvaluateNet(float next_input){
 
   int i = 0;
   int j = 0;
 
-  UpdateInput(next_input, nncfg, fifo);
-  resetOutput(nncfg);
- 
-  // propagate to the hidden layer
-  for (i = 0; i < nncfg->numInputs; i++){
-    for (j = 0; j < nncfg->numHidden; j++){
-      hiddens[j] += fifo->inputs[i] * weights_ih[i][j];			
+  for (i=(MAX_INPUTS-1); i>0 ;i--) {
+    inputs[i] = inputs[i-1];
+  }
+  inputs[i] = next_input;
+
+  for (i = 0; i < MAX_HIDDEN; i++){
+    hiddens[i] = 0;
+  }
+  for (i = 0; i < MAX_OUTPUTS; i++){
+    outputs[i] = 0;
+  }
+
+  for (i = 0; i < MAX_INPUTS; i++){
+    for (j = 0; j < MAX_HIDDEN; j++){
+      hiddens[j] += inputs[i] * weights_ih[i][j];			
       if (hiddens[j] > 1) {
       	hiddens[j] = 1;
       }
@@ -149,9 +70,8 @@ void EvaluateNet(nncfg_t *nncfg, inputFifo_t *fifo, int next_input){
     }
   }
 
-  // propagate to the output layer
-  for (i = 0; i < nncfg->numHidden; i++){
-    for (j = 0; j < nncfg->numOutput; j++){
+  for (i = 0; i < MAX_HIDDEN; i++){
+    for (j = 0; j < MAX_OUTPUTS; j++){
       outputs[j] += hiddens[i] * weights_ho[i][j];
       if (outputs[j] > 1) {
       	outputs[j] = 1;
@@ -163,24 +83,5 @@ void EvaluateNet(nncfg_t *nncfg, inputFifo_t *fifo, int next_input){
   }
 }
 
-#define PI 6.0
-#define NI -2.0
-#define PO 0xFFF
-#define NO 0x000
-#define SLOPE ((float) ((PO-NO)/(PI-NI)))
 
-float scale_input(int a2d_val) {
-  //  return(((float) a2d_val -(float) 2048.0)/(float) 1024.0);
-  return (((float) (a2d_val + (SLOPE * NI) - NO))/SLOPE);
-}
-
-int scale_output(float d2a_val) {
-  float return_val;
-  /* return_val = 1024.0 * d2a_val + 2048; */
-  /* if (return_val > 4096) return_val = 4096; */
-  /* if (return_val < 0) return_val = 0; */
-  /* return ((int) return_val); */
-  return_val = d2a_val * 4096.0;
-  return ((int) return_val);
-}
 
