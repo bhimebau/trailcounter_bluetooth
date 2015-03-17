@@ -36,7 +36,6 @@
 #include <weights.h>
 
 void EvaluateNet(float);
-void initNetwork(void);
 
 extern float inputs[MAX_INPUTS];
 extern float hiddens[MAX_HIDDEN];
