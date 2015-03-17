@@ -203,7 +203,7 @@ UADEFS =
 UINCDIR =
 
 # List the user directory to look for the libraries here
-ULIBDIR = dsp_lib
+ULIBDIR = ../dsp_lib
 
 # List all user libraries here
 ULIBS = -lmath_cm4f -lm 
