@@ -26,6 +26,7 @@
 #include "arm_math.h"
 #include "drivers.h"
 #include <NNet.h>
+#include <arb.h>
 #include <atoh.h>
 #include <dtoa.h>
 #include <chstreams.h>
@@ -76,13 +77,23 @@ static const ADCConversionGroup adcgrpcfg = {
    0}
 };
 
+float scale_input (unsigned short a2dval) {
+  float voltage;
+  voltage = ((float) a2dval/4096.0) * 3.0;
+  return (voltage * scale_factor + offset); // scale, offset come from arb.c[h]
+}
+
+unsigned int scale_output (float nnval) {
+  return ((nnval/3.0) * 4096);
+}
 
 static void gpt_adc_trigger(GPTDriver *gpt_ptr)  { 
   UNUSED(*gpt_ptr);
   /* char float_array[32]; */
   /* static unsigned short dac_val = 0;  */
 
-  /* EvaluateNet(scale_input(samples_buf[0])); */
+  EvaluateNet(scale_input(samples_buf[0]));
+  dacConvertOne(&DACD1,scale_output(outputs[0]));
 
   /* EvaluateNet(&ann, &inFifo, scale_input(samples_buf[0])); */
   /* dacConvertOne(&DACD1,scale_output(outputs[0])); */

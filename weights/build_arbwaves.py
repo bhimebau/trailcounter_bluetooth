@@ -10,6 +10,15 @@ arbfile=open(sys.argv[3], 'w+')
 
 nntest_data = open(sys.argv[4], 'w+')
 nntest_include = open(sys.argv[5], 'w+')
+wave_sample_period_uS = sys.argv[6]
+
+arb_period = float(wave_sample_period_uS) * 1e-6 * 16384
+arb_freq = 1/arb_period
+
+print >>nntest_include, "#define SAMPLE_PERIOD_US %f" % (float(wave_sample_period_uS)) 
+
+wave_max_voltage = float(sys.argv[7])
+print wave_max_voltage
 
 waveform_data = matdata['TIME_auto']
 waveform_data_sampled = matdata['TIME_sampled_auto']
@@ -78,11 +87,11 @@ tail = waveform_data[wavearrlen-1,unit_num]
 
 print >>arbfile, "RIGOL:DG5:CSV DATA FILE" 
 print >>arbfile, "TYPE:Arb"
-print >>arbfile, "AMP:3.0000 Vpp"
-print >>arbfile, "PERIOD:1.00E-3 S"
+print >>arbfile, "AMP:%f Vpp"%(wave_max_voltage * 2)
+print >>arbfile, "PERIOD:%f S"%(arb_period)
 print >>arbfile, "DOTS:16384"
 print >>arbfile, "MODE:Normal"
-print >>arbfile, "AFG Frequency:1000.000000"
+print >>arbfile, "AFG Frequency:%f"%(arb_freq)
 print >>arbfile, "AWG N:0"
 print >>arbfile, "x,y[V]"
 for i in range(wavearrlen):

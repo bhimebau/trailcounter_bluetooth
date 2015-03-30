@@ -109,6 +109,7 @@ CSRC = $(PORTSRC) \
        ${CHIBIOS}/os/hal/lib/streams/memstreams.c \
        $(CHIBIOS)/os/hal/lib/streams/chprintf.c \
        ../weights/weights.c \
+       ../weights/arb.c \
        ../atoh/atoh.c \
        ../dtoa/dtoa.c \
        ../NNet/NNet.c \
