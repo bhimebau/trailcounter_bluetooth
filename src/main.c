@@ -80,7 +80,7 @@ static const ADCConversionGroup adcgrpcfg = {
 float scale_input (unsigned short a2dval) {
   float voltage;
   voltage = ((float) a2dval/4096.0) * 3.0;
-  return (voltage * scale_factor + offset); // scale, offset come from arb.c[h]
+  return (voltage * ARB_SCALE_FACTOR + ARB_OFFSET); // scale, offset come from arb.c[h]
 }
 
 unsigned int scale_output (float nnval) {
@@ -210,6 +210,8 @@ static void cmd_dac(BaseSequentialStream *chp, int argc, char *argv[]) {
 /* } */
 
 static void cmd_sampleout(BaseSequentialStream *chp, int argc, char *argv[]) {
+  UNUSED(chp);
+  UNUSED(argc);
   char float_array[32];
   (void)argv;
   chprintf((BaseSequentialStream*)&SD1, "%s\n\r", convFloat(float_array,outputs[0]));
@@ -269,11 +271,10 @@ static const DACConfig daccfg1 = {
 
 
 int main(void) {
-  char afloat[32];
-
-  float32_t myarray[4] = {1.0,2.0,6.3456,5.0};
-  float32_t max = 0.0;
-  uint32_t index = 0;
+  // char afloat[32];
+  // float32_t myarray[4] = {1.0,2.0,6.3456,5.0};
+  // float32_t max = 0.0;
+  //  uint32_t index = 0;
   event_listener_t tel;
   /*
    * System initializations.
@@ -300,7 +301,7 @@ int main(void) {
 
   gptStart(&GPTD1, &gpt_adc_config);
   // gptStartContinuous(&GPTD1, 227);
-  gptStartContinuous(&GPTD1, 300);
+  gptStartContinuous(&GPTD1, (int) SAMPLE_PERIOD_US);
 
   palSetPadMode(GPIOA, 0, PAL_MODE_INPUT_ANALOG); // this is 15th channel
   palSetPadMode(GPIOA, 1, PAL_MODE_INPUT_ANALOG); // this is 10th channel
