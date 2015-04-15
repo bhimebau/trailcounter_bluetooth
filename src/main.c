@@ -46,6 +46,8 @@ static ADCConfig adccfg = {0};
 #define ADC_BUF_DEPTH 1 // depth of buffer
 #define ADC_CH_NUM 2    // number of used ADC channels
 static adcsample_t samples_buf[ADC_BUF_DEPTH * ADC_CH_NUM]; // results array
+int start_collection = 0;
+int collection_buf[32];
 
 static const ADCConversionGroup adcgrpcfg = {
   FALSE,    
@@ -87,13 +89,58 @@ unsigned int scale_output (float nnval) {
   return ((nnval/3.0) * 4096);
 }
 
+#define COLLECTION_THRESHOLD 0x180
+
 static void gpt_adc_trigger(GPTDriver *gpt_ptr)  { 
   UNUSED(*gpt_ptr);
+  static int collection_count = 0;
+  typedef enum {DISARMED, ARMED, COLLECTING} collection_t;
+  static collection_t cstate = DISARMED;
+
   /* char float_array[32]; */
   /* static unsigned short dac_val = 0;  */
+  // chprintf((BaseSequentialStream*)&SD1, "0x%x\n\r",samples_buf[0]);    
 
-  EvaluateNet(scale_input(samples_buf[0]));
-  dacConvertOne(&DACD1,scale_output(outputs[0]));
+  switch (cstate) {
+  case DISARMED:
+    if (start_collection) {
+      cstate = ARMED;
+    }
+    break;
+  case ARMED:
+    if (samples_buf[0] > COLLECTION_THRESHOLD) {
+      cstate = COLLECTING;
+      dacConvertOne(&DACD1,0xFFF);
+    }
+    break;
+  case COLLECTING:
+    if (collection_count<32) {
+      collection_buf[collection_count++] = samples_buf[0];
+    }
+    else {
+      dacConvertOne(&DACD1,0x000);
+      start_collection = 0;
+      collection_count = 0;
+      cstate = DISARMED;
+    }
+    break;
+  default:
+    break;
+  }
+
+  /* if ((start_collection) && (collection_count<32)) { */
+  /*   collection_buf[collection_count++] = samples_buf[0]; */
+  /* } */
+  /* else { */
+  /*   start_collection = 0; */
+  /*   collection_count = 0; */
+  /* } */
+
+  //
+  // Working Code Eliminated for testing purposes 
+  // BH 4/15 pulled  EvaluateNet(scale_input(samples_buf[0]));
+  // BH 4/15 pulled dacConvertOne(&DACD1,scale_output(outputs[0]));
+  //
 
   /* EvaluateNet(&ann, &inFifo, scale_input(samples_buf[0])); */
   /* dacConvertOne(&DACD1,scale_output(outputs[0])); */
@@ -175,6 +222,7 @@ static void cmd_dac(BaseSequentialStream *chp, int argc, char *argv[]) {
   }
 }
 
+
 /* static void cmd_weighth(BaseSequentialStream *chp, int argc, char *argv[]) { */
 /*   int hidden; */
 /*   int input; */
@@ -189,7 +237,7 @@ static void cmd_dac(BaseSequentialStream *chp, int argc, char *argv[]) {
 /*   hidden = atoi(argv[1]); */
 /*   value = atoi(argv[2]); */
 /*   chprintf(chp, "Here are the values: %d %d %d\n\r", hidden, input, value); */
-/*   setWeightHidden(&ann, input, hidden, value); */
+/*   /\* setWeightHidden(&ann, input, hidden, value); *\/ */
 
 /* } */
 
@@ -209,21 +257,62 @@ static void cmd_dac(BaseSequentialStream *chp, int argc, char *argv[]) {
 /*   setWeightOutput(&ann, hidden, output, value); */
 /* } */
 
-static void cmd_sampleout(BaseSequentialStream *chp, int argc, char *argv[]) {
+static void cmd_sample(BaseSequentialStream *chp, int argc, char *argv[]) {
   UNUSED(chp);
   UNUSED(argc);
   char float_array[32];
   (void)argv;
-  chprintf((BaseSequentialStream*)&SD1, "%s\n\r", convFloat(float_array,outputs[0]));
+  chprintf((BaseSequentialStream*)&SD1, "0x%04x ", samples_buf[0]);
+  chprintf((BaseSequentialStream*)&SD1, "%s\n\r", convFloat(float_array, scale_input(samples_buf[0])));
 }
+
+static void cmd_testweights(BaseSequentialStream *chp, int argc, char *argv[]) {
+  UNUSED(chp);
+  UNUSED(argc);
+  char float_array[32];
+  float scaled_input;
+  int i;
+  (void)argv;
+  for (i=0;i<32;i++) {
+    scaled_input = nntest_data_sampled[i] * ARB_SCALE_FACTOR + ARB_OFFSET;
+    EvaluateNet(scaled_input);
+    chprintf((BaseSequentialStream*)&SD1, "%d,", i);
+    chprintf((BaseSequentialStream*)&SD1, "%s ", convFloat(float_array, scaled_input));
+    chprintf((BaseSequentialStream*)&SD1, "%s\n\r", convFloat(float_array, outputs[0]));
+  }
+}
+
+
+static void cmd_collect (BaseSequentialStream *chp, int argc, char *argv[]) {
+  UNUSED(chp);
+  UNUSED(argc);
+
+  char float_array[32];
+  float scaled_input;
+  int i;
+  (void)argv;
+
+  start_collection = 1;
+  while (start_collection) {
+    chThdSleepMilliseconds(1);
+  }
+  for (i=0;i<32;i++) {
+    chprintf((BaseSequentialStream*)&SD1, "0x%0x ", collection_buf[i]);
+    chprintf((BaseSequentialStream*)&SD1, "%s\n\r ", convFloat(float_array, scale_input(collection_buf[i])));
+  }
+}
+
 
 static const ShellCommand commands[] = {
   {"myecho", cmd_myecho},
   {"dac", cmd_dac},
   /* {"weighth", cmd_weighth}, */
   /* {"weighto", cmd_weighto}, */
-  {"sampleout", cmd_sampleout},
+  {"sample", cmd_sample},
+  {"tw", cmd_testweights},
+  {"collect", cmd_collect},
   {NULL, NULL}
+
 };
 
 static const ShellConfig shell_cfg1 = {

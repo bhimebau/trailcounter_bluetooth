@@ -12,7 +12,7 @@ nntest_data = open(sys.argv[4], 'w+')
 nntest_include = open(sys.argv[5], 'w+')
 wave_sample_period_uS = sys.argv[6]
 
-arb_period = float(wave_sample_period_uS) * 1e-6 * 16384
+arb_period = (float(wave_sample_period_uS) * 1e-6 * 16384)/8 
 arb_freq = 1/arb_period
 
 print >>nntest_include, "#define SAMPLE_PERIOD_US %f" % (float(wave_sample_period_uS)) 
@@ -52,10 +52,10 @@ scale_factor = 3/max
 for i in range(wavearrsampled):
     waveform_data_sampled[i,unit_num] = waveform_data_sampled[i,unit_num] * scale_factor
 
-print >>nntest_data, "float scale_factor = %f;"%(1/scale_factor)
-print >>nntest_data, "float offset = %f;"%(min)
-print >>nntest_include, "extern float scale_factor;"
-print >>nntest_include, "extern float offset;"
+# print >>nntest_data, "float scale_factor = %f;"%(1/scale_factor)
+# print >>nntest_data, "float offset = %f;"%(min)
+print >>nntest_include, "#define ARB_SCALE_FACTOR %f"%(1/scale_factor)
+print >>nntest_include, "#define ARB_OFFSET %f"%(min)
 
 print >>nntest_data, "float nntest_data_sampled[] = {\\"
 for i in range(wavearrsampled-1):
@@ -68,7 +68,7 @@ min = 3
 for i in range(wavearrlen):
     if (waveform_data[i,unit_num]<min):
         min = waveform_data[i,unit_num]
-
+    print unit_num, i, waveform_data[i,unit_num]
 # shift data up to make all values positive. 
 for i in range(wavearrlen):
     waveform_data[i,unit_num] = waveform_data[i,unit_num] - min

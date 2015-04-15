@@ -44,8 +44,9 @@ int main(){
  
   for (i=0;i<32;i++) {
     scaled_input = nntest_data_sampled[i] * ARB_SCALE_FACTOR + ARB_OFFSET;
+    //   scaled_input = -0.32;
     EvaluateNet(scaled_input);
-    printf("%d, %f\n", i, outputs[0]);
+    printf("%d, %f %f\n", i, scaled_input, outputs[0]);
   }
 
   return 0; 

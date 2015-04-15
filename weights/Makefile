@@ -1,4 +1,4 @@
-UNIT = 1
+UNIT = 0
 MATDATA = 'data/singlenet_4nodes_64bits_04-Mar-2015.mat'
 WEIGHT_FILE = 'weights.c'
 CONSTANT_FILE = 'weights.h'
