@@ -35,8 +35,10 @@
 #include <stdarg.h>
 #include <stdlib.h>
 
-
 #define UNUSED(x) (void)(x)
+#define IDS 32
+#define HDS 32
+#define ODS 8
 
 // ADCConfig structure for stm32 MCUs is empty
 static ADCConfig adccfg = {0};
@@ -93,76 +95,11 @@ unsigned int scale_output (float nnval) {
 
 static void gpt_adc_trigger(GPTDriver *gpt_ptr)  { 
   UNUSED(*gpt_ptr);
-  static int collection_count = 0;
-  typedef enum {DISARMED, ARMED, COLLECTING} collection_t;
-  static collection_t cstate = DISARMED;
-
-  /* char float_array[32]; */
-  /* static unsigned short dac_val = 0;  */
-  // chprintf((BaseSequentialStream*)&SD1, "0x%x\n\r",samples_buf[0]);    
-
-  switch (cstate) {
-  case DISARMED:
-    if (start_collection) {
-      cstate = ARMED;
-    }
-    break;
-  case ARMED:
-    if (samples_buf[0] > COLLECTION_THRESHOLD) {
-      cstate = COLLECTING;
-      dacConvertOne(&DACD1,0xFFF);
-    }
-    break;
-  case COLLECTING:
-    if (collection_count<32) {
-      collection_buf[collection_count++] = samples_buf[0];
-    }
-    else {
-      dacConvertOne(&DACD1,0x000);
-      start_collection = 0;
-      collection_count = 0;
-      cstate = DISARMED;
-    }
-    break;
-  default:
-    break;
-  }
-
-  /* if ((start_collection) && (collection_count<32)) { */
-  /*   collection_buf[collection_count++] = samples_buf[0]; */
-  /* } */
-  /* else { */
-  /*   start_collection = 0; */
-  /*   collection_count = 0; */
-  /* } */
-
-  //
-  // Working Code Eliminated for testing purposes 
-  // BH 4/15 pulled  EvaluateNet(scale_input(samples_buf[0]));
-  // BH 4/15 pulled dacConvertOne(&DACD1,scale_output(outputs[0]));
-  //
-
-  /* EvaluateNet(&ann, &inFifo, scale_input(samples_buf[0])); */
-  /* dacConvertOne(&DACD1,scale_output(outputs[0])); */
-  
-
-  /* if (dac_val) { */
-  /*   dac_val = 0x000; */
-  /* } */
-  /* else { */
-  /*   dac_val = 0xFFF; */
-  /* } */
-  /* dacConvertOne(&DACD1,dac_val); */
-
-
-
-  /* if (outputs[0] > 0xFFF) { */
-  /*   outputs[0] = 0xFFF; */
-  /* } */
-
-  //  dacConvertOne(&DACD1,outputs[0]);
-  //  dacConvertOne(&DACD1,samples_buf[0]);
-  //  dacConvertOne(&DACD1,0x3ff);
+  //  static int collection_count = 0;
+  //  typedef enum {DISARMED, ARMED, COLLECTING} collection_t;
+  //  static collection_t cstate = DISARMED;
+  EvaluateNet(scale_input(samples_buf[0]));
+  dacConvertOne(&DACD1,scale_output(outputs[0]));
   adcStartConversion(&ADCD1, &adcgrpcfg, samples_buf, ADC_BUF_DEPTH);
   palTogglePad(GPIOE, GPIOE_LED4_BLUE);
 }
@@ -223,40 +160,6 @@ static void cmd_dac(BaseSequentialStream *chp, int argc, char *argv[]) {
 }
 
 
-/* static void cmd_weighth(BaseSequentialStream *chp, int argc, char *argv[]) { */
-/*   int hidden; */
-/*   int input; */
-/*   int value; */
-
-/*   (void)argv; */
-/*   if (argc!=3) { */
-/*     chprintf(chp, "Error: wrong number of arguments. %d provided\n\rExample: weighto hidden input value \n\r", argc); */
-/*   } */
-  
-/*   input = atoi(argv[0]); */
-/*   hidden = atoi(argv[1]); */
-/*   value = atoi(argv[2]); */
-/*   chprintf(chp, "Here are the values: %d %d %d\n\r", hidden, input, value); */
-/*   /\* setWeightHidden(&ann, input, hidden, value); *\/ */
-
-/* } */
-
-/* static void cmd_weighto(BaseSequentialStream *chp, int argc, char *argv[]) { */
-/*   int output; */
-/*   int hidden; */
-/*   int value; */
-
-/*   (void)argv; */
-/*   if (argc!=3) { */
-/*     chprintf(chp, "Error: wrong number of arguments. %d provided\n\rExample: weighto output hidden value \n\r", argc); */
-/*   } */
-/*   hidden = atoi(argv[0]); */
-/*   output = atoi(argv[1]); */
-/*   value = atoi(argv[2]); */
-/*   chprintf(chp, "Here are the values: %d %d %d\n\r", hidden, output, value); */
-/*   setWeightOutput(&ann, hidden, output, value); */
-/* } */
-
 static void cmd_sample(BaseSequentialStream *chp, int argc, char *argv[]) {
   UNUSED(chp);
   UNUSED(argc);
@@ -288,7 +191,7 @@ static void cmd_collect (BaseSequentialStream *chp, int argc, char *argv[]) {
   UNUSED(argc);
 
   char float_array[32];
-  float scaled_input;
+  /* float scaled_input; */
   int i;
   (void)argv;
 
@@ -302,6 +205,21 @@ static void cmd_collect (BaseSequentialStream *chp, int argc, char *argv[]) {
   }
 }
 
+/* static void cmd_timnet(BaseSequentialStream *chp, int argc, char *argv[]) { */
+/*   int hidden; */
+/*   int input; */
+/*   int value; */
+/*   float input_array[32]; */
+/*   float hidden_weights[32]; */
+
+/*   (void)argv; */
+/*   input = atoi(argv[0]); */
+/*   hidden = atoi(argv[1]); */
+/*   palSetPad(GPIOE, GPIOE_LED5_ORANGE); */
+/*   chThdSleepMilliseconds(1); */
+/*   //chprintf(chp, "input = %d hidden = %d\n\r", input, hidden); */
+/*   palClearPad(GPIOE, GPIOE_LED5_ORANGE); */
+/* } */
 
 static const ShellCommand commands[] = {
   {"myecho", cmd_myecho},
@@ -342,29 +260,17 @@ static const DACConfig daccfg1 = {
   0
 };
 
-/*
- * Application entry point.
- */
-
-/* void print_arch(nncfg_t *network) { */
-/*   char afloat[32]; */
-
-/*   chprintf((BaseSequentialStream*)&SD1, "\n\r\n\rRestart\n\r"); */
-/*   chprintf((BaseSequentialStream*)&SD1, "\n\rANNSYNTH architecture\n\r"); */
-/*   chprintf((BaseSequentialStream*)&SD1, "  Input nodes:   %d\n\r",network->numInputs); */
-/*   chprintf((BaseSequentialStream*)&SD1, "  hidden nodes:  %d\n\r",network->numHidden); */
-/*   chprintf((BaseSequentialStream*)&SD1, "  output nodes:  %d\n\r",network->numOutput); */
-/*   chprintf((BaseSequentialStream*)&SD1, "  A2D Vhigh (0xFFF) = %sV\n\r", convFloat(afloat, scale_input(0xFFF))); */
-/*   chprintf((BaseSequentialStream*)&SD1, "  A2D Vlow (0x000) = %sV\n\r", convFloat(afloat, scale_input(0x000))); */
-/* } */
-
 
 int main(void) {
-  // char afloat[32];
-  // float32_t myarray[4] = {1.0,2.0,6.3456,5.0};
-  // float32_t max = 0.0;
-  //  uint32_t index = 0;
   event_listener_t tel;
+  
+  q31_t hiddenin[IDS];
+  q31_t hidden_weights[IDS];
+  q31_t outin[HDS];
+  q31_t out_weights[HDS];
+  q63_t result;
+  int i;
+  
   /*
    * System initializations.
    * - HAL initialization, this also initializes the configured device drivers
@@ -375,13 +281,48 @@ int main(void) {
   halInit();
   driversInit();
   chSysInit();
-
+  
+  for (i=0;i<IDS;i++) {
+    hiddenin[i] = (float) i + 2.5;
+    hidden_weights[i] = (float) i + 4.786;
+  }
+  for (i=0;i<HDS;i++) {
+    outin[i] = (float) i + 2.5;
+    out_weights[i] = (float) i + 4.786;
+  }
+  palSetPad(GPIOE, GPIOE_LED5_ORANGE);
+  
+  // Sample/Hold
+  for (i=HDS-1;i>0;i--) {
+    hiddenin[i] = hiddenin[i-1];
+  }
+  hiddenin[0] = 3.546;
+  
+  // Input Scaling 
+  arm_dot_prod_q31(hiddenin,hidden_weights,IDS,&result);
+  
+  // Hidden Inputs 
+  for (i=0;i<HDS;i++) {
+    arm_dot_prod_q31(hiddenin,hidden_weights,IDS,&result);
+    if (result > 1) result = 1;
+    if (result < 0) result = 0;
+  }
+  for (i=0;i<ODS;i++) {
+    arm_dot_prod_q31(outin,out_weights,HDS,&result);
+    if (result > 1) {
+      result = 1;
+    }
+    else if (result < 0) {
+      result = 0;
+    }
+  }
+  palClearPad(GPIOE, GPIOE_LED5_ORANGE);
+  
   dacStart(&DACD1, &daccfg1);
-
-  //  arm_max_f32(myarray, 4, &max, &index); 
-
-  /*
-   * Activates the serial driver 1 using the driver default configuration.
+    
+    
+    /*
+     * Activates the serial driver 1 using the driver default configuration.
    * PC4(RX) and PC5(TX). The default baud rate is 9600.
    */
   sdStart(&SD1, NULL);

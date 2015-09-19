@@ -4,7 +4,8 @@ import sys
 import scipy.io
 
 matdata = scipy.io.loadmat(sys.argv[1])
-unit_num = int(sys.argv[2]) - 1 
+# unit_num = int(sys.argv[2]) - 1 
+unit_num = int(sys.argv[2])
 weight_file=open(sys.argv[3], 'w+')
 constant_file=open(sys.argv[4], 'w+')
 

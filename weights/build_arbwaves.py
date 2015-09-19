@@ -4,7 +4,9 @@ import sys
 import scipy.io
 
 matdata = scipy.io.loadmat(sys.argv[1])
-unit_num = int(sys.argv[2]) - 1 
+# unit_num = int(sys.argv[2]) - 1 
+# unit_num ranges from 0-6
+unit_num = int(sys.argv[2])
 # print scipy.io.whosmat(sys.argv[1])
 arbfile=open(sys.argv[3], 'w+')
 
@@ -20,11 +22,22 @@ print >>nntest_include, "#define SAMPLE_PERIOD_US %f" % (float(wave_sample_perio
 wave_max_voltage = float(sys.argv[7])
 print wave_max_voltage
 
+noisefile=open(sys.argv[8], 'w+')
+
 waveform_data = matdata['TIME_auto']
 waveform_data_sampled = matdata['TIME_sampled_auto']
 
 wavearrlen = waveform_data.shape[0]
 wavearrsampled = waveform_data_sampled.shape[0]
+
+# for i in range(wavearrsampled):
+#   print waveform_data_sampled[i,0],\
+#         waveform_data_sampled[i,1],\
+#         waveform_data_sampled[i,2],\
+#         waveform_data_sampled[i,3],\
+#         waveform_data_sampled[i,4],\
+#         waveform_data_sampled[i,5],\
+#         waveform_data_sampled[i,6],\
 
 wf_sampled_shifted = []
 wf_sampled_shifted.append(waveform_data_sampled[31,unit_num])
@@ -57,6 +70,8 @@ for i in range(wavearrsampled):
 print >>nntest_include, "#define ARB_SCALE_FACTOR %f"%(1/scale_factor)
 print >>nntest_include, "#define ARB_OFFSET %f"%(min)
 
+arb_offset = min
+
 print >>nntest_data, "float nntest_data_sampled[] = {\\"
 for i in range(wavearrsampled-1):
     print >>nntest_data, "    %1.8f,\\"%(waveform_data_sampled[i,unit_num])
@@ -65,10 +80,13 @@ print >>nntest_include, "extern float nntest_data_sampled[];"
 
 # determine the minimum value of the waveform
 min = 3
+print "min = ",waveform_data[0,unit_num]
+print "max = ",waveform_data[255,unit_num]
+
 for i in range(wavearrlen):
     if (waveform_data[i,unit_num]<min):
         min = waveform_data[i,unit_num]
-    print unit_num, i, waveform_data[i,unit_num]
+# print unit_num, i, waveform_data[i,unit_num]
 # shift data up to make all values positive. 
 for i in range(wavearrlen):
     waveform_data[i,unit_num] = waveform_data[i,unit_num] - min
@@ -82,8 +100,8 @@ scale_factor = 3/max
 for i in range(wavearrlen):
     waveform_data[i,unit_num] = waveform_data[i,unit_num] * scale_factor
 
-head = waveform_data[0,unit_num]
-tail = waveform_data[wavearrlen-1,unit_num]
+# head = waveform_data[0,unit_num]
+# tail = waveform_data[wavearrlen-1,unit_num]
 
 print >>arbfile, "RIGOL:DG5:CSV DATA FILE" 
 print >>arbfile, "TYPE:Arb"
@@ -97,15 +115,29 @@ print >>arbfile, "x,y[V]"
 for i in range(wavearrlen):
     print >>arbfile, ",%f"%(waveform_data[i,unit_num])
 
-delta = head - tail
-increment = delta/(16384-wavearrlen)
-value = tail
+# delta = head - tail
+# increment = delta/(16384-wavearrlen)
+# value = tail
 
 # print head, tail, delta, increment 
 
+# AC couple by making the period between signals 0 
+value = 0.0 - arb_offset
 for i in range(16384-wavearrlen):
-    value = value + increment
+#     value = value + increment
     print >>arbfile, ",%f"%(value)
+
+print >>noisefile, "RIGOL:DG5:CSV DATA FILE" 
+print >>noisefile, "TYPE:Arb"
+print >>noisefile, "AMP:%f Vpp"%(wave_max_voltage * 2)
+print >>noisefile, "PERIOD:%f S"%(arb_period)
+print >>noisefile, "DOTS:16384"
+print >>noisefile, "MODE:Normal"
+print >>noisefile, "AFG Frequency:%f"%(arb_freq)
+print >>noisefile, "AWG N:0"
+print >>noisefile, "x,y[V]"
+for i in range(16384):
+    print >>noisefile, ",%f"%(value)
 
 print >>nntest_data, "float nntest_data[] = {\\"
 for i in range(wavearrlen-1):
