@@ -30,7 +30,7 @@ endif
 
 # Enable this if you want link time optimizations (LTO)
 ifeq ($(USE_LTO),)
-  USE_LTO = yes
+  USE_LTO = no
 endif
 
 # If enabled, this option allows to compile the application in THUMB mode.
@@ -41,12 +41,6 @@ endif
 # Enable this if you want to see the full log while compiling.
 ifeq ($(USE_VERBOSE_COMPILE),)
   USE_VERBOSE_COMPILE = no
-endif
-
-# If enabled, this option makes the build process faster by not compiling
-# modules not used in the current configuration.
-ifeq ($(USE_SMART_BUILD),)
-  USE_SMART_BUILD = yes
 endif
 
 #
@@ -71,7 +65,7 @@ endif
 
 # Enables the use of FPU on Cortex-M4 (no, softfp, hard).
 ifeq ($(USE_FPU),)
-  USE_FPU = no
+  USE_FPU = hard
 endif
 
 #
@@ -83,37 +77,32 @@ endif
 #
 
 # Define project name here
-PROJECT = ch
+PROJECT = annsynth
 
 # Imported source files and paths
 CHIBIOS = ../ChibiOS
-# Startup files.
-include $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC/mk/startup_stm32f3xx.mk
-# HAL-OSAL files (optional).
 include $(CHIBIOS)/os/hal/hal.mk
-include $(CHIBIOS)/os/hal/ports/STM32/STM32F3xx/platform.mk
 include $(CHIBIOS)/os/hal/boards/ST_STM32F3_DISCOVERY/board.mk
+include $(CHIBIOS)/os/hal/ports/STM32/STM32F3xx/platform.mk
 include $(CHIBIOS)/os/hal/osal/rt/osal.mk
-# RTOS files (optional).
 include $(CHIBIOS)/os/rt/rt.mk
+# include $(CHIBIOS)/os/rt/ports/ARMCMx/compilers/GCC/mk/port_stm32f3xx.mk
 include $(CHIBIOS)/os/rt/ports/ARMCMx/compilers/GCC/mk/port_v7m.mk
-# Other files (optional).
 include $(CHIBIOS)/test/rt/test.mk
 include $(CHIBIOS)/../ChibiOS-Drivers/drivers.mk
 
 # Define linker script file here
-LDSCRIPT= $(STARTUPLD)/STM32F303xC.ld
+LDSCRIPT= $(PORTLD)/STM32F303xC.ld
 
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
-CSRC = $(STARTUPSRC) \
+CSRC = $(PORTSRC) \
        $(KERNSRC) \
-       $(PORTSRC) \
-       $(OSALSRC) \
+       $(TESTSRC) \
        $(HALSRC) \
+       $(OSALSRC) \
        $(PLATFORMSRC) \
        $(BOARDSRC) \
-       $(TESTSRC) \
        $(STM32DRIVERSRC) \
        ${CHIBIOS}/os/various/shell.c \
        $(CHIBIOS)/os/various/evtimer.c \
@@ -152,10 +141,10 @@ TCSRC =
 TCPPSRC =
 
 # List ASM source files here
-ASMSRC = $(STARTUPASM) $(PORTASM) $(OSALASM)
+ASMSRC = $(PORTASM)
 
-INCDIR = $(STARTUPINC) $(KERNINC) $(PORTINC) $(OSALINC) \
-         $(HALINC) $(PLATFORMINC) $(BOARDINC) $(TESTINC) \
+INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
+         $(HALINC) $(OSALINC) $(PLATFORMINC) $(BOARDINC) \
          $(STM32DRIVERINC) $(CHIBIOS)/os/various $(CHIBIOS)/os/hal/lib/streams \
          ../weights ../atoh ../dtoa ../NNet ../STM32F30x_StdPeriph_Driver/inc
 
@@ -193,10 +182,10 @@ AOPT =
 TOPT = -mthumb -DTHUMB
 
 # Define C warning options here
-CWARN = -Wall -Wextra -Wundef -Wstrict-prototypes
+CWARN = -Wall -Wextra -Wstrict-prototypes
 
 # Define C++ warning options here
-CPPWARN = -Wall -Wextra -Wundef
+CPPWARN = -Wall -Wextra
 
 #
 # Compiler settings
@@ -219,7 +208,7 @@ UINCDIR =
 ULIBDIR = ../dsp_lib
 
 # List all user libraries here
-ULIBS = -lmath_cm4f -lm
+ULIBS = -lmath_cm4f -lm 
 
 #
 # End of user defines
@@ -228,3 +217,4 @@ ULIBS = -lmath_cm4f -lm
 RULESPATH = $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC
 include $(RULESPATH)/rules.mk
 include ./acs.mk
+

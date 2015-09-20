@@ -125,6 +125,7 @@ static THD_FUNCTION(counterThread,arg) {
     palClearPad(GPIOE, GPIOE_LED3_RED);
     chThdSleepMilliseconds(500);
   }
+  return 0;
 }
 
 static void cmd_myecho(BaseSequentialStream *chp, int argc, char *argv[]) {

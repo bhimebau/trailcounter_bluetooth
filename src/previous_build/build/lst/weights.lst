@@ -1,0 +1,395 @@
+ARM GAS  /tmp/ccUtCQTa.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m4
+   3              		.eabi_attribute 27, 3
+   4              		.eabi_attribute 28, 1
+   5              		.fpu fpv4-sp-d16
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 2
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.thumb
+  16              		.file	"weights.c"
+  17              		.text
+  18              	.Ltext0:
+  19              		.cfi_sections	.debug_frame
+  20              		.global	weights_ho
+  21              		.global	weights_ih
+  22              		.section	.data.weights_ih,"aw",%progbits
+  23              		.align	2
+  24              		.type	weights_ih, %object
+  25              		.size	weights_ih, 512
+  26              	weights_ih:
+  27 0000 4A5A853C 		.word	1015372362
+  28 0004 C4A1863C 		.word	1015456196
+  29 0008 8EE2823C 		.word	1015210638
+  30 000c C07C04BD 		.word	-1123779392
+  31 0010 3C30723C 		.word	1014116412
+  32 0014 5C2B3E3C 		.word	1010707292
+  33 0018 B0638BBD 		.word	-1114938448
+  34 001c FD791DBE 		.word	-1105364483
+  35 0020 6A0126BD 		.word	-1121582742
+  36 0024 11376E3D 		.word	1030633233
+  37 0028 1817D83D 		.word	1037571864
+  38 002c 7941F03D 		.word	1039155577
+  39 0030 356815BB 		.word	-1156224971
+  40 0034 53DB7A3D 		.word	1031461715
+  41 0038 34A18DBC 		.word	-1131568844
+  42 003c 63D45C3D 		.word	1029493859
+  43 0040 DF83D53D 		.word	1037403103
+  44 0044 5E55BF3D 		.word	1035949406
+  45 0048 C2EB883D 		.word	1032383426
+  46 004c A926CC3C 		.word	1020012201
+  47 0050 0D55993D 		.word	1033458957
+  48 0054 FA76063D 		.word	1023833850
+  49 0058 9AB0E73C 		.word	1021816986
+  50 005c 61EFDABC 		.word	-1126502559
+  51 0060 E4A0B53D 		.word	1035313380
+  52 0064 7CB40B3D 		.word	1024177276
+  53 0068 575815BD 		.word	-1122674601
+  54 006c F8073A3D 		.word	1027213304
+  55 0070 424EFBBC 		.word	-1124381118
+  56 0074 B4EBAC3C 		.word	1017965492
+  57 0078 B30C0EBD 		.word	-1123152717
+ARM GAS  /tmp/ccUtCQTa.s 			page 2
+
+
+  58 007c 432220BD 		.word	-1121967549
+  59 0080 6F4AEABD 		.word	-1108718993
+  60 0084 909D6ABE 		.word	-1100309104
+  61 0088 362881BE 		.word	-1098831818
+  62 008c 177D8DBE 		.word	-1098023657
+  63 0090 A4C79EBE 		.word	-1096890460
+  64 0094 C5E1FBBE 		.word	-1090788923
+  65 0098 DBD1A9BE 		.word	-1096166949
+  66 009c 2270D13D 		.word	1037135906
+  67 00a0 8DF92A3E 		.word	1043003789
+  68 00a4 9595093D 		.word	1024038293
+  69 00a8 268535BE 		.word	-1103788762
+  70 00ac 9EA994BE 		.word	-1097553506
+  71 00b0 08963F3D 		.word	1027577352
+  72 00b4 263192BD 		.word	-1114492634
+  73 00b8 469CDEBC 		.word	-1126261690
+  74 00bc 75915B3D 		.word	1029411189
+  75 00c0 9B1ED23D 		.word	1037180571
+  76 00c4 A5AA4CBC 		.word	-1135826267
+  77 00c8 75BA613D 		.word	1029814901
+  78 00cc EB0C3A3E 		.word	1043991787
+  79 00d0 D0042E3D 		.word	1026426064
+  80 00d4 AE7A96BC 		.word	-1130988882
+  81 00d8 4104813D 		.word	1031865409
+  82 00dc FC8A593C 		.word	1012501244
+  83 00e0 0A2BBD3D 		.word	1035807498
+  84 00e4 9490E2BD 		.word	-1109225324
+  85 00e8 51B7CC3D 		.word	1036826449
+  86 00ec 1E82913D 		.word	1032946206
+  87 00f0 3B0FC33D 		.word	1036193595
+  88 00f4 F2442A3C 		.word	1009403122
+  89 00f8 77921ABD 		.word	-1122332041
+  90 00fc 75BFB93B 		.word	1002028917
+  91 0100 F2EF33BD 		.word	-1120669710
+  92 0104 3219CDBD 		.word	-1110632142
+  93 0108 0614E5BD 		.word	-1109060602
+  94 010c 2BE123BE 		.word	-1104944853
+  95 0110 9B8D10BE 		.word	-1106211429
+  96 0114 E96F6EBE 		.word	-1100058647
+  97 0118 85385BBE 		.word	-1101318011
+  98 011c 8E1D86BD 		.word	-1115284082
+  99 0120 6DF0523D 		.word	1028845677
+ 100 0124 1ACA763D 		.word	1031195162
+ 101 0128 0A1EFBBB 		.word	-1141170678
+ 102 012c 207F5EBD 		.word	-1117880544
+ 103 0130 281CAE3C 		.word	1018043432
+ 104 0134 3AA3343C 		.word	1010082618
+ 105 0138 C1DFD7BC 		.word	-1126703167
+ 106 013c ECFB883D 		.word	1032387564
+ 107 0140 9CE9033E 		.word	1040443804
+ 108 0144 2B64833D 		.word	1032021035
+ 109 0148 6C709E3D 		.word	1033793644
+ 110 014c D41FDD3D 		.word	1037901780
+ 111 0150 18179E3D 		.word	1033770776
+ 112 0154 D970803C 		.word	1015050457
+ 113 0158 7CDE553D 		.word	1029037692
+ 114 015c AA9D5EBC 		.word	-1134649942
+ARM GAS  /tmp/ccUtCQTa.s 			page 3
+
+
+ 115 0160 C28BE53D 		.word	1038453698
+ 116 0164 1ACFEABC 		.word	-1125462246
+ 117 0168 0763B13C 		.word	1018258183
+ 118 016c AB6F8D3D 		.word	1032679339
+ 119 0170 D911C23C 		.word	1019351513
+ 120 0174 51E8AB3C 		.word	1017899089
+ 121 0178 74C736BD 		.word	-1120483468
+ 122 017c 6728DABC 		.word	-1126553497
+ 123 0180 8C4148BD 		.word	-1119338100
+ 124 0184 4307A0BD 		.word	-1113585853
+ 125 0188 E692D03D 		.word	1037079270
+ 126 018c FA8FDCBC 		.word	-1126395910
+ 127 0190 0824A1BD 		.word	-1113512952
+ 128 0194 E2CD0FBE 		.word	-1106260510
+ 129 0198 D48AB8BC 		.word	-1128756524
+ 130 019c DEA493BA 		.word	-1164729122
+ 131 01a0 0C60A23C 		.word	1017274380
+ 132 01a4 3F80EDBD 		.word	-1108508609
+ 133 01a8 18BC82BC 		.word	-1132282856
+ 134 01ac 23166B3D 		.word	1030428195
+ 135 01b0 D3A0E53D 		.word	1038459091
+ 136 01b4 903876BD 		.word	-1116325744
+ 137 01b8 1B44513C 		.word	1011958811
+ 138 01bc 046ECE3C 		.word	1020161540
+ 139 01c0 9336903E 		.word	1049638547
+ 140 01c4 8B98303D 		.word	1026594955
+ 141 01c8 7554AEBC 		.word	-1129425803
+ 142 01cc 9AC3003D 		.word	1023460250
+ 143 01d0 148C173E 		.word	1041730580
+ 144 01d4 BAB9B03D 		.word	1034992058
+ 145 01d8 B7908C3D 		.word	1032622263
+ 146 01dc F88BBEBB 		.word	-1145140232
+ 147 01e0 7ACEFA3D 		.word	1039847034
+ 148 01e4 79A011BC 		.word	-1139695495
+ 149 01e8 F32FB73D 		.word	1035415539
+ 150 01ec 408A113E 		.word	1041336896
+ 151 01f0 9F12AC3D 		.word	1034687135
+ 152 01f4 4D77A7BC 		.word	-1129875635
+ 153 01f8 85FCBBBD 		.word	-1111753595
+ 154 01fc 0D52963D 		.word	1033261581
+ 155              		.section	.data.weights_ho,"aw",%progbits
+ 156              		.align	2
+ 157              		.type	weights_ho, %object
+ 158              		.size	weights_ho, 16
+ 159              	weights_ho:
+ 160 0000 B939BDBF 		.word	-1078117959
+ 161 0004 420277BF 		.word	-1082719678
+ 162 0008 2181FB3F 		.word	1073447201
+ 163 000c 0D1C7BB3 		.word	-1283777523
+ 164              		.text
+ 165              	.Letext0:
+ 166              		.file 1 "../weights/weights.c"
+ 167              		.section	.debug_info,"",%progbits
+ 168              	.Ldebug_info0:
+ 169 0000 76000000 		.4byte	0x76
+ 170 0004 0400     		.2byte	0x4
+ 171 0006 00000000 		.4byte	.Ldebug_abbrev0
+ARM GAS  /tmp/ccUtCQTa.s 			page 4
+
+
+ 172 000a 04       		.byte	0x4
+ 173 000b 01       		.uleb128 0x1
+ 174 000c 5C000000 		.4byte	.LASF4
+ 175 0010 01       		.byte	0x1
+ 176 0011 1A000000 		.4byte	.LASF5
+ 177 0015 3A000000 		.4byte	.LASF6
+ 178 0019 00000000 		.4byte	.Ldebug_line0
+ 179 001d 02       		.uleb128 0x2
+ 180 001e 3A000000 		.4byte	0x3a
+ 181 0022 33000000 		.4byte	0x33
+ 182 0026 03       		.uleb128 0x3
+ 183 0027 33000000 		.4byte	0x33
+ 184 002b 1F       		.byte	0x1f
+ 185 002c 03       		.uleb128 0x3
+ 186 002d 33000000 		.4byte	0x33
+ 187 0031 03       		.byte	0x3
+ 188 0032 00       		.byte	0
+ 189 0033 04       		.uleb128 0x4
+ 190 0034 04       		.byte	0x4
+ 191 0035 07       		.byte	0x7
+ 192 0036 0B000000 		.4byte	.LASF0
+ 193 003a 04       		.uleb128 0x4
+ 194 003b 04       		.byte	0x4
+ 195 003c 04       		.byte	0x4
+ 196 003d 14000000 		.4byte	.LASF1
+ 197 0041 05       		.uleb128 0x5
+ 198 0042 2F000000 		.4byte	.LASF2
+ 199 0046 01       		.byte	0x1
+ 200 0047 02       		.byte	0x2
+ 201 0048 1D000000 		.4byte	0x1d
+ 202 004c 05       		.uleb128 0x5
+ 203 004d 03       		.byte	0x3
+ 204 004e 00000000 		.4byte	weights_ih
+ 205 0052 02       		.uleb128 0x2
+ 206 0053 3A000000 		.4byte	0x3a
+ 207 0057 68000000 		.4byte	0x68
+ 208 005b 03       		.uleb128 0x3
+ 209 005c 33000000 		.4byte	0x33
+ 210 0060 03       		.byte	0x3
+ 211 0061 03       		.uleb128 0x3
+ 212 0062 33000000 		.4byte	0x33
+ 213 0066 00       		.byte	0
+ 214 0067 00       		.byte	0
+ 215 0068 05       		.uleb128 0x5
+ 216 0069 00000000 		.4byte	.LASF3
+ 217 006d 01       		.byte	0x1
+ 218 006e 23       		.byte	0x23
+ 219 006f 52000000 		.4byte	0x52
+ 220 0073 05       		.uleb128 0x5
+ 221 0074 03       		.byte	0x3
+ 222 0075 00000000 		.4byte	weights_ho
+ 223 0079 00       		.byte	0
+ 224              		.section	.debug_abbrev,"",%progbits
+ 225              	.Ldebug_abbrev0:
+ 226 0000 01       		.uleb128 0x1
+ 227 0001 11       		.uleb128 0x11
+ 228 0002 01       		.byte	0x1
+ARM GAS  /tmp/ccUtCQTa.s 			page 5
+
+
+ 229 0003 25       		.uleb128 0x25
+ 230 0004 0E       		.uleb128 0xe
+ 231 0005 13       		.uleb128 0x13
+ 232 0006 0B       		.uleb128 0xb
+ 233 0007 03       		.uleb128 0x3
+ 234 0008 0E       		.uleb128 0xe
+ 235 0009 1B       		.uleb128 0x1b
+ 236 000a 0E       		.uleb128 0xe
+ 237 000b 10       		.uleb128 0x10
+ 238 000c 17       		.uleb128 0x17
+ 239 000d 00       		.byte	0
+ 240 000e 00       		.byte	0
+ 241 000f 02       		.uleb128 0x2
+ 242 0010 01       		.uleb128 0x1
+ 243 0011 01       		.byte	0x1
+ 244 0012 49       		.uleb128 0x49
+ 245 0013 13       		.uleb128 0x13
+ 246 0014 01       		.uleb128 0x1
+ 247 0015 13       		.uleb128 0x13
+ 248 0016 00       		.byte	0
+ 249 0017 00       		.byte	0
+ 250 0018 03       		.uleb128 0x3
+ 251 0019 21       		.uleb128 0x21
+ 252 001a 00       		.byte	0
+ 253 001b 49       		.uleb128 0x49
+ 254 001c 13       		.uleb128 0x13
+ 255 001d 2F       		.uleb128 0x2f
+ 256 001e 0B       		.uleb128 0xb
+ 257 001f 00       		.byte	0
+ 258 0020 00       		.byte	0
+ 259 0021 04       		.uleb128 0x4
+ 260 0022 24       		.uleb128 0x24
+ 261 0023 00       		.byte	0
+ 262 0024 0B       		.uleb128 0xb
+ 263 0025 0B       		.uleb128 0xb
+ 264 0026 3E       		.uleb128 0x3e
+ 265 0027 0B       		.uleb128 0xb
+ 266 0028 03       		.uleb128 0x3
+ 267 0029 0E       		.uleb128 0xe
+ 268 002a 00       		.byte	0
+ 269 002b 00       		.byte	0
+ 270 002c 05       		.uleb128 0x5
+ 271 002d 34       		.uleb128 0x34
+ 272 002e 00       		.byte	0
+ 273 002f 03       		.uleb128 0x3
+ 274 0030 0E       		.uleb128 0xe
+ 275 0031 3A       		.uleb128 0x3a
+ 276 0032 0B       		.uleb128 0xb
+ 277 0033 3B       		.uleb128 0x3b
+ 278 0034 0B       		.uleb128 0xb
+ 279 0035 49       		.uleb128 0x49
+ 280 0036 13       		.uleb128 0x13
+ 281 0037 3F       		.uleb128 0x3f
+ 282 0038 19       		.uleb128 0x19
+ 283 0039 02       		.uleb128 0x2
+ 284 003a 18       		.uleb128 0x18
+ 285 003b 00       		.byte	0
+ARM GAS  /tmp/ccUtCQTa.s 			page 6
+
+
+ 286 003c 00       		.byte	0
+ 287 003d 00       		.byte	0
+ 288              		.section	.debug_aranges,"",%progbits
+ 289 0000 14000000 		.4byte	0x14
+ 290 0004 0200     		.2byte	0x2
+ 291 0006 00000000 		.4byte	.Ldebug_info0
+ 292 000a 04       		.byte	0x4
+ 293 000b 00       		.byte	0
+ 294 000c 0000     		.2byte	0
+ 295 000e 0000     		.2byte	0
+ 296 0010 00000000 		.4byte	0
+ 297 0014 00000000 		.4byte	0
+ 298              		.section	.debug_line,"",%progbits
+ 299              	.Ldebug_line0:
+ 300 0000 31000000 		.section	.debug_str,"MS",%progbits,1
+ 300      02002B00 
+ 300      00000201 
+ 300      FB0E0D00 
+ 300      01010101 
+ 301              	.LASF3:
+ 302 0000 77656967 		.ascii	"weights_ho\000"
+ 302      6874735F 
+ 302      686F00
+ 303              	.LASF0:
+ 304 000b 73697A65 		.ascii	"sizetype\000"
+ 304      74797065 
+ 304      00
+ 305              	.LASF1:
+ 306 0014 666C6F61 		.ascii	"float\000"
+ 306      7400
+ 307              	.LASF5:
+ 308 001a 2E2E2F77 		.ascii	"../weights/weights.c\000"
+ 308      65696768 
+ 308      74732F77 
+ 308      65696768 
+ 308      74732E63 
+ 309              	.LASF2:
+ 310 002f 77656967 		.ascii	"weights_ih\000"
+ 310      6874735F 
+ 310      696800
+ 311              	.LASF6:
+ 312 003a 2F686F6D 		.ascii	"/home/bhimebau/forge/annsynth/src\000"
+ 312      652F6268 
+ 312      696D6562 
+ 312      61752F66 
+ 312      6F726765 
+ 313              	.LASF4:
+ 314 005c 474E5520 		.ascii	"GNU C 4.9.3 20141119 (release) [ARM/embedded-4_9-br"
+ 314      4320342E 
+ 314      392E3320 
+ 314      32303134 
+ 314      31313139 
+ 315 008f 616E6368 		.ascii	"anch revision 218278] -mcpu=cortex-m4 -mfloat-abi=h"
+ 315      20726576 
+ 315      6973696F 
+ 315      6E203231 
+ 315      38323738 
+ARM GAS  /tmp/ccUtCQTa.s 			page 7
+
+
+ 316 00c2 61726420 		.ascii	"ard -mfpu=fpv4-sp-d16 -mno-thumb-interwork -mthumb "
+ 316      2D6D6670 
+ 316      753D6670 
+ 316      76342D73 
+ 316      702D6431 
+ 317 00f5 2D676764 		.ascii	"-ggdb -O2 -fomit-frame-pointer -falign-functions=16"
+ 317      62202D4F 
+ 317      32202D66 
+ 317      6F6D6974 
+ 317      2D667261 
+ 318 0128 202D6666 		.ascii	" -ffunction-sections -fdata-sections -fno-common -f"
+ 318      756E6374 
+ 318      696F6E2D 
+ 318      73656374 
+ 318      696F6E73 
+ 319 015b 73696E67 		.ascii	"single-precision-constant\000"
+ 319      6C652D70 
+ 319      72656369 
+ 319      73696F6E 
+ 319      2D636F6E 
+ 320              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 4.9.3 20141119 (release) [ARM/embedded-4_9-br
+ARM GAS  /tmp/ccUtCQTa.s 			page 8
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 weights.c
+     /tmp/ccUtCQTa.s:159    .data.weights_ho:00000000 weights_ho
+     /tmp/ccUtCQTa.s:26     .data.weights_ih:00000000 weights_ih
+     /tmp/ccUtCQTa.s:23     .data.weights_ih:00000000 $d
+     /tmp/ccUtCQTa.s:156    .data.weights_ho:00000000 $d
+
+NO UNDEFINED SYMBOLS

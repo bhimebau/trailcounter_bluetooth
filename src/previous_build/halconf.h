@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2015 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2014 Giovanni Di Sirio
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -52,13 +52,6 @@
 #endif
 
 /**
- * @brief   Enables the DAC subsystem.
- */
-#if !defined(HAL_USE_DAC) || defined(__DOXYGEN__)
-#define HAL_USE_DAC                 FALSE
-#endif
-
-/**
  * @brief   Enables the EXT subsystem.
  */
 #if !defined(HAL_USE_EXT) || defined(__DOXYGEN__)
@@ -76,7 +69,7 @@
  * @brief   Enables the I2C subsystem.
  */
 #if !defined(HAL_USE_I2C) || defined(__DOXYGEN__)
-#define HAL_USE_I2C                 TRUE
+#define HAL_USE_I2C                 FALSE
 #endif
 
 /**
@@ -104,7 +97,7 @@
  * @brief   Enables the MMC_SPI subsystem.
  */
 #if !defined(HAL_USE_MMC_SPI) || defined(__DOXYGEN__)
-#define HAL_USE_MMC_SPI             TRUE
+#define HAL_USE_MMC_SPI             FALSE
 #endif
 
 /**
@@ -139,14 +132,14 @@
  * @brief   Enables the SERIAL over USB subsystem.
  */
 #if !defined(HAL_USE_SERIAL_USB) || defined(__DOXYGEN__)
-#define HAL_USE_SERIAL_USB          FALSE
+#define HAL_USE_SERIAL_USB          TRUE
 #endif
 
 /**
  * @brief   Enables the SPI subsystem.
  */
 #if !defined(HAL_USE_SPI) || defined(__DOXYGEN__)
-#define HAL_USE_SPI                 TRUE
+#define HAL_USE_SPI                 FALSE
 #endif
 
 /**
@@ -160,7 +153,7 @@
  * @brief   Enables the USB subsystem.
  */
 #if !defined(HAL_USE_USB) || defined(__DOXYGEN__)
-#define HAL_USE_USB                 FALSE
+#define HAL_USE_USB                 TRUE
 #endif
 
 /*===========================================================================*/
@@ -280,7 +273,7 @@
  *          default configuration.
  */
 #if !defined(SERIAL_DEFAULT_BITRATE) || defined(__DOXYGEN__)
-#define SERIAL_DEFAULT_BITRATE      38400
+#define SERIAL_DEFAULT_BITRATE      9600
 #endif
 
 /**

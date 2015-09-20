@@ -1,0 +1,80 @@
+ARM GAS  /tmp/ccKFqIQA.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m4
+   3              		.eabi_attribute 27, 3
+   4              		.eabi_attribute 28, 1
+   5              		.fpu fpv4-sp-d16
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 2
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.thumb
+  16              		.file	"eeprom_driver.c"
+  17              		.text
+  18              	.Ltext0:
+  19              		.cfi_sections	.debug_frame
+  20              	.Letext0:
+  21              		.section	.debug_line,"",%progbits
+  22              	.Ldebug_line0:
+  23              		.section	.debug_str,"MS",%progbits,1
+  24              	.LASF0:
+  25 0000 2E2E2F43 		.ascii	"../ChibiOS/../ChibiOS-Drivers/src/eeprom_driver.c\000"
+  25      68696269 
+  25      4F532F2E 
+  25      2E2F4368 
+  25      6962694F 
+  26              	.LASF1:
+  27 0032 2F686F6D 		.ascii	"/home/bhimebau/forge/annsynth/src\000"
+  27      652F6268 
+  27      696D6562 
+  27      61752F66 
+  27      6F726765 
+  28              	.LASF2:
+  29 0054 474E5520 		.ascii	"GNU C 4.9.3 20141119 (release) [ARM/embedded-4_9-br"
+  29      4320342E 
+  29      392E3320 
+  29      32303134 
+  29      31313139 
+  30 0087 616E6368 		.ascii	"anch revision 218278] -mcpu=cortex-m4 -mfloat-abi=h"
+  30      20726576 
+  30      6973696F 
+  30      6E203231 
+  30      38323738 
+  31 00ba 61726420 		.ascii	"ard -mfpu=fpv4-sp-d16 -mno-thumb-interwork -mthumb "
+  31      2D6D6670 
+  31      753D6670 
+  31      76342D73 
+  31      702D6431 
+  32 00ed 2D676764 		.ascii	"-ggdb -O2 -fomit-frame-pointer -falign-functions=16"
+  32      62202D4F 
+  32      32202D66 
+  32      6F6D6974 
+  32      2D667261 
+  33 0120 202D6666 		.ascii	" -ffunction-sections -fdata-sections -fno-common -f"
+ARM GAS  /tmp/ccKFqIQA.s 			page 2
+
+
+  33      756E6374 
+  33      696F6E2D 
+  33      73656374 
+  33      696F6E73 
+  34 0153 73696E67 		.ascii	"single-precision-constant\000"
+  34      6C652D70 
+  34      72656369 
+  34      73696F6E 
+  34      2D636F6E 
+  35              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 4.9.3 20141119 (release) [ARM/embedded-4_9-br
+ARM GAS  /tmp/ccKFqIQA.s 			page 3
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 eeprom_driver.c
+
+NO UNDEFINED SYMBOLS

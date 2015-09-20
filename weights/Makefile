@@ -1,7 +1,7 @@
 # Range of the units is from 0-6
 UNIT = 3
 MATDATA = 'data/singlenet_4nodes_64bits_04-Mar-2015.mat'
-WEIGHT_FILE = ' weights.c'
+WEIGHT_FILE = 'weights.c'
 CONSTANT_FILE = 'weights.h'
 
 WAVDATA = 'data/TIME_set_auto.mat'
