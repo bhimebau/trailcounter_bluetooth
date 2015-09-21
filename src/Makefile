@@ -125,6 +125,9 @@ CSRC = $(STARTUPSRC) \
        ../atoh/atoh.c \
        ../dtoa/dtoa.c \
        ../NNet/NNet.c \
+       gyro.c \
+       caann.c \
+       console.c \
        main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
