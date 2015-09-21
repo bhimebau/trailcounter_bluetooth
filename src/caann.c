@@ -78,7 +78,7 @@ void caann_init (void) {
 }
 
 void cmd_caann_read(BaseSequentialStream *chp, int argc, char *argv[]) {
-  int32_t i;
+  int32_t i = 0;
   (void)argv;
 
   int address = 0x00;

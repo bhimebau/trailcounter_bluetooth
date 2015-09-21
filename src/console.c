@@ -42,9 +42,11 @@
  */
 
 void console_init(void) {
-  sdStart(&SD1, NULL); 
-  palSetPadMode(GPIOC, 4, PAL_MODE_ALTERNATE(7));
-  palSetPadMode(GPIOC, 5, PAL_MODE_ALTERNATE(7));
+  sdStart(&SD2, NULL); 
+  //  palSetPadMode(GPIOC, 4, PAL_MODE_ALTERNATE(7));
+  //  palSetPadMode(GPIOC, 5, PAL_MODE_ALTERNATE(7));
+  palSetPadMode(GPIOA, 2, PAL_MODE_ALTERNATE(7));
+  palSetPadMode(GPIOA, 3, PAL_MODE_ALTERNATE(7));
 }
 
 

@@ -80,18 +80,18 @@ static const ShellCommand commands[] = {
 };
 
 static const ShellConfig shell_cfg1 = {
-  (BaseSequentialStream *)&SD1,
+  (BaseSequentialStream *)&SD2,
   commands
 };
 
 static void termination_handler(eventid_t id) {
 
   (void)id;
-  chprintf((BaseSequentialStream*)&SD1, "Shell Died\n\r");
+  chprintf((BaseSequentialStream*)&SD2, "Shell Died\n\r");
 
   if (shelltp1 && chThdTerminatedX(shelltp1)) {
     chThdWait(shelltp1);
-    chprintf((BaseSequentialStream*)&SD1, "Restarting from termination handler\n\r");
+    chprintf((BaseSequentialStream*)&SD2, "Restarting from termination handler\n\r");
     chThdSleepMilliseconds(100);
     shelltp1 = shellCreate(&shell_cfg1, sizeof(waShell), NORMALPRIO);
   }
@@ -122,8 +122,8 @@ int main(void) {
   caann_init();
   console_init();
   
-  //  chprintf((BaseSequentialStream*)&SD1, "\n\rUp and Running\n\r");
-  // chprintf((BaseSequentialStream*)&SD1, "Gyro Whoami Byte = 0x%02x\n\r",gyro_read_register(0x0F));
+  //  chprintf((BaseSequentialStream*)&SD2, "\n\rUp and Running\n\r");
+  // chprintf((BaseSequentialStream*)&SD2, "Gyro Whoami Byte = 0x%02x\n\r",gyro_read_register(0x0F));
 
   /* Initialize the command shell */ 
   shellInit();
