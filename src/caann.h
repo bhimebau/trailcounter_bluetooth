@@ -33,8 +33,9 @@
 
 /* Code: */
 void caann_init (void);
-void caann_write_register (uint8_t, uint8_t);
-uint8_t caann_read_register (uint8_t);
+void caann_write_register (uint16_t, uint8_t);
+uint8_t caann_read_register (uint16_t);
 void cmd_caann_read(BaseSequentialStream *, int, char **);
+void cmd_caann_write(BaseSequentialStream *, int, char **);
 
 /* caann.h ends here */

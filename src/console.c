@@ -38,13 +38,19 @@
 
 /*
  * Activates the serial driver 1 using the driver default configuration.
- * PC4(RX) and PC5(TX). The default baud rate is 9600.
+ * PB10(RX) and PC5(TX). The default baud rate is 9600.
  */
 
 void console_init(void) {
-  sdStart(&SD1, NULL); 
-  palSetPadMode(GPIOC, 4, PAL_MODE_ALTERNATE(7));
-  palSetPadMode(GPIOC, 5, PAL_MODE_ALTERNATE(7));
+  sdStart(&SD3, NULL); 
+
+  //  palSetPadMode(GPIOC, 4, PAL_MODE_ALTERNATE(7));
+  // palSetPadMode(GPIOC, 5, PAL_MODE_ALTERNATE(7));
+
+  palSetPadMode(GPIOB, 10, PAL_MODE_ALTERNATE(7));
+  palSetPadMode(GPIOB, 11, PAL_MODE_ALTERNATE(7));
+
+
 }
 
 
