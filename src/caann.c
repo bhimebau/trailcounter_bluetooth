@@ -97,7 +97,7 @@ void cmd_caann_read(BaseSequentialStream *chp, int argc, char *argv[]) {
     chprintf(chp,"%x\n\r",caann_read_register(address));
   }
   else {
-    chprintf(chp, "ERR wrong number of arguments\n\r");
+    chprintf(chp, "ERR\n\r");
   }
 }
 
@@ -107,11 +107,11 @@ void cmd_caann_write(BaseSequentialStream *chp, int argc, char *argv[]) {
   int data = 0x00;
   if (argc == 2) {
     atoh(argv[0],&address);
-    atoh(argv[0],&data);
+    atoh(argv[1],&data);
     caann_write_register((uint16_t) address, (uint8_t) data);
   }
   else {
-    chprintf(chp, "ERR wrong number of arguments\n\r");
+    chprintf(chp, "ERR\n\r");
   }
 }
 
