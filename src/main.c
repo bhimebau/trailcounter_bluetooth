@@ -138,8 +138,6 @@ int main(void) {
   chSysInit();
 
   // Board Specific Initilizations
-  gyro_init();
-  caann_init();
   console_init();
   rtcGetTime(&RTCD1, &time);
   chprintf((BaseSequentialStream*)&SD2,"\n\r");

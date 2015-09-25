@@ -156,7 +156,7 @@ ASMSRC = $(STARTUPASM) $(PORTASM) $(OSALASM)
 INCDIR = $(STARTUPINC) $(KERNINC) $(PORTINC) $(OSALINC) \
          $(HALINC) $(PLATFORMINC) $(BOARDINC) $(TESTINC) \
          $(STM32DRIVERINC) $(CHIBIOS)/os/various $(CHIBIOS)/os/hal/lib/streams \
-         ../weights ../atoh ../dtoa ../NNet ../STM32F30x_StdPeriph_Driver/inc
+         ../STM32F30x_StdPeriph_Driver/inc
 
 #
 # Project, sources and paths
@@ -216,10 +216,10 @@ UADEFS =
 UINCDIR =
 
 # List the user directory to look for the libraries here
-ULIBDIR = ../dsp_lib
+ULIBDIR = 
 
 # List all user libraries here
-ULIBS = -lmath_cm4f -lm
+ULIBS = -lm
 
 #
 # End of user defines
