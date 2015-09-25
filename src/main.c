@@ -40,6 +40,8 @@
 #include <chstreams.h>
 #include "console.h"
 #include "stm32f30x_flash.h"
+#include "clock.h"
+
 #include <string.h>
 #include <stdio.h>
 #include <stdarg.h>
@@ -74,6 +76,8 @@ static void cmd_myecho(BaseSequentialStream *chp, int argc, char *argv[]) {
 
 static const ShellCommand commands[] = {
   {"myecho", cmd_myecho},
+  {"rtcset", cmd_rtcSet},
+  {"rtcread", cmd_rtcRead},
   {NULL, NULL}
 };
 
@@ -99,21 +103,6 @@ static evhandler_t fhandlers[] = {
   termination_handler
 };
 
-
-/* typedef struct daydata { */
-/*   uint32_t epoch; */
-/*   uint16_t hourly_count[24]; */
-/* } daydata_t; */
-
-#define MAX_DAYS 100
-// static const uint32_t epoch_data[MAX_DAYS] __attribute__((section (".rodata"))) = { [0 ... MAX_DAYS-1] = 0xFFFFFFFF};
-// static const uint16_t hourly_data[24*MAX_DAYS] __attribute__((section (".rodata"))) = { [0 ... (24*MAX_DAYS)-1] = 0xFFFF};
-
-volatile uint32_t epoch_data[MAX_DAYS] __attribute__((section (".rodata"))) = { [0 ... MAX_DAYS-1] = 0xFFFFFFFF};
-volatile uint16_t hourly_data[24*MAX_DAYS] __attribute__((section (".rodata"))) = { [0 ... (24*MAX_DAYS)-1] = 0xFFFF};
-
-
-/* static const daydata_t data_array __attribute__((section (".rodata"))) = {.epoch=0xFFFFFFFF, .hourly_count[]={ [0 ... 23] = 0xFFFF}}; */
 
 /*
  * Application entry point.
@@ -192,11 +181,8 @@ int main(void) {
     chprintf((BaseSequentialStream*)&SD2,"%d %x\n\r",i, epoch_data[i]);
   }
   for (i=0;i<2;i++) {
-    chprintf((BaseSequentialStream*)&SD2,"%d %x\n\r",i, (volatile int) epoch_data[i]);
+    chprintf((BaseSequentialStream*)&SD2,"%d %x\n\r",i, epoch_data[i]);
   }
-
-  //  chprintf((BaseSequentialStream*)&SD2, "\n\rUp and Running\n\r");
-  // chprintf((BaseSequentialStream*)&SD2, "Gyro Whoami Byte = 0x%02x\n\r",gyro_read_register(0x0F));
 
   /* Initialize the command shell */ 
   shellInit();
