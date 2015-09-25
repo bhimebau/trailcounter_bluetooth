@@ -38,8 +38,6 @@
 #include "shell.h" 
 #include "chprintf.h"
 #include <chstreams.h>
-#include "gyro.h"
-#include "caann.h"
 #include "console.h"
 #include "stm32f30x_flash.h"
 #include <string.h>
@@ -76,8 +74,6 @@ static void cmd_myecho(BaseSequentialStream *chp, int argc, char *argv[]) {
 
 static const ShellCommand commands[] = {
   {"myecho", cmd_myecho},
-  {"gr",cmd_gyro_read},
-  {"cr",cmd_gyro_read},
   {NULL, NULL}
 };
 

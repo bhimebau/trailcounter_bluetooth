@@ -122,10 +122,6 @@ CSRC = $(STARTUPSRC) \
        $(CHIBIOS)/os/various/syscalls.c \
        ${CHIBIOS}/os/hal/lib/streams/memstreams.c \
        $(CHIBIOS)/os/hal/lib/streams/chprintf.c \
-       ../atoh/atoh.c \
-       ../dtoa/dtoa.c \
-       gyro.c \
-       caann.c \
        console.c \
        ../STM32F30x_StdPeriph_Driver/src/stm32f30x_flash.c \
        main.c
