@@ -30,12 +30,18 @@
 #ifndef __STM32F30x_FLASH_H
 #define __STM32F30x_FLASH_H
 
+#define assert_param(x)
+
 #ifdef __cplusplus
  extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32f30x.h"
+// #include "stm32f30x.h"
+//#include "stm32f303xc.h"
+
+#include "board.h"
+#include "stm32f3xx.h" 
 
 /** @addtogroup STM32F30x_StdPeriph_Driver
   * @{

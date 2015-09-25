@@ -41,9 +41,11 @@
 #include "gyro.h"
 #include "caann.h"
 #include "console.h"
+#include "stm32f30x_flash.h"
 #include <string.h>
 #include <stdio.h>
 #include <stdarg.h>
+#include <time.h>
 
 #define UNUSED(x) (void)(x)
 static THD_WORKING_AREA(waShell,2048);
@@ -101,12 +103,34 @@ static evhandler_t fhandlers[] = {
   termination_handler
 };
 
+
+/* typedef struct daydata { */
+/*   uint32_t epoch; */
+/*   uint16_t hourly_count[24]; */
+/* } daydata_t; */
+
+#define MAX_DAYS 100
+// static const uint32_t epoch_data[MAX_DAYS] __attribute__((section (".rodata"))) = { [0 ... MAX_DAYS-1] = 0xFFFFFFFF};
+// static const uint16_t hourly_data[24*MAX_DAYS] __attribute__((section (".rodata"))) = { [0 ... (24*MAX_DAYS)-1] = 0xFFFF};
+
+volatile uint32_t epoch_data[MAX_DAYS] __attribute__((section (".rodata"))) = { [0 ... MAX_DAYS-1] = 0xFFFFFFFF};
+volatile uint16_t hourly_data[24*MAX_DAYS] __attribute__((section (".rodata"))) = { [0 ... (24*MAX_DAYS)-1] = 0xFFFF};
+
+
+/* static const daydata_t data_array __attribute__((section (".rodata"))) = {.epoch=0xFFFFFFFF, .hourly_count[]={ [0 ... 23] = 0xFFFF}}; */
+
 /*
  * Application entry point.
  */
 
 int main(void) {
   event_listener_t tel;
+  RTCDateTime time;
+  struct tm * ltime;
+  time_t epoch = 1443110745;
+  uint32_t testaddress;
+  int i;
+
   /*
    * System initializations.
    * - HAL initialization, this also initializes the configured device drivers
@@ -121,7 +145,62 @@ int main(void) {
   gyro_init();
   caann_init();
   console_init();
-  
+  rtcGetTime(&RTCD1, &time);
+  chprintf((BaseSequentialStream*)&SD2,"\n\r");
+  chprintf((BaseSequentialStream*)&SD2,"date = %d\n\r",time.year);
+  chprintf((BaseSequentialStream*)&SD2,"month = %d\n\r",time.month);
+  chprintf((BaseSequentialStream*)&SD2,"dst flag = %d\n\r",time.dstflag);
+  chprintf((BaseSequentialStream*)&SD2,"day of week = %d\n\r",time.dayofweek);
+  chprintf((BaseSequentialStream*)&SD2,"day = %d\n\r",time.day);
+  chprintf((BaseSequentialStream*)&SD2,"milliseconds = %d\n\r",time.millisecond);
+  time.year = 2015 - 1980;
+  rtcSetTime(&RTCD1, &time);
+  rtcGetTime(&RTCD1, &time);
+  chprintf((BaseSequentialStream*)&SD2,"\n\r");
+  chprintf((BaseSequentialStream*)&SD2,"date = %d\n\r",time.year);
+  chprintf((BaseSequentialStream*)&SD2,"month = %d\n\r",time.month);
+  chprintf((BaseSequentialStream*)&SD2,"dst flag = %d\n\r",time.dstflag);
+  chprintf((BaseSequentialStream*)&SD2,"day of week = %d\n\r",time.dayofweek);
+  chprintf((BaseSequentialStream*)&SD2,"day = %d\n\r",time.day);
+  chprintf((BaseSequentialStream*)&SD2,"milliseconds = %d\n\r",time.millisecond);
+
+  ltime = localtime(&epoch);
+  rtcConvertStructTmToDateTime(ltime, 0, &time);
+  rtcSetTime(&RTCD1, &time);
+  rtcGetTime(&RTCD1, &time);
+  chprintf((BaseSequentialStream*)&SD2,"\n\r");
+  chprintf((BaseSequentialStream*)&SD2,"date = %d\n\r",time.year);
+  chprintf((BaseSequentialStream*)&SD2,"month = %d\n\r",time.month);
+  chprintf((BaseSequentialStream*)&SD2,"dst flag = %d\n\r",time.dstflag);
+  chprintf((BaseSequentialStream*)&SD2,"day of week = %d\n\r",time.dayofweek);
+  chprintf((BaseSequentialStream*)&SD2,"day = %d\n\r",time.day);
+  chprintf((BaseSequentialStream*)&SD2,"milliseconds = %d\n\r",time.millisecond);
+  rtcConvertDateTimeToStructTm(&time,ltime, NULL);
+  chprintf((BaseSequentialStream*)&SD2,"%s\n\r",asctime(ltime));
+  chprintf((BaseSequentialStream*)&SD2,"data start = %x\n\r",epoch_data);
+  chprintf((BaseSequentialStream*)&SD2,"epoch data[0] = %x\n\r",&epoch_data[0]);
+  chprintf((BaseSequentialStream*)&SD2,"epoch data[MAX_DAYS-1] = %x\n\r",&epoch_data[MAX_DAYS-1]);
+  chprintf((BaseSequentialStream*)&SD2,"delta = %d\n\r",(void *)(&epoch_data[MAX_DAYS-1])-(void *)(&epoch_data[0])+4);
+  chprintf((BaseSequentialStream*)&SD2,"hourly_data[0] = %x\n\r",hourly_data[0]);
+  chprintf((BaseSequentialStream*)&SD2,"epoch data[MAX_DAYS-1] = %x\n\r",hourly_data[(24*MAX_DAYS)-1]);
+  chprintf((BaseSequentialStream*)&SD2,"delta = %d\n\r",(void *)(&hourly_data[(24*MAX_DAYS)-1])-(void *)(&hourly_data[0])+2);
+
+  /* chprintf((BaseSequentialStream*)&SD2,"epoch data[0] before = %x\n\r",epoch_data[0]); */
+  FLASH_Unlock();
+  FLASH_ClearFlag(FLASH_FLAG_EOP | FLASH_FLAG_PGERR | FLASH_FLAG_WRPERR);
+  testaddress = (uint32_t)(&epoch_data[0]);
+  chprintf((BaseSequentialStream*)&SD2,"address = %x, write_status = %d\n\r",testaddress, FLASH_ProgramWord(testaddress,0xA1A2A3A5));
+  chprintf((BaseSequentialStream*)&SD2,"address = %x, write_status = %d\n\r",testaddress+4, FLASH_ProgramWord(testaddress+4,0x11111111));
+
+  FLASH_Lock();
+  //  chprintf((BaseSequentialStream*)&SD2,"epoch data[0] after = %x\n\r",epoch_data[0]);
+  for (i=0;i<10;i++) {
+    chprintf((BaseSequentialStream*)&SD2,"%d %x\n\r",i, epoch_data[i]);
+  }
+  for (i=0;i<2;i++) {
+    chprintf((BaseSequentialStream*)&SD2,"%d %x\n\r",i, (volatile int) epoch_data[i]);
+  }
+
   //  chprintf((BaseSequentialStream*)&SD2, "\n\rUp and Running\n\r");
   // chprintf((BaseSequentialStream*)&SD2, "Gyro Whoami Byte = 0x%02x\n\r",gyro_read_register(0x0F));
 

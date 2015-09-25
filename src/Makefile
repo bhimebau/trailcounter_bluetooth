@@ -128,6 +128,7 @@ CSRC = $(STARTUPSRC) \
        gyro.c \
        caann.c \
        console.c \
+       ../STM32F30x_StdPeriph_Driver/src/stm32f30x_flash.c \
        main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
