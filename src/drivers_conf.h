@@ -6,7 +6,7 @@
  * @brief   Enables the Drivers.
  */
 #if !defined(DRIVER_USE_DAC) || defined(__DOXYGEN__)
-#define DRIVER_USE_DAC                 TRUE
+#define DRIVER_USE_DAC                 FALSE
 #endif
 
 #if !defined(DRIVER_USE_IWDG) || defined(__DOXYGEN__)
@@ -87,7 +87,7 @@
 /*
  * EEPROM driver system settings.
  */
-#define EEPROM_DRV_USE_25XX              TRUE
+#define EEPROM_DRV_USE_25XX              FALSE
 #define EEPROM_DRV_USE_24XX              FALSE
 
 #endif /* _DRIVERS_CONF_H */

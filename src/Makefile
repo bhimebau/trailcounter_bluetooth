@@ -3,6 +3,8 @@
 # NOTE: Can be overridden externally.
 #
 
+# Override the STM32_LSECLK variable in ChibiOS/os/hal/boards/ST_STM32F3_DISCOVERY/board.h
+
 # Compiler options here.
 ifeq ($(USE_OPT),)
   USE_OPT = -O2 -ggdb -fomit-frame-pointer -falign-functions=16
@@ -208,7 +210,8 @@ CPPWARN = -Wall -Wextra -Wundef
 #
 
 # List all user C define here, like -D_DEBUG=1
-UDEFS = -DARM_MATH_CM4
+UDEFS = -DARM_MATH_CM4 -DSTM32_LSECLK=32768U
+
 
 # Define ASM defines here
 UADEFS =
