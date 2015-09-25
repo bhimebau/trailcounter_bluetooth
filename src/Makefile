@@ -101,7 +101,6 @@ include $(CHIBIOS)/os/rt/rt.mk
 include $(CHIBIOS)/os/rt/ports/ARMCMx/compilers/GCC/mk/port_v7m.mk
 # Other files (optional).
 include $(CHIBIOS)/test/rt/test.mk
-include $(CHIBIOS)/../ChibiOS-Drivers/drivers.mk
 
 # Define linker script file here
 LDSCRIPT= $(STARTUPLD)/STM32F303xC.ld
@@ -116,7 +115,6 @@ CSRC = $(STARTUPSRC) \
        $(PLATFORMSRC) \
        $(BOARDSRC) \
        $(TESTSRC) \
-       $(STM32DRIVERSRC) \
        ${CHIBIOS}/os/various/shell.c \
        $(CHIBIOS)/os/various/evtimer.c \
        $(CHIBIOS)/os/various/syscalls.c \
@@ -155,7 +153,7 @@ ASMSRC = $(STARTUPASM) $(PORTASM) $(OSALASM)
 
 INCDIR = $(STARTUPINC) $(KERNINC) $(PORTINC) $(OSALINC) \
          $(HALINC) $(PLATFORMINC) $(BOARDINC) $(TESTINC) \
-         $(STM32DRIVERINC) $(CHIBIOS)/os/various $(CHIBIOS)/os/hal/lib/streams \
+         $(CHIBIOS)/os/various $(CHIBIOS)/os/hal/lib/streams \
          ../STM32F30x_StdPeriph_Driver/inc
 
 #
@@ -206,7 +204,7 @@ CPPWARN = -Wall -Wextra -Wundef
 #
 
 # List all user C define here, like -D_DEBUG=1
-UDEFS = -DARM_MATH_CM4 -DSTM32_LSECLK=32768U
+UDEFS = -DSTM32_LSECLK=32768U
 
 
 # Define ASM defines here
@@ -227,4 +225,4 @@ ULIBS = -lm
 
 RULESPATH = $(CHIBIOS)/os/common/ports/ARMCMx/compilers/GCC
 include $(RULESPATH)/rules.mk
-include ./acs.mk
+include ./local.mk
