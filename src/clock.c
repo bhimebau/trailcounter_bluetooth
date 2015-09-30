@@ -33,8 +33,20 @@
  */
 
 /* Code: */
-
-#include "clock.h" 
+#include "ch.h"
+#include "hal.h"
+#include "test.h"
+#include "shell.h" 
+#include "chprintf.h"
+#include <chstreams.h>
+#include "console.h"
+#include "stm32f30x_flash.h"
+#include "flash_data.h"
+#include "clock.h"
+#include <string.h>
+#include <stdio.h>
+#include <stdarg.h>
+#include <time.h>
 
 void cmd_rtcSet(BaseSequentialStream *chp, int argc, char *argv[]) {
   //  int32_t i;
@@ -59,8 +71,9 @@ void cmd_rtcRead(BaseSequentialStream *chp, int argc, char *argv[]) {
   (void)argv;
   (void)argc;
   rtcGetTime(&RTCD1, &time);
-  rtcConvertDateTimeToStructTm(&time,&ltime, NULL);
+  rtcConvertDateTimeToStructTm(&time, &ltime, NULL);
   chprintf(chp,"%s\n\r",asctime(&ltime));  
+  //chprintf(chp,"in rtc read\n\r");  
 }
 
 /* clock.c ends here */

@@ -40,8 +40,8 @@
 #include <chstreams.h>
 #include "console.h"
 #include "stm32f30x_flash.h"
+#include "flash_data.h"
 #include "clock.h"
-
 #include <string.h>
 #include <stdio.h>
 #include <stdarg.h>
@@ -111,9 +111,9 @@ static evhandler_t fhandlers[] = {
 int main(void) {
   event_listener_t tel;
   RTCDateTime time;
-  struct tm * ltime;
-  time_t epoch = 1443110745;
-  uint32_t testaddress;
+  struct tm ltime;
+  // time_t epoch = 1443110745;
+  // uint32_t testaddress;
   int i;
 
   /*
@@ -128,61 +128,66 @@ int main(void) {
 
   // Board Specific Initilizations
   console_init();
-  rtcGetTime(&RTCD1, &time);
-  chprintf((BaseSequentialStream*)&SD2,"\n\r");
-  chprintf((BaseSequentialStream*)&SD2,"date = %d\n\r",time.year);
-  chprintf((BaseSequentialStream*)&SD2,"month = %d\n\r",time.month);
-  chprintf((BaseSequentialStream*)&SD2,"dst flag = %d\n\r",time.dstflag);
-  chprintf((BaseSequentialStream*)&SD2,"day of week = %d\n\r",time.dayofweek);
-  chprintf((BaseSequentialStream*)&SD2,"day = %d\n\r",time.day);
-  chprintf((BaseSequentialStream*)&SD2,"milliseconds = %d\n\r",time.millisecond);
-  time.year = 2015 - 1980;
-  rtcSetTime(&RTCD1, &time);
-  rtcGetTime(&RTCD1, &time);
-  chprintf((BaseSequentialStream*)&SD2,"\n\r");
-  chprintf((BaseSequentialStream*)&SD2,"date = %d\n\r",time.year);
-  chprintf((BaseSequentialStream*)&SD2,"month = %d\n\r",time.month);
-  chprintf((BaseSequentialStream*)&SD2,"dst flag = %d\n\r",time.dstflag);
-  chprintf((BaseSequentialStream*)&SD2,"day of week = %d\n\r",time.dayofweek);
-  chprintf((BaseSequentialStream*)&SD2,"day = %d\n\r",time.day);
-  chprintf((BaseSequentialStream*)&SD2,"milliseconds = %d\n\r",time.millisecond);
+  for (i=0;i<3;i++) {
+    writeEpochDataWord(getFirstFreeEpoch(),i);
+  }
+  printEpochData();
 
-  ltime = localtime(&epoch);
-  rtcConvertStructTmToDateTime(ltime, 0, &time);
-  rtcSetTime(&RTCD1, &time);
+  /* rtcGetTime(&RTCD1, &time); */
+  /* chprintf((BaseSequentialStream*)&SD2,"\n\r"); */
+  /* chprintf((BaseSequentialStream*)&SD2,"date = %d\n\r",time.year); */
+  /* chprintf((BaseSequentialStream*)&SD2,"month = %d\n\r",time.month); */
+  /* chprintf((BaseSequentialStream*)&SD2,"dst flag = %d\n\r",time.dstflag); */
+  /* chprintf((BaseSequentialStream*)&SD2,"day of week = %d\n\r",time.dayofweek); */
+  /* chprintf((BaseSequentialStream*)&SD2,"day = %d\n\r",time.day); */
+  /* chprintf((BaseSequentialStream*)&SD2,"milliseconds = %d\n\r",time.millisecond); */
+  /* time.year = 2015 - 1980; */
+  /* rtcSetTime(&RTCD1, &time); */
+  /* rtcGetTime(&RTCD1, &time); */
+  /* chprintf((BaseSequentialStream*)&SD2,"\n\r"); */
+  /* chprintf((BaseSequentialStream*)&SD2,"date = %d\n\r",time.year); */
+  /* chprintf((BaseSequentialStream*)&SD2,"month = %d\n\r",time.month); */
+  /* chprintf((BaseSequentialStream*)&SD2,"dst flag = %d\n\r",time.dstflag); */
+  /* chprintf((BaseSequentialStream*)&SD2,"day of week = %d\n\r",time.dayofweek); */
+  /* chprintf((BaseSequentialStream*)&SD2,"day = %d\n\r",time.day); */
+  /* chprintf((BaseSequentialStream*)&SD2,"milliseconds = %d\n\r",time.millisecond); */
+
+  /* ltime = localtime(&epoch); */
+  /* rtcConvertStructTmToDateTime(ltime, 0, &time); */
+  /* rtcSetTime(&RTCD1, &time); */
   rtcGetTime(&RTCD1, &time);
-  chprintf((BaseSequentialStream*)&SD2,"\n\r");
-  chprintf((BaseSequentialStream*)&SD2,"date = %d\n\r",time.year);
-  chprintf((BaseSequentialStream*)&SD2,"month = %d\n\r",time.month);
-  chprintf((BaseSequentialStream*)&SD2,"dst flag = %d\n\r",time.dstflag);
-  chprintf((BaseSequentialStream*)&SD2,"day of week = %d\n\r",time.dayofweek);
-  chprintf((BaseSequentialStream*)&SD2,"day = %d\n\r",time.day);
-  chprintf((BaseSequentialStream*)&SD2,"milliseconds = %d\n\r",time.millisecond);
-  rtcConvertDateTimeToStructTm(&time,ltime, NULL);
-  chprintf((BaseSequentialStream*)&SD2,"%s\n\r",asctime(ltime));
-  chprintf((BaseSequentialStream*)&SD2,"data start = %x\n\r",epoch_data);
-  chprintf((BaseSequentialStream*)&SD2,"epoch data[0] = %x\n\r",&epoch_data[0]);
-  chprintf((BaseSequentialStream*)&SD2,"epoch data[MAX_DAYS-1] = %x\n\r",&epoch_data[MAX_DAYS-1]);
-  chprintf((BaseSequentialStream*)&SD2,"delta = %d\n\r",(void *)(&epoch_data[MAX_DAYS-1])-(void *)(&epoch_data[0])+4);
-  chprintf((BaseSequentialStream*)&SD2,"hourly_data[0] = %x\n\r",hourly_data[0]);
-  chprintf((BaseSequentialStream*)&SD2,"epoch data[MAX_DAYS-1] = %x\n\r",hourly_data[(24*MAX_DAYS)-1]);
-  chprintf((BaseSequentialStream*)&SD2,"delta = %d\n\r",(void *)(&hourly_data[(24*MAX_DAYS)-1])-(void *)(&hourly_data[0])+2);
+  /* chprintf((BaseSequentialStream*)&SD2,"\n\r"); */
+  /* chprintf((BaseSequentialStream*)&SD2,"date = %d\n\r",time.year); */
+  /* chprintf((BaseSequentialStream*)&SD2,"month = %d\n\r",time.month); */
+  /* chprintf((BaseSequentialStream*)&SD2,"dst flag = %d\n\r",time.dstflag); */
+  /* chprintf((BaseSequentialStream*)&SD2,"day of week = %d\n\r",time.dayofweek); */
+  /* chprintf((BaseSequentialStream*)&SD2,"day = %d\n\r",time.day); */
+  /* chprintf((BaseSequentialStream*)&SD2,"milliseconds = %d\n\r",time.millisecond); */
+  rtcConvertDateTimeToStructTm(&time,&ltime, NULL);
+  chprintf((BaseSequentialStream*)&SD2,"%s\n\r",asctime(&ltime));
+  /* chprintf((BaseSequentialStream*)&SD2,"data start = %x\n\r",epoch_data); */
+  /* chprintf((BaseSequentialStream*)&SD2,"epoch data[0] = %x\n\r",&epoch_data[0]); */
+  /* chprintf((BaseSequentialStream*)&SD2,"epoch data[MAX_DAYS-1] = %x\n\r",&epoch_data[MAX_DAYS-1]); */
+  /* chprintf((BaseSequentialStream*)&SD2,"delta = %d\n\r",(void *)(&epoch_data[MAX_DAYS-1])-(void *)(&epoch_data[0])+4); */
+  /* chprintf((BaseSequentialStream*)&SD2,"hourly_data[0] = %x\n\r",hourly_data[0]); */
+  /* chprintf((BaseSequentialStream*)&SD2,"epoch data[MAX_DAYS-1] = %x\n\r",hourly_data[(24*MAX_DAYS)-1]); */
+  /* chprintf((BaseSequentialStream*)&SD2,"delta = %d\n\r",(void *)(&hourly_data[(24*MAX_DAYS)-1])-(void *)(&hourly_data[0])+2); */
 
-  /* chprintf((BaseSequentialStream*)&SD2,"epoch data[0] before = %x\n\r",epoch_data[0]); */
-  FLASH_Unlock();
-  FLASH_ClearFlag(FLASH_FLAG_EOP | FLASH_FLAG_PGERR | FLASH_FLAG_WRPERR);
-  testaddress = (uint32_t)(&epoch_data[0]);
-  chprintf((BaseSequentialStream*)&SD2,"address = %x, write_status = %d\n\r",testaddress, FLASH_ProgramWord(testaddress,0xA1A2A3A5));
-  chprintf((BaseSequentialStream*)&SD2,"address = %x, write_status = %d\n\r",testaddress+4, FLASH_ProgramWord(testaddress+4,0x11111111));
+  /* /\* chprintf((BaseSequentialStream*)&SD2,"epoch data[0] before = %x\n\r",epoch_data[0]); *\/ */
+  /* FLASH_Unlock(); */
+  /* FLASH_ClearFlag(FLASH_FLAG_EOP | FLASH_FLAG_PGERR | FLASH_FLAG_WRPERR); */
+  /* testaddress = (uint32_t)(&epoch_data[0]); */
+  /* chprintf((BaseSequentialStream*)&SD2,"address = %x, write_status = %d\n\r",testaddress, FLASH_ProgramWord(testaddress,0xA1A2A3A5)); */
+  /* chprintf((BaseSequentialStream*)&SD2,"address = %x, write_status = %d\n\r",testaddress+4, FLASH_ProgramWord(testaddress+4,0x11111111)); */
 
-  FLASH_Lock();
+  /* FLASH_Lock(); */
   //  chprintf((BaseSequentialStream*)&SD2,"epoch data[0] after = %x\n\r",epoch_data[0]);
-  for (i=0;i<10;i++) {
-    chprintf((BaseSequentialStream*)&SD2,"%d %x\n\r",i, epoch_data[i]);
-  }
-  for (i=0;i<2;i++) {
-    chprintf((BaseSequentialStream*)&SD2,"%d %x\n\r",i, epoch_data[i]);
-  }
+  /* for (i=0;i<10;i++) { */
+  /*   chprintf((BaseSequentialStream*)&SD2,"%d %x\n\r",i, epoch_data[i]); */
+  /* } */
+  /* for (i=0;i<2;i++) { */
+  /*   chprintf((BaseSequentialStream*)&SD2,"%d %x\n\r",i, epoch_data[i]); */
+  /* } */
 
   /* Initialize the command shell */ 
   shellInit();
