@@ -42,6 +42,7 @@
 #include "stm32f30x_flash.h"
 #include "flash_data.h"
 #include "clock.h"
+#include "adxl362.h"
 #include <string.h>
 #include <stdio.h>
 #include <stdarg.h>
@@ -81,7 +82,8 @@ static const ShellCommand commands[] = {
   {"enablewake", cmd_enableWakeup},
   {"sleep", cmd_sleep},
   {"rtcread", cmd_rtcRead},
-
+  {"accelwrite", cmd_adxl362_write},
+  {"accelread", cmd_adxl362_read},
   {NULL, NULL}
 };
 
@@ -113,6 +115,7 @@ static evhandler_t fhandlers[] = {
  */
 
 int main(void) {
+  int myvar = 5;
   event_listener_t tel;
   RTCDateTime time;
   struct tm ltime;
@@ -136,6 +139,10 @@ int main(void) {
     writeEpochDataWord(getFirstFreeEpoch(),i);
   }
   printEpochData();
+  chprintf((BaseSequentialStream*)&SD2,"myvar=%d\n",myvar);
+  myvar++;
+  adxl362_init();
+
 
   /* rtcGetTime(&RTCD1, &time); */
   /* chprintf((BaseSequentialStream*)&SD2,"\n\r"); */
