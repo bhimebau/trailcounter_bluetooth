@@ -78,6 +78,10 @@ static const ShellCommand commands[] = {
   {"myecho", cmd_myecho},
   {"rtcset", cmd_rtcSet},
   {"rtcread", cmd_rtcRead},
+  {"enablewake", cmd_enableWakeup},
+  {"sleep", cmd_sleep},
+  {"rtcread", cmd_rtcRead},
+
   {NULL, NULL}
 };
 

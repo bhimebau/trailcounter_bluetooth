@@ -48,7 +48,8 @@
 
 void cmd_rtcSet(BaseSequentialStream *chp, int argc, char *argv[]);
 void cmd_rtcRead(BaseSequentialStream *chp, int argc, char *argv[]);
-
+void cmd_enableWakeup(BaseSequentialStream *chp, int argc, char *argv[]);
+void cmd_sleep(BaseSequentialStream *chp, int argc, char *argv[]);
 
 
 /* clock.h ends here */
