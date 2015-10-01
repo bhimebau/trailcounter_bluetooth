@@ -59,6 +59,7 @@ void cmd_rtcSet(BaseSequentialStream *chp, int argc, char *argv[]) {
   (void)argc;
  
   epoch = (time_t) atoi(argv[0]);
+  epoch -= 4 * 3600; // Convert from UTC time to EDT time. 
   ltime = localtime(&epoch);
   rtcConvertStructTmToDateTime(ltime, 0, &time);
   rtcSetTime(&RTCD1, &time);
@@ -73,7 +74,6 @@ void cmd_rtcRead(BaseSequentialStream *chp, int argc, char *argv[]) {
   rtcGetTime(&RTCD1, &time);
   rtcConvertDateTimeToStructTm(&time, &ltime, NULL);
   chprintf(chp,"%s\n\r",asctime(&ltime));  
-  //chprintf(chp,"in rtc read\n\r");  
 }
 
 /* clock.c ends here */
