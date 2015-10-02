@@ -120,6 +120,7 @@ CSRC = $(STARTUPSRC) \
        $(CHIBIOS)/os/various/syscalls.c \
        ${CHIBIOS}/os/hal/lib/streams/memstreams.c \
        $(CHIBIOS)/os/hal/lib/streams/chprintf.c \
+       ../atoh/atoh.c \
        console.c \
        clock.c \
        ../STM32F30x_StdPeriph_Driver/src/stm32f30x_flash.c \
@@ -157,7 +158,7 @@ ASMSRC = $(STARTUPASM) $(PORTASM) $(OSALASM)
 INCDIR = $(STARTUPINC) $(KERNINC) $(PORTINC) $(OSALINC) \
          $(HALINC) $(PLATFORMINC) $(BOARDINC) $(TESTINC) \
          $(CHIBIOS)/os/various $(CHIBIOS)/os/hal/lib/streams \
-         ../STM32F30x_StdPeriph_Driver/inc
+         ../STM32F30x_StdPeriph_Driver/inc ../atoh
 
 #
 # Project, sources and paths
