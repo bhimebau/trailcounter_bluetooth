@@ -83,6 +83,22 @@ void adxl362_init (void) {
   palSetPadMode(GPIOA, 7, PAL_MODE_ALTERNATE(5));     /* MOSI.*/
   palSetPadMode(GPIOB, 6, PAL_MODE_OUTPUT_PUSHPULL);  /* adxl362 chip select */
   palSetPad(GPIOB, 6);                                /* Deassert the adxl362 chip select */
+  int reg = 0x20;
+  for(reg;reg<0x27;reg++){
+    if(reg == 0x22){
+      adxl362_write_register(reg, 0x02);              /*TIME_ACT register >1 to avoid false pos. */
+    }
+    else{
+      adxl362_write_register(reg, 0x01);              /*Set Activity/Inactivity thresholds/timers*/
+    }
+  }
+  adxl362_write_register(0x27, 0x00);                  /* reg = 0x27 Control Reg: Default.*/
+  adxl362_write_register(0x28, 0x03);                  /* FIFO - Triggered Mode */
+  adxl362_write_register(0x29, 0x60);                 /* Number of FIFO samples to keep */
+  adxl362_write_register(0x2A, 0b01000000);           /*map Awake status to INT1 Pin */
+  adxl362_write_register(0x2B, 0b00100000);           /*map inactivity status to INT2 pin. */
+  adxl362_write_register(0x2C, 0b01010000);           /* +- 4g, thinner bandwidth, 12.5 hz */
+  adxl362_write_register(0x2D, 0b00000010);           /* measurement mode */
 }
 
 void cmd_adxl362_read(BaseSequentialStream *chp, int argc, char *argv[]) {
