@@ -75,8 +75,8 @@ void cmd_rtcRead(BaseSequentialStream *chp, int argc, char *argv[]) {
   (void)argc;
   rtcGetTime(&RTCD1, &time);
   rtcConvertDateTimeToStructTm(&time, &ltime, NULL);
-  asctime_r(&ltime,time_string);
-  chprintf(chp,"%s\n\r",time_string);  
+  //  asctime_r(&ltime,time_string);
+  //chprintf(chp,"%s\n\r",time_string);  
 }
 
 static void anabiosis(void) {

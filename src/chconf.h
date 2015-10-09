@@ -467,7 +467,7 @@
  * @details This hook is continuously invoked by the idle thread loop.
  */
 #define CH_CFG_IDLE_LOOP_HOOK() {                                           \
-  /* Idle loop code here.*/   						\       
+  /* Idle loop code here.*/                                                 \
 }
 
 /**
