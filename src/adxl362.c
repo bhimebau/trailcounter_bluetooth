@@ -113,6 +113,19 @@ void cmd_adxl362_read(BaseSequentialStream *chp, int argc, char *argv[]) {
   }
 }
 
+void cmd_read_all(BaseSequentialStream *chp, int argc, char *argv[]) {
+  (void)argv;
+  int address = 0x08;
+  uint8_t output[3];
+  int count=0;
+  for(address; address<0x0B; address++){
+    output[count] = adxl362_read_register(address);
+    //returns all values of accel
+    chprintf(chp, "%d: %d", count, output[count]);
+    count++;
+  }
+}
+
 void cmd_adxl362_write(BaseSequentialStream *chp, int argc, char *argv[]) {
   (void)argv;
   int address = 0x00;
@@ -126,5 +139,6 @@ void cmd_adxl362_write(BaseSequentialStream *chp, int argc, char *argv[]) {
     chprintf(chp, "%d ERR\n\r", argc);
   }
 }
+
 
 /* adxl362.c ends here */
