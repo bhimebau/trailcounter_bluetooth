@@ -35,7 +35,11 @@
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32f30x.h"
+// #include "stm32f30x.h"
+#include "board.h"
+#include "stm32f3xx.h" 
+
+#define  PWR_CR_LPSDSR                       ((uint16_t)0x0001)     /*!< Low-power deepsleep/sleep/low power run */
 
 /** @addtogroup STM32F30x_StdPeriph_Driver
   * @{

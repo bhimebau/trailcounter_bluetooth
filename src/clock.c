@@ -48,6 +48,53 @@
 #include <stdarg.h>
 #include <time.h>
 
+/* Implementation of External Interrupts */
+
+volatile int alarm_called;
+
+static void extcb(EXTDriver *extp, expchannel_t channel) {
+  (void)extp;
+  (void)channel;
+
+  chSysLockFromISR();
+  alarm_called = 1;
+
+  chSysUnlockFromISR();
+}
+
+EXTConfig trailExtcfg = {
+  {
+    {EXT_CH_MODE_DISABLED, NULL},
+    {EXT_CH_MODE_DISABLED, NULL},
+    {EXT_CH_MODE_DISABLED, NULL},
+    {EXT_CH_MODE_DISABLED, NULL},
+    // Enable interrupt on PA4 from the accelerometer
+    {EXT_CH_MODE_RISING_EDGE | EXT_CH_MODE_AUTOSTART | EXT_MODE_GPIOA, extcb},
+    {EXT_CH_MODE_DISABLED, NULL},
+    {EXT_CH_MODE_DISABLED, NULL},
+    {EXT_CH_MODE_DISABLED, NULL},
+    {EXT_CH_MODE_DISABLED, NULL},
+    {EXT_CH_MODE_DISABLED, NULL},
+    {EXT_CH_MODE_DISABLED, NULL},
+    {EXT_CH_MODE_DISABLED, NULL},
+    {EXT_CH_MODE_DISABLED, NULL},
+    {EXT_CH_MODE_DISABLED, NULL},
+    {EXT_CH_MODE_DISABLED, NULL},
+    {EXT_CH_MODE_DISABLED, NULL},
+    {EXT_CH_MODE_DISABLED, NULL},
+    // Enable interrupt from the RTC alarm
+    {EXT_CH_MODE_RISING_EDGE | EXT_CH_MODE_AUTOSTART | EXT_MODE_GPIOA , extcb},
+    {EXT_CH_MODE_DISABLED, NULL},
+    {EXT_CH_MODE_DISABLED, NULL},
+    {EXT_CH_MODE_DISABLED, NULL},
+    {EXT_CH_MODE_DISABLED, NULL},
+    {EXT_CH_MODE_DISABLED, NULL}
+  }
+};
+
+/* End Interrupt */
+
+
 void cmd_rtcSet(BaseSequentialStream *chp, int argc, char *argv[]) {
   //  int32_t i;
   RTCDateTime time;
@@ -75,8 +122,8 @@ void cmd_rtcRead(BaseSequentialStream *chp, int argc, char *argv[]) {
   (void)argc;
   rtcGetTime(&RTCD1, &time);
   rtcConvertDateTimeToStructTm(&time, &ltime, NULL);
-  asctime_r(&ltime,time_string);
-  chprintf(chp,"%s\n\r",time_string);  
+  //  asctime_r(&ltime,time_string);
+  //chprintf(chp,"%s\n\r",time_string);  
 }
 
 static void anabiosis(void) {

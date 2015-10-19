@@ -23,3 +23,6 @@ Also note that not all the files present in the ST library are distributed
 with ChibiOS/RT, you can find the whole library on the ST web site:
 
                              http://www.st.com
+                             
+                             - Schematics - 
+                             http://www.st.com/web/en/catalog/tools/FM116/SC959/SS1532/LN1847/PF260945?icmp=pf260945_pron_pr_jan2015&sc=nucleo-f303-pr

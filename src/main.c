@@ -40,6 +40,7 @@
 #include <chstreams.h>
 #include "console.h"
 #include "stm32f30x_flash.h"
+#include "stm32f30x_pwr.h"
 #include "flash_data.h"
 #include "clock.h"
 #include "adxl362.h"
@@ -58,9 +59,7 @@ static THD_WORKING_AREA(waCounterThread,128);
 static THD_FUNCTION(counterThread,arg) {
   UNUSED(arg);
   while (TRUE) {
-    palSetPad(GPIOE, GPIOE_LED3_RED);
-    chThdSleepMilliseconds(500);
-    palClearPad(GPIOE, GPIOE_LED3_RED);
+    palTogglePad(GPIOE, GPIOE_LED3_RED);
     chThdSleepMilliseconds(500);
   }
 }
@@ -73,6 +72,16 @@ static void cmd_myecho(BaseSequentialStream *chp, int argc, char *argv[]) {
   for (i=0;i<argc;i++) {
     chprintf(chp, "%s\n\r", argv[i]);
   }
+  //chprintf(chp, "%d\n\r", global_track);
+}
+
+static void cmd_stop(BaseSequentialStream *chp, int argc, char *argv[]) {
+  (void)chp; (void)argc; (void)argv; 
+
+  chprintf(chp, "Going sleep...\r\n");
+  chThdSleepMilliseconds(200);
+
+  PWR_EnterSTOPMode(((uint32_t)0x00000001), ((uint8_t)0x01));
 }
 
 static const ShellCommand commands[] = {
@@ -81,7 +90,7 @@ static const ShellCommand commands[] = {
   {"rtcread", cmd_rtcRead},
   {"enablewake", cmd_enableWakeup},
   {"sleep", cmd_sleep},
-  {"rtcread", cmd_rtcRead},
+  {"stop", cmd_stop},
   {"accelwrite", cmd_adxl362_write},
   {"accelread", cmd_adxl362_read},
   {NULL, NULL}
@@ -135,9 +144,9 @@ int main(void) {
 
   // Board Specific Initilizations
   console_init();
-  for (i=0;i<3;i++) {
+  /*for (i=0;i<3;i++) {
     writeEpochDataWord(getFirstFreeEpoch(),i);
-  }
+    }*/
   printEpochData();
   chprintf((BaseSequentialStream*)&SD2,"myvar=%d\n",myvar);
   myvar++;
@@ -208,7 +217,7 @@ int main(void) {
   chEvtRegister(&shell_terminated, &tel, 0);
 
   shelltp1 = shellCreate(&shell_cfg1, sizeof(waShell), NORMALPRIO);
-  chThdCreateStatic(waCounterThread, sizeof(waCounterThread), NORMALPRIO+1, counterThread, NULL);
+  //chThdCreateStatic(waCounterThread, sizeof(waCounterThread), NORMALPRIO+1, counterThread, NULL);
 
   while (TRUE) {
     chEvtDispatch(fhandlers, chEvtWaitOne(ALL_EVENTS));

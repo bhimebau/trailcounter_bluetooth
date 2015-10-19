@@ -34,7 +34,11 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f30x_pwr.h"
-#include "stm32f30x_rcc.h"
+
+//#include "stm32f30x_rcc.h"
+#define RCC_APB1Periph_PWR               ((uint32_t)0x10000000)
+#define assert_param(x)
+
 
 /** @addtogroup STM32F30x_StdPeriph_Driver
   * @{
