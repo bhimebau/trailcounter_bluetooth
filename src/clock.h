@@ -45,7 +45,15 @@
 #include <stdarg.h>
 #include <time.h>
 
+extern volatile int alarm_called;
+extern EXTConfig trailExtcfg;
 
+#define RESET_ALARM alarm_called = 0;
+#define SET_ALARM alarm_called = 1;
+
+static uint8_t RTC_ByteToBcd2(uint8_t Value);
+void trailRtcInitAlarmSystem(void);
+void trailRtcSetAlarm(RTCDriver *rtcp, uint8_t offset, struct tm *ltime);
 void cmd_rtcSet(BaseSequentialStream *chp, int argc, char *argv[]);
 void cmd_rtcRead(BaseSequentialStream *chp, int argc, char *argv[]);
 void cmd_enableWakeup(BaseSequentialStream *chp, int argc, char *argv[]);

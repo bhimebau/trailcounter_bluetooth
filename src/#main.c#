@@ -147,13 +147,14 @@ int main(void) {
     
     if (alarm_called == 1) {
       chprintf((BaseSequentialStream*)&SD2,"Woken by accelerometer\n\r");
+      RESET_ALARM;
     }
 
     else if (alarm_called == 2) {
       chprintf((BaseSequentialStream*)&SD2,"%Woken by alarm\n\r");
+      RESET_ALARM;
     }
-    RESET_ALARM;
-
+    
     trailRtcSetAlarm(&RTCD1, 10, &ltime);
     chprintf((BaseSequentialStream*)&SD2,"Current time:%s\n\r",asctime(&ltime));
 

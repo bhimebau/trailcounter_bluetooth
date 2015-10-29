@@ -62,7 +62,7 @@ void writeEpochDataWord(int epoch_array_index, int data) {
 void writeHourlyData(int hourly_array_index, uint16_t data) {
   FLASH_Unlock();
   FLASH_ClearFlag(FLASH_FLAG_EOP | FLASH_FLAG_PGERR | FLASH_FLAG_WRPERR);
-  FLASH_ProgramWord((uint32_t)(&hourly_data[hourly_array_index]),data);
+  FLASH_ProgramHalfWord((uint32_t)(&hourly_data[hourly_array_index]),data);
   FLASH_Lock();
 }
 
@@ -70,6 +70,16 @@ int getFirstFreeEpoch(void) {
   int i;
   for (i=0;i<MAX_DAYS;i++) {
     if (epoch_data[i] == 0xFFFFFFFF) {
+      break;
+    }
+  } 
+  return i;
+}
+
+int getFirstFreeHourly(void) {
+  int i;
+  for (i=getFirstFreeEpoch()*24;i<MAX_DAYS*24;i++) {
+    if (hourly_data[i] == 0xFFFF) {
       break;
     }
   } 
@@ -89,6 +99,18 @@ int printEpochData(void) {
   return i;
 }
 
+int printHourlyData(void) {
+  int i;
+  for (i=0;i<MAX_DAYS*24;i++) {
+    if (hourly_data[i] == 0xFFFF) {
+      break;
+    }
+    else {
+      chprintf((BaseSequentialStream*)&SD2,"index=%d,data=%x\n\r",i,epoch_data[i]);
+    }
+  } 
+  return i;
+}
 
 
 

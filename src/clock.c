@@ -48,6 +48,7 @@
 #include <stdarg.h>
 #include <time.h>
 
+
 /* Implementation of External Interrupts */
 
 volatile int alarm_called;
@@ -62,11 +63,23 @@ static void extcb(EXTDriver *extp, expchannel_t channel) {
   chSysUnlockFromISR();
 }
 
+static void extcb1(EXTDriver *extp, expchannel_t channel) {
+  (void)extp;
+  (void)channel;
+
+  chSysLockFromISR();
+
+  //if it wakes from stop then it needs to re-init the clock for print
+  //i'm not sure if this is required when we go ultra low power
+  //needs to be tested
+  stm32_clock_init();
+  alarm_called = 2;
+
+  chSysUnlockFromISR();
+}
+
 EXTConfig trailExtcfg = {
   {
-    {EXT_CH_MODE_DISABLED, NULL},
-    {EXT_CH_MODE_DISABLED, NULL},
-    {EXT_CH_MODE_DISABLED, NULL},
     {EXT_CH_MODE_DISABLED, NULL},
     // Enable interrupt on PA4 from the accelerometer
     {EXT_CH_MODE_RISING_EDGE | EXT_CH_MODE_AUTOSTART | EXT_MODE_GPIOA, extcb},
@@ -82,8 +95,11 @@ EXTConfig trailExtcfg = {
     {EXT_CH_MODE_DISABLED, NULL},
     {EXT_CH_MODE_DISABLED, NULL},
     {EXT_CH_MODE_DISABLED, NULL},
+    {EXT_CH_MODE_DISABLED, NULL},
+    {EXT_CH_MODE_DISABLED, NULL},
+    {EXT_CH_MODE_DISABLED, NULL},
     // Enable interrupt from the RTC alarm
-    {EXT_CH_MODE_RISING_EDGE | EXT_CH_MODE_AUTOSTART | EXT_MODE_GPIOA , extcb},
+    {EXT_CH_MODE_RISING_EDGE | EXT_CH_MODE_AUTOSTART | EXT_MODE_GPIOA , extcb1},
     {EXT_CH_MODE_DISABLED, NULL},
     {EXT_CH_MODE_DISABLED, NULL},
     {EXT_CH_MODE_DISABLED, NULL},
@@ -94,6 +110,48 @@ EXTConfig trailExtcfg = {
 
 /* End Interrupt */
 
+static uint8_t RTC_ByteToBcd2(uint8_t Value)
+{
+  uint8_t bcdhigh = 0;
+  
+  while (Value >= 10)
+  {
+    bcdhigh++;
+    Value -= 10;
+  }
+
+  return  ((uint8_t)(bcdhigh << 4) | Value);
+}
+
+void trailRtcInitAlarmSystem(void)
+{
+  extStart(&EXTD1, &trailExtcfg);
+  extChannelEnable(&EXTD1, EXT_MODE_GPIOA);
+}
+
+void trailRtcSetAlarm(RTCDriver *rtcp, uint8_t offset, struct tm *ltime)
+{
+  RTCDateTime time;
+  uint8_t i;
+  RTCAlarm alarmspec;
+
+  //reset the alarms
+  rtcSetAlarm(rtcp, 0, NULL);
+  rtcSetAlarm(rtcp, 1, NULL);
+
+  //Get the current time
+  rtcGetTime(&RTCD1, &time);
+  rtcConvertDateTimeToStructTm(&time,ltime, NULL);
+
+  //get seconsd, add offset, make it a possible seconds value
+  i = (ltime->tm_sec + offset) % 60;
+
+  alarmspec.alrmr = (((uint32_t)(RTC_ByteToBcd2(i))) | \
+		     ((uint32_t)(0x31) << 24)        | \
+		     ((uint32_t)0x80808000)); 
+
+  rtcSetAlarm(rtcp, 0, &alarmspec);
+}
 
 void cmd_rtcSet(BaseSequentialStream *chp, int argc, char *argv[]) {
   //  int32_t i;
