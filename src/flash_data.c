@@ -106,13 +106,27 @@ int printHourlyData(void) {
       break;
     }
     else {
-      chprintf((BaseSequentialStream*)&SD2,"index=%d,data=%x\n\r",i,epoch_data[i]);
+      chprintf((BaseSequentialStream*)&SD2,"index=%d,data=%x\n\r",i,hourly_data[i]);
     }
   } 
   return i;
 }
 
-
+int printCoalesceData(void) {
+  int i;
+  for (i=0;i<MAX_DAYS*24;i++) {
+    if (hourly_data[i] == 0xFFFF) {
+      break;
+    }
+    if (i % 24 == 0) {
+      chprintf((BaseSequentialStream*)&SD2,"\n\r---Day---\n\r");
+      chprintf((BaseSequentialStream*)&SD2,"Day #: %d, Data: %x\n\r",i%24,epoch_data[i%24]);
+      chprintf((BaseSequentialStream*)&SD2,"---Hour---\n\r");
+    }
+    chprintf((BaseSequentialStream*)&SD2,"Hour #: %d, Data: %x\n\r",i,hourly_data[i]);
+  }
+  return i;
+}
 
 
 

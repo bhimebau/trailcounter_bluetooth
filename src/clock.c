@@ -129,9 +129,8 @@ void trailRtcInitAlarmSystem(void)
   extChannelEnable(&EXTD1, EXT_MODE_GPIOA);
 }
 
-void trailRtcSetAlarm(RTCDriver *rtcp, uint8_t offset, struct tm *ltime)
+void trailRtcSetAlarm(RTCDriver *rtcp, uint8_t offset, RTCDateTime *time)
 {
-  RTCDateTime time;
   uint8_t i;
   RTCAlarm alarmspec;
 
@@ -140,11 +139,10 @@ void trailRtcSetAlarm(RTCDriver *rtcp, uint8_t offset, struct tm *ltime)
   rtcSetAlarm(rtcp, 1, NULL);
 
   //Get the current time
-  rtcGetTime(&RTCD1, &time);
-  rtcConvertDateTimeToStructTm(&time,ltime, NULL);
+  rtcGetTime(&RTCD1, time);
 
   //get seconsd, add offset, make it a possible seconds value
-  i = (ltime->tm_sec + offset) % 60;
+  i = ((time->millisecond/1000) + offset) % 60;
 
   alarmspec.alrmr = (((uint32_t)(RTC_ByteToBcd2(i))) | \
 		     ((uint32_t)(0x31) << 24)        | \

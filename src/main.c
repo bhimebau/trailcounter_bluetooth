@@ -133,29 +133,38 @@ int main(void) {
   //print flash, init accel
   printEpochData();
   adxl362_init();
-
+  
   //get/convert/print current set time
   rtcGetTime(&RTCD1, &time);
   rtcConvertDateTimeToStructTm(&time,&ltime, NULL);
   chprintf((BaseSequentialStream*)&SD2,"%s\n\r",asctime(&ltime));
-
+  
   //initialize and enable external interrupts
   trailRtcInitAlarmSystem();
   RESET_ALARM;
 
   while (TRUE){
-    
+    /*
     if (alarm_called == 1) {
       chprintf((BaseSequentialStream*)&SD2,"Woken by accelerometer\n\r");
     }
-
+    
     else if (alarm_called == 2) {
       chprintf((BaseSequentialStream*)&SD2,"%Woken by alarm\n\r");
     }
     RESET_ALARM;
+    */
+    //TODO:  instead of printing, write to flash
+    //Also update current time so we are writing proper times
+    //Consider making write to flash function that converts time
+    // to structure for flash arrays, and it writes to both
+    // hourly and daily arrays based on time
+    
+    trailRtcSetAlarm(&RTCD1, 20, &time);
+    writeEpochDataWord(getFirstFreeEpoch(), (time.millisecond/1000)%60);
 
-    trailRtcSetAlarm(&RTCD1, 10, &ltime);
-    chprintf((BaseSequentialStream*)&SD2,"Current time:%s\n\r",asctime(&ltime));
+    //rtcConvertDateTimeToStructTm(&time,&ltime, NULL);
+    //chprintf((BaseSequentialStream*)&SD2,"Current time:%s\n\r",asctime(&ltime));
 
     chThdSleepMilliseconds(500);
     PWR_EnterSTOPMode( ((uint32_t)0x00000001), PWR_STOPEntry_WFI);
