@@ -142,6 +142,7 @@ int main(void) {
   //initialize and enable external interrupts
   trailRtcInitAlarmSystem();
   RESET_ALARM;
+  chThdSleepMilliseconds(5000);
 
   while (TRUE){
     /*
@@ -166,7 +167,7 @@ int main(void) {
     //rtcConvertDateTimeToStructTm(&time,&ltime, NULL);
     //chprintf((BaseSequentialStream*)&SD2,"Current time:%s\n\r",asctime(&ltime));
 
-    chThdSleepMilliseconds(500);
+     chThdSleepMilliseconds(500);
     PWR_EnterSTOPMode( ((uint32_t)0x00000001), PWR_STOPEntry_WFI);
   }
   return 0;

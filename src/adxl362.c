@@ -92,6 +92,8 @@ void adxl362_init (void) {
       adxl362_write_register(reg, 0x01);              /*Set Activity/Inactivity thresholds/timers*/
     }
   }
+ 
+
   adxl362_write_register(0x27, 0x00);           /* reg = 0x27 Control Reg: Default.*/
   adxl362_write_register(0x28, 0x03);           /* FIFO - Triggered Mode */
   adxl362_write_register(0x29, 0x60);           /* Number of FIFO samples to keep */
@@ -99,6 +101,17 @@ void adxl362_init (void) {
   adxl362_write_register(0x2B, 0x20);           /*map inactivity status to INT2 pin. */
   adxl362_write_register(0x2C, 0x10);           /* +- 2g, thinner bandwidth, 12.5 hz(low) */
   adxl362_write_register(0x2D, 0x02);           /* measurement mode */
+
+  
+  //adxl362_write_register(0x27, 0x00);           /* reg = 0x27 Control Reg: Default.*/
+  //adxl362_write_register(0x28, 0x03);           /* FIFO - Triggered Mode */
+  //adxl362_write_register(0x29, 0x60);           /* Number of FIFO samples to keep */
+  //adxl362_write_register(0x2A, 0x40);           /*map Awake status to INT1 Pin */
+  //adxl362_write_register(0x2B, 0x20);           /*map inactivity status to INT2 pin. */
+  //adxl362_write_register(0x2C, 0x10);           /* +- 2g, thinner bandwidth, 12.5 hz(low) */
+  //adxl362_write_register(0x2D, 0x02);           /* measurement mode */
+
+
 }
 
 void cmd_adxl362_read(BaseSequentialStream *chp, int argc, char *argv[]) {
