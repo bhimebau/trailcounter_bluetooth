@@ -147,7 +147,7 @@ int main(void) {
   while (TRUE){
     /*
     if (alarm_called == 1) {
-      chprintf((BaseSequentialStream*)&SD2,"Woken by accelerometer\n\r");
+      chprintf((BaseSequentialStream*)&SD2 ,"Woken by accelerometer\n\r");
     }
     
     else if (alarm_called == 2) {
@@ -167,7 +167,7 @@ int main(void) {
     //rtcConvertDateTimeToStructTm(&time,&ltime, NULL);
     //chprintf((BaseSequentialStream*)&SD2,"Current time:%s\n\r",asctime(&ltime));
 
-     chThdSleepMilliseconds(500);
+    // chThdSleepMilliseconds(500);
     PWR_EnterSTOPMode( ((uint32_t)0x00000001), PWR_STOPEntry_WFI);
   }
   return 0;
