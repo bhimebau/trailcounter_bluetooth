@@ -93,7 +93,7 @@ int printEpochData(void) {
       break;
     }
     else {
-      chprintf((BaseSequentialStream*)&SD2,"index=%d,data=%x\n\r",i,epoch_data[i]);
+      chprintf((BaseSequentialStream*)&SD2,"index=%d,data=%d\n\r",i,epoch_data[i]);
     }
   } 
   return i;
@@ -106,7 +106,7 @@ int printHourlyData(void) {
       break;
     }
     else {
-      chprintf((BaseSequentialStream*)&SD2,"index=%d,data=%x\n\r",i,hourly_data[i]);
+      chprintf((BaseSequentialStream*)&SD2,"index=%d,data=%d\n\r",i,hourly_data[i]);
     }
   } 
   return i;

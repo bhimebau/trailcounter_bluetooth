@@ -131,7 +131,7 @@ int main(void) {
   console_init();
 
   //print flash, init accel
-  printEpochData();
+  printHourlyData();
   adxl362_init();
   
   //get/convert/print current set time
@@ -143,6 +143,9 @@ int main(void) {
   trailRtcInitAlarmSystem();
   RESET_ALARM;
 
+  
+
+  chThdSleepMilliseconds(500);
   while (TRUE){
     /*
     if (alarm_called == 1) {
@@ -154,19 +157,21 @@ int main(void) {
     }
     RESET_ALARM;
     */
-    //TODO:  instead of printing, write to flash
-    //Also update current time so we are writing proper times
-    //Consider making write to flash function that converts time
-    // to structure for flash arrays, and it writes to both
-    // hourly and daily arrays based on time
+    //TODO:
+    // rtcSetTime so we are writing proper times
+    // Consider making write to flash function that converts time to uint32
+    //   epochdata saves day and year
+    //   hourlydata saves hours
+    //Test long term time, make sure it's writing proper number of times and that
+    //time isn't getting off balance with real time
     
-    trailRtcSetAlarm(&RTCD1, 20, &time);
-    writeEpochDataWord(getFirstFreeEpoch(), (time.millisecond/1000)%60);
+    trailRtcSetAlarm(&RTCD1, 5, &time);
+    writeHourlyData(getFirstFreeHourly(), (time.millisecond/1000)%60);
 
     //rtcConvertDateTimeToStructTm(&time,&ltime, NULL);
     //chprintf((BaseSequentialStream*)&SD2,"Current time:%s\n\r",asctime(&ltime));
 
-    chThdSleepMilliseconds(500);
+    //chThdSleepMilliseconds(500);
     PWR_EnterSTOPMode( ((uint32_t)0x00000001), PWR_STOPEntry_WFI);
   }
   return 0;

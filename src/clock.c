@@ -69,10 +69,9 @@ static void extcb1(EXTDriver *extp, expchannel_t channel) {
 
   chSysLockFromISR();
 
-  //if it wakes from stop then it needs to re-init the clock for print
-  //i'm not sure if this is required when we go ultra low power
-  //needs to be tested
-  stm32_clock_init();
+  //power consumption and additional time need to be tested
+  //also make sure all functionality remains the same
+  //stm32_clock_init();
   alarm_called = 2;
 
   chSysUnlockFromISR();
