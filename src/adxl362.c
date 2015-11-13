@@ -51,6 +51,28 @@ static SPIConfig adxl362_cfg = {
   0
 };
 
+void cmd_reg(BaseSequentialStream *chp, int argc, char *argv[]) {
+  (void)argv;
+  int i = 0x00;
+  for(i; i<0x2F; i++){
+    chprintf(chp, "Register 0x%x: 0x%x\t",i, adxl362_read_register(i));
+    if (!(i%3))     chprintf(chp, "\n\r");
+  }
+}
+
+void cmd_xyz(BaseSequentialStream *chp, int argc, char *argv[]) {
+
+  (void)argv;(void)argc; (void)argv;
+  int i=0;
+  //for(i; i<10; i++){
+   while(1){
+     //if( adxl362_read_register(0x0B)==0x41 ){
+     // chprintf(chp, "INTERRUPT /n/r");
+     //  }*/
+    chprintf(chp, "X: %d, Y:%d, Z:%d ACT:%x \r\n",  adxl362_read_register(0x08), adxl362_read_register(0x09),  adxl362_read_register(0x0A), adxl362_read_register(0x0B) );
+     }
+}
+
 uint8_t adxl362_read_register (uint8_t address) {
   uint8_t command = 0x0B;
   uint8_t dummy = 0x00;
@@ -94,20 +116,31 @@ void adxl362_init (void) {
   }
  
 
-  adxl362_write_register(0x20, 250);            /* */
-  adxl362_write_register(0x21, 0x00);           /* */
-  adxl362_write_register(0x23, 150);           /* INACT LO*/
-  adxl362_write_register(0x24, 0x00);           /*INACT HI */
-  adxl362_write_register(0x25, 90);            /*90s INACT */
-  adxl362_write_register(0x27, 0x3F);           /* reg = 0x27 Control Reg: Default.*/
-  //adxl362_write_register(0x28, 0x03);           /* FIFO - Triggered Mode */
-  // adxl362_write_register(0x29, 0x60);           /* Number of FIFO samples to keep */
-  adxl362_write_register(0x2A, 0x40);           /*map Awake status to INT1 Pin */
-  adxl362_write_register(0x2B, 0x40);           /*map inactivity status to INT2 pin. */
-  adxl362_write_register(0x2C, 0x10);           /* +- 2g, thinner bandwidth, 12.5 hz(low) */
+  /* found this: https://ez.analog.com/thread/43236?start=0&tstart=0 */
+  
+
+  adxl362_write_register(0x20, 20);             /*8 LSB Thresh_ACT */    
+  adxl362_write_register(0x21, 0x00);           /*3 MSB thresh_ACT */
+  adxl362_write_register(0x22, 0x01);           /*Required Activity Length */
+
+  //adxl362_write_register(0x23, 150);            /* INACT LO*/
+  //adxl362_write_register(0x24, 0x00);           /*INACT HI */
+  //adxl362_write_register(0x25, 6);              /*90s INACT */
+  //adxl362_write_register(0x27, 0x3B);           /* reg = 0x27 Control Reg: Default.*/
+
+  adxl362_write_register(0x27, 0x13);           /* Referenced and Activity Enable. */  
+
+  //adxl362_write_register(0x28, 0x03);         /* FIFO - Triggered Mode */
+  //adxl362_write_register(0x29, 0x60);         /* Number of FIFO samples to keep */
+  //adxl362_write_register(0x2A, 0x41);         /*map Awake status to INT1 Pin */
+  adxl362_write_register(0x2A, 0x90);           /*map Awake status to INT1 Pin, Active Low. 
+						  Some docs I read said this was necessary. */
+  //adxl362_write_register(0x2B, 0x10);         /*map inactivity status to INT2 pin. */
+  adxl362_write_register(0x2C, 0x00);           /* +- 2g, thinner bandwidth, 12.5 hz(low) */
+  //  adxl362_write_register(0x2D, 0x0A);       /* measurement mode, WAKEUP mode */
   adxl362_write_register(0x2D, 0x0A);           /* measurement mode */
 
-  
+  adxl362_write_register(0x2E, 0x01);           /* Referenced and Activity Enable. */
   //adxl362_write_register(0x27, 0x00);           /* reg = 0x27 Control Reg: Default.*/
   //adxl362_write_register(0x28, 0x03);           /* FIFO - Triggered Mode */
   //adxl362_write_register(0x29, 0x60);           /* Number of FIFO samples to keep */

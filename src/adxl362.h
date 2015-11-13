@@ -39,5 +39,7 @@ void adxl362_write_register (uint16_t address, uint8_t data);
 void adxl362_init (void);
 void cmd_adxl362_read(BaseSequentialStream *chp, int argc, char *argv[]);
 void cmd_adxl362_write(BaseSequentialStream *chp, int argc, char *argv[]);
+void cmd_xyz(BaseSequentialStream *chp, int argc, char *argv[]);
+void cmd_reg(BaseSequentialStream *chp, int argc, char *argv[]);
 
 /* adxl362.h ends here */

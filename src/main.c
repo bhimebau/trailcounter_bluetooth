@@ -72,6 +72,11 @@ static void cmd_stop(BaseSequentialStream *chp, int argc, char *argv[]) {
   chThdSleepMilliseconds(200);
 
   PWR_EnterSTOPMode(((uint32_t)0x00000001), ((uint8_t)0x01));
+ 
+}
+
+static void cmd_r_data(BaseSequentialStream *chp, int argc, char *argv[]) {
+  adxl362_read_register(0x0B);       /* */    
 }
 
 static const ShellCommand commands[] = {
@@ -83,6 +88,9 @@ static const ShellCommand commands[] = {
   {"stop", cmd_stop},
   {"accelwrite", cmd_adxl362_write},
   {"accelread", cmd_adxl362_read},
+  {"xyz", cmd_xyz},
+  {"[A", cmd_r_data},
+  {"allreg",cmd_reg},
   {NULL, NULL}
 };
 
@@ -113,7 +121,7 @@ static evhandler_t fhandlers[] = {
  * Application entry point.
  */
 int main(void) {
-  //event_listener_t tel;
+  event_listener_t tel;
   RTCDateTime time;
   struct tm ltime;
 
@@ -142,9 +150,22 @@ int main(void) {
   //initialize and enable external interrupts
   trailRtcInitAlarmSystem();
   RESET_ALARM;
-  chThdSleepMilliseconds(5000);
+  //chThdSleepMilliseconds(5000);
+
+
+    /* Initialize the command shell */ 
+  shellInit();
+   /* 
+    *  setup to listen for the shell_terminated event. This setup will be stored in the tel  * event listner structure in item 0
+   */
+  chEvtRegister(&shell_terminated, &tel, 0);
+ 
+  shelltp1 = shellCreate(&shell_cfg1, sizeof(waShell), NORMALPRIO);
+  //chThdCreateStatic(waCounterThread, sizeof(waCounterThread), NORMALPRIO+1, counterThread, NULL);
+
 
   while (TRUE){
+    chEvtDispatch(fhandlers, chEvtWaitOne(ALL_EVENTS));
     /*
     if (alarm_called == 1) {
       chprintf((BaseSequentialStream*)&SD2 ,"Woken by accelerometer\n\r");
@@ -161,16 +182,16 @@ int main(void) {
     // to structure for flash arrays, and it writes to both
     // hourly and daily arrays based on time
     
-    trailRtcSetAlarm(&RTCD1, 20, &time);
-    writeEpochDataWord(getFirstFreeEpoch(), (time.millisecond/1000)%60);
+    //trailRtcSetAlarm(&RTCD1, 20, &time);
+    // writeEpochDataWord(getFirstFreeEpoch(), (time.millisecond/1000)%60);
 
     //rtcConvertDateTimeToStructTm(&time,&ltime, NULL);
     //chprintf((BaseSequentialStream*)&SD2,"Current time:%s\n\r",asctime(&ltime));
 
     // chThdSleepMilliseconds(500);
-    PWR_EnterSTOPMode( ((uint32_t)0x00000001), PWR_STOPEntry_WFI);
+    //PWR_EnterSTOPMode( ((uint32_t)0x00000001), PWR_STOPEntry_WFI);
   }
-  return 0;
+  //return 0;
 
 
 }
