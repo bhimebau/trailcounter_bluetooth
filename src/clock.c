@@ -58,7 +58,8 @@ static void extcb(EXTDriver *extp, expchannel_t channel) {
   (void)channel;
 
   chSysLockFromISR();
-  alarm_called = 1;
+  //alarm_called = 1;
+  alarm_called++;
 
   chSysUnlockFromISR();
 }
@@ -80,7 +81,7 @@ static void extcb1(EXTDriver *extp, expchannel_t channel) {
 EXTConfig trailExtcfg = {
   {
     {EXT_CH_MODE_DISABLED, NULL},
-    // Enable interrupt on PA4 from the accelerometer
+    // Enable interrupt on PA1 from the accelerometer
     {EXT_CH_MODE_RISING_EDGE | EXT_CH_MODE_AUTOSTART | EXT_MODE_GPIOA, extcb},
     {EXT_CH_MODE_DISABLED, NULL},
     {EXT_CH_MODE_DISABLED, NULL},

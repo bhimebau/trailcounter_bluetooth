@@ -99,57 +99,177 @@ void adxl362_write_register (uint16_t address, uint8_t data) {
 }
 
 void adxl362_init (void) {
+  //Read 0x0B status bit to reset interrupt
+
   // Pin Initializations
   palSetPadMode(GPIOA, 5, PAL_MODE_ALTERNATE(5));     /* SCK. */
   palSetPadMode(GPIOA, 6, PAL_MODE_ALTERNATE(5));     /* MISO.*/
   palSetPadMode(GPIOA, 7, PAL_MODE_ALTERNATE(5));     /* MOSI.*/
   palSetPadMode(GPIOB, 6, PAL_MODE_OUTPUT_PUSHPULL);  /* adxl362 chip select */
   palSetPad(GPIOB, 6);                                /* Deassert the adxl362 chip select */
-  int reg = 0x20;
-  for(reg;reg<0x27;reg++){
-    if(reg == 0x22){
-      adxl362_write_register(reg, 0x02);              /*TIME_ACT register >1 to avoid false pos. */
-    }
-    else{
-      adxl362_write_register(reg, 0x01);              /*Set Activity/Inactivity thresholds/timers*/
-    }
-  }
- 
 
-  /* found this: https://ez.analog.com/thread/43236?start=0&tstart=0 */
+
+  //TODO:  play with activity/inactivity thresholds
+  //TODO:  compare linked vs default modes vs LOOP(current)
+  //TODO:  compare relative to absolute measurements
+  //TODO:  play with all of this (for understanding)
+
+  /*************
+   *  Address:      0x1F
+   *  Reset:        0x00
+   *  Name:         SOFT_RESET
+   *  Description:  Write 0x52 to reset the accelerometer
+   *************/
+
+  /*************
+   *  Address:      0x20
+   *  Reset:        0x00
+   *  Name:         THRESH_ACT_L
+   *  Description:  Holds eight least-significant-bits for thresholding activity detection
+   *************/
+
+
+  /*************
+   *  Address:      0x21
+   *  Reset:        0x00
+   *  Name:         TRESH_ACT_H
+   *  Description:  Holds three most-significant-bits for thresholding activity detection
+   *************/
+
+
+  /*************
+   *  Address:      0x22
+   *  Reset:        0x00
+   *  Name:         TIME_ACT
+   *  Description:  The amount of time that activity must persist to trigger activity detection
+   *                0x00 or 0x01 both only require a single sample to be above threshold
+   *************/
+
+
+  /*************
+   *  Address:      0x23
+   *  Reset:        0x00
+   *  Name:         THRESH_INACT_L
+   *  Description:  Holds eight least-significant bits for thresholding inactivity detection
+   *************/
+
+
+  /*************
+   *  Address:      0x24
+   *  Reset:        0x00
+   *  Name:         TRHESH_INACT_H
+   *  Description:  Holds three most-significant bits for thresholding inactivity detection
+   *************/
+
+
+  /*************
+   *  Address:      0x25
+   *  Reset:        0x00
+   *  Name:         TIME_INACT_L
+   *  Description:  The eight least-significant bits corresponding to the amount of time that inactivity 
+   *                must persist to trigger inactivity detection
+   *************/
+
+
+  /*************
+   *  Address:      0x26
+   *  Reset:        0x00
+   *  Name:         TIME_INACT_H
+   *  Description:  The eight most-significant bits corresponding to the amount of time that inactivity 
+   *                must persist to trigger inactivity detection
+   *************/
+
+
+  /*************
+   *  Address:      0x27
+   *  Reset:        0x00
+   *  Name:         ACT_INACT_CTL
+   *  Description:  [7:6] Unused
+   *                
+   *************/
+
+
+  /*************
+   *  Address:      0x28
+   *  Reset:        
+   *  Name:         
+   *  Description:  
+   *************/
+
+
+  /*************
+   *  Address:      0x29
+   *  Reset:        
+   *  Name:         
+   *  Description:  
+   *************/
+
+
+  /*************
+   *  Address:      0x2A
+   *  Reset:        
+   *  Name:         
+   *  Description:  
+   *************/
+
+
+  /*************
+   *  Address:      0x2B
+   *  Reset:        
+   *  Name:         
+   *  Description:  
+   *************/
+
+
+  /*************
+   *  Address:      0x2C
+   *  Reset:        
+   *  Name:         
+   *  Description:  
+   *************/
+
+
+  /*************
+   *  Address:      0x2D
+   *  Reset:        
+   *  Name:         
+   *  Description:  
+   *************/
+
+
+  /*************
+   *  Address:      0x2E
+   *  Reset:        
+   *  Name:         
+   *  Description:  
+   *************/
+
+
+  adxl362_write_register(0x20, 0x2C);  //thresh_act_l
+  adxl362_write_register(0x21, 1);    //thresh_act_h
+  adxl362_write_register(0x22, 0xA);    //thresh_act_h
+  adxl362_write_register(0x23, 0x50);  //thresh_nact_l
+  adxl362_write_register(0x24, 0);    //thresh_nact_h
+
+  //amount of time to wait for inactivity
+  //set to zero because we are trying not to use it (probably still does something)
+  adxl362_write_register(0x25, 0);   //time_inact_l
+  //adxl362_write_register(0x25, 0xC8);   //time_inact_l
+
+  adxl362_write_register(0x26, 0);   //time_inact_l
+
+  //Using loop mode, commented is attempt at default w/o inactivity
+  adxl362_write_register(0x27, 0x3F); //act_inact_ctl
+  //adxl362_write_register(0x27, 0x03); //act_inact_ctl
+
+  adxl362_write_register(0x28, 0); //intmap2
+  adxl362_write_register(0x29, 0x80); //intmap2
+  adxl362_write_register(0x2A, 0x40); //intmap2
+  adxl362_write_register(0x2B, 0); //intmap2
+  adxl362_write_register(0x2C, 0x13); //intmap2
+  adxl362_write_register(0x2D, 0x6); //power_ctl
+  adxl362_write_register(0x2E, 0); //intmap2
   
-
-  adxl362_write_register(0x20, 20);             /*8 LSB Thresh_ACT */    
-  adxl362_write_register(0x21, 0x00);           /*3 MSB thresh_ACT */
-  adxl362_write_register(0x22, 0x01);           /*Required Activity Length */
-
-  //adxl362_write_register(0x23, 150);            /* INACT LO*/
-  //adxl362_write_register(0x24, 0x00);           /*INACT HI */
-  //adxl362_write_register(0x25, 6);              /*90s INACT */
-  //adxl362_write_register(0x27, 0x3B);           /* reg = 0x27 Control Reg: Default.*/
-
-  adxl362_write_register(0x27, 0x13);           /* Referenced and Activity Enable. */  
-
-  //adxl362_write_register(0x28, 0x03);         /* FIFO - Triggered Mode */
-  //adxl362_write_register(0x29, 0x60);         /* Number of FIFO samples to keep */
-  //adxl362_write_register(0x2A, 0x41);         /*map Awake status to INT1 Pin */
-  adxl362_write_register(0x2A, 0x90);           /*map Awake status to INT1 Pin, Active Low. 
-						  Some docs I read said this was necessary. */
-  //adxl362_write_register(0x2B, 0x10);         /*map inactivity status to INT2 pin. */
-  adxl362_write_register(0x2C, 0x00);           /* +- 2g, thinner bandwidth, 12.5 hz(low) */
-  //  adxl362_write_register(0x2D, 0x0A);       /* measurement mode, WAKEUP mode */
-  adxl362_write_register(0x2D, 0x0A);           /* measurement mode */
-
-  adxl362_write_register(0x2E, 0x01);           /* Referenced and Activity Enable. */
-  //adxl362_write_register(0x27, 0x00);           /* reg = 0x27 Control Reg: Default.*/
-  //adxl362_write_register(0x28, 0x03);           /* FIFO - Triggered Mode */
-  //adxl362_write_register(0x29, 0x60);           /* Number of FIFO samples to keep */
-  //adxl362_write_register(0x2A, 0x40);           /*map Awake status to INT1 Pin */
-  //adxl362_write_register(0x2B, 0x20);           /*map inactivity status to INT2 pin. */
-  //adxl362_write_register(0x2C, 0x10);           /* +- 2g, thinner bandwidth, 12.5 hz(low) */
-  //adxl362_write_register(0x2D, 0x02);           /* measurement mode */
-
-
 }
 
 void cmd_adxl362_read(BaseSequentialStream *chp, int argc, char *argv[]) {

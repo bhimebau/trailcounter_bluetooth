@@ -76,7 +76,9 @@ static void cmd_stop(BaseSequentialStream *chp, int argc, char *argv[]) {
 }
 
 static void cmd_r_data(BaseSequentialStream *chp, int argc, char *argv[]) {
-  adxl362_read_register(0x0B);       /* */    
+  adxl362_read_register(0x0B);       /* */
+  chprintf(chp, "alarm_called = %d\r\n", alarm_called);
+  //RESET_ALARM;
 }
 
 static const ShellCommand commands[] = {
