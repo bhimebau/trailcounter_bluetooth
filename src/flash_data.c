@@ -48,7 +48,8 @@
 #include <stdarg.h>
 #include <time.h>
 
-
+//consider removing epoc_data
+//or changing the structure of flash from 16_t to custom structs
 volatile uint32_t epoch_data[MAX_DAYS] __attribute__((section (".rodata"))) = { [0 ... MAX_DAYS-1] = 0xFFFFFFFF};
 volatile uint16_t hourly_data[24*MAX_DAYS] __attribute__((section (".rodata"))) = { [0 ... (24*MAX_DAYS)-1] = 0xFFFF};
 

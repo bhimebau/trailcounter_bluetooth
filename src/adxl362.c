@@ -101,6 +101,7 @@ void adxl362_write_register (uint16_t address, uint8_t data) {
 void adxl362_init (void) {
   //Read 0x0B status bit to reset interrupt
 
+
   // Pin Initializations
   palSetPadMode(GPIOA, 5, PAL_MODE_ALTERNATE(5));     /* SCK. */
   palSetPadMode(GPIOA, 6, PAL_MODE_ALTERNATE(5));     /* MISO.*/

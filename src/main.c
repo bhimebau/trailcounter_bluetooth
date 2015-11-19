@@ -68,7 +68,7 @@ static void cmd_myecho(BaseSequentialStream *chp, int argc, char *argv[]) {
 static void cmd_stop(BaseSequentialStream *chp, int argc, char *argv[]) {
   (void)chp; (void)argc; (void)argv; 
 
-  chprintf(chp, "Going sleep...\r\n");
+  chprintf(chp, "stopping...\r\n");
   chThdSleepMilliseconds(200);
 
   PWR_EnterSTOPMode(((uint32_t)0x00000001), ((uint8_t)0x01));
@@ -160,27 +160,16 @@ int main(void) {
    /* 
     *  setup to listen for the shell_terminated event. This setup will be stored in the tel  * event listner structure in item 0
    */
-  chEvtRegister(&shell_terminated, &tel, 0);
+  //chEvtRegister(&shell_terminated, &tel, 0);
  
-  shelltp1 = shellCreate(&shell_cfg1, sizeof(waShell), NORMALPRIO);
+  //shelltp1 = shellCreate(&shell_cfg1, sizeof(waShell), NORMALPRIO);
   //chThdCreateStatic(waCounterThread, sizeof(waCounterThread), NORMALPRIO+1, counterThread, NULL);
-
-
-  
 
   chThdSleepMilliseconds(500);
   while (TRUE){
-    chEvtDispatch(fhandlers, chEvtWaitOne(ALL_EVENTS));
-    /*
-    if (alarm_called == 1) {
-      chprintf((BaseSequentialStream*)&SD2 ,"Woken by accelerometer\n\r");
-    }
-    
-    else if (alarm_called == 2) {
-      chprintf((BaseSequentialStream*)&SD2,"%Woken by alarm\n\r");
-    }
-    RESET_ALARM;
-    */
+    /*Shell Dispatcher */
+    //chEvtDispatch(fhandlers, chEvtWaitOne(ALL_EVENTS));
+
     //TODO:
     // rtcSetTime so we are writing proper times
     // Consider making write to flash function that converts time to uint32
@@ -188,14 +177,30 @@ int main(void) {
     //   hourlydata saves hours
     //Test long term time, make sure it's writing proper number of times and that
     //time isn't getting off balance with real time
-    
-    trailRtcSetAlarm(&RTCD1, 5, &time);
-    writeHourlyData(getFirstFreeHourly(), (time.millisecond/1000)%60);
 
+    //woke up from accelerometer
+    if (alarm_called == 1) {
+      people_count++;
+    }
+    
+    else if (alarm_called == 2) {
+      //change function to work 30 seconds from time it actually woke up
+      trailRtcSetAlarm(&RTCD1, 30, &time);
+
+      if (Its been an hour) {
+	writeHourlyData(getFirstFreeHourly(), people_count);
+	/*	if (Its been a day) {
+	  writeEpochData(whatever);
+	}
+	*/
+      }
+    }
+    RESET_ALARM;
+    
     //rtcConvertDateTimeToStructTm(&time,&ltime, NULL);
     //chprintf((BaseSequentialStream*)&SD2,"Current time:%s\n\r",asctime(&ltime));
 
-    //PWR_EnterSTOPMode( ((uint32_t)0x00000001), PWR_STOPEntry_WFI);
+    PWR_EnterSTOPMode( ((uint32_t)0x00000001), PWR_STOPEntry_WFI);
   }
   //return 0;
 

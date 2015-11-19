@@ -52,18 +52,22 @@
 /* Implementation of External Interrupts */
 
 volatile int alarm_called;
+extern volatile uint16_t people_count;
 
+/** Callback for Accelerometer Wakeup **/
 static void extcb(EXTDriver *extp, expchannel_t channel) {
   (void)extp;
   (void)channel;
 
   chSysLockFromISR();
-  //alarm_called = 1;
-  alarm_called++;
-
+  alarm_called = 1;
+  people_count++;
+  //stm32_clock_init();
   chSysUnlockFromISR();
 }
 
+
+/** Callback for ALARM wakeup **/
 static void extcb1(EXTDriver *extp, expchannel_t channel) {
   (void)extp;
   (void)channel;
@@ -127,6 +131,7 @@ void trailRtcInitAlarmSystem(void)
 {
   extStart(&EXTD1, &trailExtcfg);
   extChannelEnable(&EXTD1, EXT_MODE_GPIOA);
+  people_count = 0;
 }
 
 void trailRtcSetAlarm(RTCDriver *rtcp, uint8_t offset, RTCDateTime *time)

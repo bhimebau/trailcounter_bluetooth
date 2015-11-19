@@ -46,6 +46,8 @@
 #include <time.h>
 
 extern volatile int alarm_called;
+extern volatile uint16_t people_count;
+
 extern EXTConfig trailExtcfg;
 
 #define RESET_ALARM alarm_called = 0;
