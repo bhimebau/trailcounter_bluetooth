@@ -142,7 +142,6 @@ int main(void) {
 
   //print flash, init accel
   printHourlyData();
-  adxl362_init();
   
   //get/convert/print current set time
   rtcGetTime(&RTCD1, &time);
@@ -152,11 +151,15 @@ int main(void) {
   //initialize and enable external interrupts
   trailRtcInitAlarmSystem();
   RESET_ALARM;
+  people_count = 0;
+
+  adxl362_init();
+
   //chThdSleepMilliseconds(5000);
 
 
     /* Initialize the command shell */ 
-  shellInit();
+  //shellInit();
    /* 
     *  setup to listen for the shell_terminated event. This setup will be stored in the tel  * event listner structure in item 0
    */
@@ -165,6 +168,9 @@ int main(void) {
   //shelltp1 = shellCreate(&shell_cfg1, sizeof(waShell), NORMALPRIO);
   //chThdCreateStatic(waCounterThread, sizeof(waCounterThread), NORMALPRIO+1, counterThread, NULL);
 
+
+  uint32_t hourly_wakeup = (time.millisecond) + (60*60*1000);
+  char tomorrow = ((time.dayofweek) % 7) + 1;
   chThdSleepMilliseconds(500);
   while (TRUE){
     /*Shell Dispatcher */
@@ -178,23 +184,25 @@ int main(void) {
     //Test long term time, make sure it's writing proper number of times and that
     //time isn't getting off balance with real time
 
-    //woke up from accelerometer
-    if (alarm_called == 1) {
-      people_count++;
-    }
-    
-    else if (alarm_called == 2) {
-      //change function to work 30 seconds from time it actually woke up
-      trailRtcSetAlarm(&RTCD1, 30, &time);
 
-      if (Its been an hour) {
+    //woke up from alarm
+    if (alarm_called) {
+      trailRtcSetAlarm(&RTCD1, 30, &time);
+      
+      if (time.millisecond > hourly_wakeup) {
 	writeHourlyData(getFirstFreeHourly(), people_count);
-	/*	if (Its been a day) {
-	  writeEpochData(whatever);
-	}
-	*/
+	people_count = 0;
+	hourly_wakeup = (time.millisecond) + (60*60*1000);
       }
+      if (time.dayofweek == tomorrow) {
+	writeHourlyData(getFirstFreeHourly(), people_count);
+	writeEpochDataWord(getFirstFreeEpoch(), time.day);
+	people_count = 0;
+	hourly_wakeup = (time.millisecond) + (60*60*1000);
+	tomorrow = ((time.dayofweek) % 7) + 1;
+      } 
     }
+
     RESET_ALARM;
     
     //rtcConvertDateTimeToStructTm(&time,&ltime, NULL);
