@@ -171,7 +171,10 @@ int main(void) {
 
   uint32_t hourly_wakeup = (time.millisecond) + (60*60*1000);
   char tomorrow = ((time.dayofweek) % 7) + 1;
-  chThdSleepMilliseconds(500);
+
+  trailRtcSetAlarm(&RTCD1, 30, &time);
+
+  chThdSleepMilliseconds(1000);
   while (TRUE){
     /*Shell Dispatcher */
     //chEvtDispatch(fhandlers, chEvtWaitOne(ALL_EVENTS));
@@ -188,22 +191,22 @@ int main(void) {
     //woke up from alarm
     if (alarm_called) {
       trailRtcSetAlarm(&RTCD1, 30, &time);
-      
       if (time.millisecond > hourly_wakeup) {
 	writeHourlyData(getFirstFreeHourly(), people_count);
+	writeHourlyData(getFirstFreeHourly(), time.millisecond/2000);
 	people_count = 0;
-	hourly_wakeup = (time.millisecond) + (60*60*1000);
+	hourly_wakeup += (60*60*1000);
       }
       if (time.dayofweek == tomorrow) {
 	writeHourlyData(getFirstFreeHourly(), people_count);
+	writeHourlyData(getFirstFreeHourly(), time.millisecond/2000);
 	writeEpochDataWord(getFirstFreeEpoch(), time.day);
 	people_count = 0;
-	hourly_wakeup = (time.millisecond) + (60*60*1000);
+	hourly_wakeup += (60*60*1000);
 	tomorrow = ((time.dayofweek) % 7) + 1;
       } 
+      RESET_ALARM;
     }
-
-    RESET_ALARM;
     
     //rtcConvertDateTimeToStructTm(&time,&ltime, NULL);
     //chprintf((BaseSequentialStream*)&SD2,"Current time:%s\n\r",asctime(&ltime));

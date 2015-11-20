@@ -79,7 +79,8 @@ int getFirstFreeEpoch(void) {
 
 int getFirstFreeHourly(void) {
   int i;
-  for (i=getFirstFreeEpoch()*24;i<MAX_DAYS*24;i++) {
+  //for (i=getFirstFreeEpoch()*24;i<MAX_DAYS*24;i++) {
+  for (i=0;i<MAX_DAYS*24;i++) {
     if (hourly_data[i] == 0xFFFF) {
       break;
     }
