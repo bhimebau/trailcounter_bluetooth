@@ -192,7 +192,7 @@ int main(void) {
     if (alarm_called) {
       trailRtcSetAlarm(&RTCD1, 30, &time);
       if (time.millisecond > hourly_wakeup) {
-	writeHourlyData(getFirstFreeHourly(), people_count);
+	writeHourlyData(getFirstFreeHourly(), *(&people_count));
 	writeHourlyData(getFirstFreeHourly(), time.millisecond/2000);
 	people_count = 0;
 	hourly_wakeup += (60*60*1000);
