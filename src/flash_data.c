@@ -50,8 +50,11 @@
 
 //consider removing epoc_data
 //or changing the structure of flash from 16_t to custom structs
+//volatile uint32_t epoch_data[MAX_DAYS] __attribute__((section (".rodata"))) = { [0 ... MAX_DAYS-1] = 0xFFFFFFFF};
+//volatile uint16_t hourly_data[24*MAX_DAYS] __attribute__((section (".rodata"))) = { [0 ... (24*MAX_DAYS)-1] = 0xFFFF};
+
 volatile uint32_t epoch_data[MAX_DAYS] __attribute__((section (".rodata"))) = { [0 ... MAX_DAYS-1] = 0xFFFFFFFF};
-volatile uint16_t hourly_data[24*MAX_DAYS] __attribute__((section (".rodata"))) = { [0 ... (24*MAX_DAYS)-1] = 0xFFFF};
+volatile uint16_t hourly_data[2*24*MAX_DAYS] __attribute__((section (".rodata"))) = { [0 ... (24*MAX_DAYS)-1] = 0xFFFF};
 
 void writeEpochDataWord(int epoch_array_index, int data) {
   FLASH_Unlock();
@@ -113,26 +116,5 @@ int printHourlyData(void) {
   } 
   return i;
 }
-
-int printCoalesceData(void) {
-  int i;
-  for (i=0;i<MAX_DAYS*24;i++) {
-    if (hourly_data[i] == 0xFFFF) {
-      break;
-    }
-    if (i % 24 == 0) {
-      chprintf((BaseSequentialStream*)&SD2,"\n\r---Day---\n\r");
-      chprintf((BaseSequentialStream*)&SD2,"Day #: %d, Data: %x\n\r",i%24,epoch_data[i%24]);
-      chprintf((BaseSequentialStream*)&SD2,"---Hour---\n\r");
-    }
-    chprintf((BaseSequentialStream*)&SD2,"Hour #: %d, Data: %x\n\r",i,hourly_data[i]);
-  }
-  return i;
-}
-
-
-
-
-
 
 /* flash_data.c ends here */

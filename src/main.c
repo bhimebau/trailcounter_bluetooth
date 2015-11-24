@@ -192,17 +192,20 @@ int main(void) {
     if (alarm_called) {
       trailRtcSetAlarm(&RTCD1, 30, &time);
       if (time.millisecond > hourly_wakeup) {
+	//make a function for this
+	writeHourlyData(getFirstFreeHourly(), (((time.millisecond/(1000*60*60))<<8) | 
+					       ((time.millisecond/(1000*60))%60)) );
 	writeHourlyData(getFirstFreeHourly(), *(&people_count));
-	writeHourlyData(getFirstFreeHourly(), time.millisecond/2000);
 	people_count = 0;
 	hourly_wakeup += (60*60*1000);
       }
       if (time.dayofweek == tomorrow) {
-	writeHourlyData(getFirstFreeHourly(), people_count);
-	writeHourlyData(getFirstFreeHourly(), time.millisecond/2000);
+	writeHourlyData(getFirstFreeHourly(), (((time.millisecond/(1000*60*60))<<8) | 
+					       ((time.millisecond/(1000*60))%60)) );
+	writeHourlyData(getFirstFreeHourly(), *(&people_count));
 	writeEpochDataWord(getFirstFreeEpoch(), time.day);
 	people_count = 0;
-	hourly_wakeup += (60*60*1000);
+	hourly_wakeup = (time.millisecond) + (60*60*1000);
 	tomorrow = ((time.dayofweek) % 7) + 1;
       } 
       RESET_ALARM;
