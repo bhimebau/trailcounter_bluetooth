@@ -137,7 +137,7 @@ void adxl362_init (void) {
    *  Description:  Holds three most-significant-bits for thresholding activity detection
    *************/
 
-    adxl362_write_register(0x21, 1);   
+  adxl362_write_register(0x21, 1);   
 
 
   /*************
@@ -147,7 +147,7 @@ void adxl362_init (void) {
    *  Description:  The amount of time that activity must persist to trigger activity detection
    *                0x00 or 0x01 both only require a single sample to be above threshold
    *************/
-    adxl362_write_register(0x22, 0xA);  //10 Samples  
+  adxl362_write_register(0x22, 0xA);  //10 Samples  
 
   /*************
    *  Address:      0x23
@@ -228,7 +228,7 @@ void adxl362_init (void) {
    *                
    *************/
 
-   //Using loop mode, commented is attempt at default w/o inactivity
+  //Using loop mode, commented is attempt at default w/o inactivity
   adxl362_write_register(0x27, 0x3F); 
   //adxl362_write_register(0x27, 0x03); 
 
@@ -254,7 +254,7 @@ void adxl362_init (void) {
    *                       11 - Triggered mode.
    *
    *************/
- adxl362_write_register(0x28, 0);
+  adxl362_write_register(0x28, 0);
 
   /*************
    *  Address:      0x29
