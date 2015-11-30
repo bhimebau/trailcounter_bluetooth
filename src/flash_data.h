@@ -42,7 +42,8 @@ extern volatile uint16_t hourly_data[];
 void writeEpochDataWord(int, int);
 void writeHourlyData(int hourly_array_index, uint16_t data);
 int getFirstFreeEpoch(void);
+int getFirstFreeHourly(void);
 int printEpochData(void);
-
+int printHourlyData(void);
 
 /* flash_data.h ends here */

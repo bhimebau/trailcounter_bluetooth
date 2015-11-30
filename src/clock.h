@@ -45,7 +45,16 @@
 #include <stdarg.h>
 #include <time.h>
 
+extern volatile int alarm_called;
+extern volatile uint16_t people_count;
 
+extern EXTConfig trailExtcfg;
+
+#define RESET_ALARM alarm_called = 0;
+#define SET_ALARM alarm_called = 1;
+
+void trailRtcInitAlarmSystem(void);
+void trailRtcSetAlarm(RTCDriver *rtcp, uint8_t offset,  RTCDateTime *time);
 void cmd_rtcSet(BaseSequentialStream *chp, int argc, char *argv[]);
 void cmd_rtcRead(BaseSequentialStream *chp, int argc, char *argv[]);
 void cmd_enableWakeup(BaseSequentialStream *chp, int argc, char *argv[]);

@@ -40,6 +40,7 @@
 #include <chstreams.h>
 #include "console.h"
 #include "stm32f30x_flash.h"
+#include "stm32f30x_pwr.h"
 #include "flash_data.h"
 #include "clock.h"
 #include "adxl362.h"
@@ -53,18 +54,6 @@ static THD_WORKING_AREA(waShell,2048);
 
 static thread_t *shelltp1;
 
-/* Thread that blinks North LED as an "alive" indicator */
-static THD_WORKING_AREA(waCounterThread,128);
-static THD_FUNCTION(counterThread,arg) {
-  UNUSED(arg);
-  while (TRUE) {
-    palSetPad(GPIOE, GPIOE_LED3_RED);
-    chThdSleepMilliseconds(500);
-    palClearPad(GPIOE, GPIOE_LED3_RED);
-    chThdSleepMilliseconds(500);
-  }
-}
-
 static void cmd_myecho(BaseSequentialStream *chp, int argc, char *argv[]) {
   int32_t i;
 
@@ -73,6 +62,23 @@ static void cmd_myecho(BaseSequentialStream *chp, int argc, char *argv[]) {
   for (i=0;i<argc;i++) {
     chprintf(chp, "%s\n\r", argv[i]);
   }
+  //chprintf(chp, "%d\n\r", global_track);
+}
+
+static void cmd_stop(BaseSequentialStream *chp, int argc, char *argv[]) {
+  (void)chp; (void)argc; (void)argv; 
+
+  chprintf(chp, "stopping...\r\n");
+  chThdSleepMilliseconds(200);
+
+  PWR_EnterSTOPMode(((uint32_t)0x00000001), ((uint8_t)0x01));
+ 
+}
+
+static void cmd_r_data(BaseSequentialStream *chp, int argc, char *argv[]) {
+  adxl362_read_register(0x0B);       /* */
+  chprintf(chp, "alarm_called = %d\r\n", alarm_called);
+  //RESET_ALARM;
 }
 
 static const ShellCommand commands[] = {
@@ -81,9 +87,12 @@ static const ShellCommand commands[] = {
   {"rtcread", cmd_rtcRead},
   {"enablewake", cmd_enableWakeup},
   {"sleep", cmd_sleep},
-  {"rtcread", cmd_rtcRead},
+  {"stop", cmd_stop},
   {"accelwrite", cmd_adxl362_write},
   {"accelread", cmd_adxl362_read},
+  {"xyz", cmd_xyz},
+  {"[A", cmd_r_data},
+  {"allreg",cmd_reg},
   {NULL, NULL}
 };
 
@@ -113,15 +122,10 @@ static evhandler_t fhandlers[] = {
 /*
  * Application entry point.
  */
-
 int main(void) {
-  int myvar = 5;
   event_listener_t tel;
   RTCDateTime time;
   struct tm ltime;
-  // time_t epoch = 1443110745;
-  // uint32_t testaddress;
-  int i;
 
   /*
    * System initializations.
@@ -135,85 +139,87 @@ int main(void) {
 
   // Board Specific Initilizations
   console_init();
-  for (i=0;i<3;i++) {
-    writeEpochDataWord(getFirstFreeEpoch(),i);
-  }
-  printEpochData();
-  chprintf((BaseSequentialStream*)&SD2,"myvar=%d\n",myvar);
-  myvar++;
-  adxl362_init();
 
-
-  /* rtcGetTime(&RTCD1, &time); */
-  /* chprintf((BaseSequentialStream*)&SD2,"\n\r"); */
-  /* chprintf((BaseSequentialStream*)&SD2,"date = %d\n\r",time.year); */
-  /* chprintf((BaseSequentialStream*)&SD2,"month = %d\n\r",time.month); */
-  /* chprintf((BaseSequentialStream*)&SD2,"dst flag = %d\n\r",time.dstflag); */
-  /* chprintf((BaseSequentialStream*)&SD2,"day of week = %d\n\r",time.dayofweek); */
-  /* chprintf((BaseSequentialStream*)&SD2,"day = %d\n\r",time.day); */
-  /* chprintf((BaseSequentialStream*)&SD2,"milliseconds = %d\n\r",time.millisecond); */
-  /* time.year = 2015 - 1980; */
-  /* rtcSetTime(&RTCD1, &time); */
-  /* rtcGetTime(&RTCD1, &time); */
-  /* chprintf((BaseSequentialStream*)&SD2,"\n\r"); */
-  /* chprintf((BaseSequentialStream*)&SD2,"date = %d\n\r",time.year); */
-  /* chprintf((BaseSequentialStream*)&SD2,"month = %d\n\r",time.month); */
-  /* chprintf((BaseSequentialStream*)&SD2,"dst flag = %d\n\r",time.dstflag); */
-  /* chprintf((BaseSequentialStream*)&SD2,"day of week = %d\n\r",time.dayofweek); */
-  /* chprintf((BaseSequentialStream*)&SD2,"day = %d\n\r",time.day); */
-  /* chprintf((BaseSequentialStream*)&SD2,"milliseconds = %d\n\r",time.millisecond); */
-
-  /* ltime = localtime(&epoch); */
-  /* rtcConvertStructTmToDateTime(ltime, 0, &time); */
-  /* rtcSetTime(&RTCD1, &time); */
+  //print flash, init accel
+  printHourlyData();
+  
+  //get/convert/print current set time
   rtcGetTime(&RTCD1, &time);
-  /* chprintf((BaseSequentialStream*)&SD2,"\n\r"); */
-  /* chprintf((BaseSequentialStream*)&SD2,"date = %d\n\r",time.year); */
-  /* chprintf((BaseSequentialStream*)&SD2,"month = %d\n\r",time.month); */
-  /* chprintf((BaseSequentialStream*)&SD2,"dst flag = %d\n\r",time.dstflag); */
-  /* chprintf((BaseSequentialStream*)&SD2,"day of week = %d\n\r",time.dayofweek); */
-  /* chprintf((BaseSequentialStream*)&SD2,"day = %d\n\r",time.day); */
-  /* chprintf((BaseSequentialStream*)&SD2,"milliseconds = %d\n\r",time.millisecond); */
   rtcConvertDateTimeToStructTm(&time,&ltime, NULL);
   chprintf((BaseSequentialStream*)&SD2,"%s\n\r",asctime(&ltime));
-  /* chprintf((BaseSequentialStream*)&SD2,"data start = %x\n\r",epoch_data); */
-  /* chprintf((BaseSequentialStream*)&SD2,"epoch data[0] = %x\n\r",&epoch_data[0]); */
-  /* chprintf((BaseSequentialStream*)&SD2,"epoch data[MAX_DAYS-1] = %x\n\r",&epoch_data[MAX_DAYS-1]); */
-  /* chprintf((BaseSequentialStream*)&SD2,"delta = %d\n\r",(void *)(&epoch_data[MAX_DAYS-1])-(void *)(&epoch_data[0])+4); */
-  /* chprintf((BaseSequentialStream*)&SD2,"hourly_data[0] = %x\n\r",hourly_data[0]); */
-  /* chprintf((BaseSequentialStream*)&SD2,"epoch data[MAX_DAYS-1] = %x\n\r",hourly_data[(24*MAX_DAYS)-1]); */
-  /* chprintf((BaseSequentialStream*)&SD2,"delta = %d\n\r",(void *)(&hourly_data[(24*MAX_DAYS)-1])-(void *)(&hourly_data[0])+2); */
+  
+  //initialize and enable external interrupts
+  trailRtcInitAlarmSystem();
+  RESET_ALARM;
+  people_count = 0;
 
-  /* /\* chprintf((BaseSequentialStream*)&SD2,"epoch data[0] before = %x\n\r",epoch_data[0]); *\/ */
-  /* FLASH_Unlock(); */
-  /* FLASH_ClearFlag(FLASH_FLAG_EOP | FLASH_FLAG_PGERR | FLASH_FLAG_WRPERR); */
-  /* testaddress = (uint32_t)(&epoch_data[0]); */
-  /* chprintf((BaseSequentialStream*)&SD2,"address = %x, write_status = %d\n\r",testaddress, FLASH_ProgramWord(testaddress,0xA1A2A3A5)); */
-  /* chprintf((BaseSequentialStream*)&SD2,"address = %x, write_status = %d\n\r",testaddress+4, FLASH_ProgramWord(testaddress+4,0x11111111)); */
+  adxl362_init();
 
-  /* FLASH_Lock(); */
-  //  chprintf((BaseSequentialStream*)&SD2,"epoch data[0] after = %x\n\r",epoch_data[0]);
-  /* for (i=0;i<10;i++) { */
-  /*   chprintf((BaseSequentialStream*)&SD2,"%d %x\n\r",i, epoch_data[i]); */
-  /* } */
-  /* for (i=0;i<2;i++) { */
-  /*   chprintf((BaseSequentialStream*)&SD2,"%d %x\n\r",i, epoch_data[i]); */
-  /* } */
+  //chThdSleepMilliseconds(5000);
 
-  /* Initialize the command shell */ 
-  shellInit();
-  /* 
-   *  setup to listen for the shell_terminated event. This setup will be stored in the tel  * event listner structure in item 0
-  */
-  chEvtRegister(&shell_terminated, &tel, 0);
 
-  shelltp1 = shellCreate(&shell_cfg1, sizeof(waShell), NORMALPRIO);
-  chThdCreateStatic(waCounterThread, sizeof(waCounterThread), NORMALPRIO+1, counterThread, NULL);
+    /* Initialize the command shell */ 
+  //shellInit();
+   /* 
+    *  setup to listen for the shell_terminated event. This setup will be stored in the tel  * event listner structure in item 0
+   */
+  //chEvtRegister(&shell_terminated, &tel, 0);
+ 
+  //shelltp1 = shellCreate(&shell_cfg1, sizeof(waShell), NORMALPRIO);
+  //chThdCreateStatic(waCounterThread, sizeof(waCounterThread), NORMALPRIO+1, counterThread, NULL);
 
-  while (TRUE) {
-    chEvtDispatch(fhandlers, chEvtWaitOne(ALL_EVENTS));
+
+  uint32_t hourly_wakeup = (time.millisecond) + (60*60*1000);
+  char tomorrow = ((time.dayofweek) % 7) + 1;
+
+  trailRtcSetAlarm(&RTCD1, 30, &time);
+
+  chThdSleepMilliseconds(1000);
+  while (TRUE){
+    /*Shell Dispatcher */
+    //chEvtDispatch(fhandlers, chEvtWaitOne(ALL_EVENTS));
+
+    //TODO:
+    // rtcSetTime so we are writing proper times
+    // Consider making write to flash function that converts time to uint32
+    //   epochdata saves day and year
+    //   hourlydata saves hours
+    //Test long term time, make sure it's writing proper number of times and that
+    //time isn't getting off balance with real time
+
+
+    //woke up from alarm
+    if (alarm_called) {
+      trailRtcSetAlarm(&RTCD1, 30, &time);
+      if (time.millisecond > hourly_wakeup) {
+	//make a function for this
+	writeHourlyData(getFirstFreeHourly(), (((time.millisecond/(1000*60*60))<<8) | 
+					       ((time.millisecond/(1000*60))%60)) );
+	writeHourlyData(getFirstFreeHourly(), *(&people_count));
+	people_count = 0;
+	hourly_wakeup += (60*60*1000);
+      }
+      if (time.dayofweek == tomorrow) {
+	writeHourlyData(getFirstFreeHourly(), (((time.millisecond/(1000*60*60))<<8) | 
+					       ((time.millisecond/(1000*60))%60)) );
+	writeHourlyData(getFirstFreeHourly(), *(&people_count));
+	writeEpochDataWord(getFirstFreeEpoch(), time.day);
+	people_count = 0;
+	hourly_wakeup = (time.millisecond) + (60*60*1000);
+	tomorrow = ((time.dayofweek) % 7) + 1;
+      } 
+      RESET_ALARM;
+    }
+    
+    //rtcConvertDateTimeToStructTm(&time,&ltime, NULL);
+    //chprintf((BaseSequentialStream*)&SD2,"Current time:%s\n\r",asctime(&ltime));
+
+    PWR_EnterSTOPMode( ((uint32_t)0x00000001), PWR_STOPEntry_WFI);
   }
- }
+  //return 0;
+
+
+}
 
 
 /* main.c ends here */

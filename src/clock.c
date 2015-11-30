@@ -48,6 +48,110 @@
 #include <stdarg.h>
 #include <time.h>
 
+
+/* Implementation of External Interrupts */
+
+volatile int alarm_called;
+volatile uint16_t people_count;
+
+/** Callback for Accelerometer Wakeup **/
+static void extcb(EXTDriver *extp, expchannel_t channel) {
+  (void)extp;
+  (void)channel;
+
+  chSysLockFromISR();
+  people_count++;
+  //stm32_clock_init();
+  chSysUnlockFromISR();
+}
+
+
+/** Callback for ALARM wakeup **/
+static void extcb1(EXTDriver *extp, expchannel_t channel) {
+  (void)extp;
+  (void)channel;
+
+  chSysLockFromISR();
+  //power consumption and additional time need to be tested
+  //also make sure all functionality remains the same
+  //stm32_clock_init();
+  alarm_called = 1;
+  chSysUnlockFromISR();
+}
+
+EXTConfig trailExtcfg = {
+  {
+    {EXT_CH_MODE_DISABLED, NULL},
+    // Enable interrupt on PA1 from the accelerometer
+    {EXT_CH_MODE_RISING_EDGE | EXT_CH_MODE_AUTOSTART | EXT_MODE_GPIOA, extcb},
+    {EXT_CH_MODE_DISABLED, NULL},
+    {EXT_CH_MODE_DISABLED, NULL},
+    {EXT_CH_MODE_DISABLED, NULL},
+    {EXT_CH_MODE_DISABLED, NULL},
+    {EXT_CH_MODE_DISABLED, NULL},
+    {EXT_CH_MODE_DISABLED, NULL},
+    {EXT_CH_MODE_DISABLED, NULL},
+    {EXT_CH_MODE_DISABLED, NULL},
+    {EXT_CH_MODE_DISABLED, NULL},
+    {EXT_CH_MODE_DISABLED, NULL},
+    {EXT_CH_MODE_DISABLED, NULL},
+    {EXT_CH_MODE_DISABLED, NULL},
+    {EXT_CH_MODE_DISABLED, NULL},
+    {EXT_CH_MODE_DISABLED, NULL},
+    {EXT_CH_MODE_DISABLED, NULL},
+    // Enable interrupt from the RTC alarm
+    {EXT_CH_MODE_RISING_EDGE | EXT_CH_MODE_AUTOSTART | EXT_MODE_GPIOA , extcb1},
+    {EXT_CH_MODE_DISABLED, NULL},
+    {EXT_CH_MODE_DISABLED, NULL},
+    {EXT_CH_MODE_DISABLED, NULL},
+    {EXT_CH_MODE_DISABLED, NULL},
+    {EXT_CH_MODE_DISABLED, NULL}
+  }
+};
+
+/* End Interrupt */
+
+static uint8_t RTC_ByteToBcd2(uint8_t Value)
+{
+  uint8_t bcdhigh = 0;
+  
+  while (Value >= 10)
+  {
+    bcdhigh++;
+    Value -= 10;
+  }
+
+  return  ((uint8_t)(bcdhigh << 4) | Value);
+}
+
+void trailRtcInitAlarmSystem(void)
+{
+  extStart(&EXTD1, &trailExtcfg);
+  extChannelEnable(&EXTD1, EXT_MODE_GPIOA);
+}
+
+void trailRtcSetAlarm(RTCDriver *rtcp, uint8_t offset, RTCDateTime *time)
+{
+  uint8_t i;
+  RTCAlarm alarmspec;
+
+  //reset the alarms
+  rtcSetAlarm(rtcp, 0, NULL);
+  rtcSetAlarm(rtcp, 1, NULL);
+
+  //Get the current time
+  rtcGetTime(&RTCD1, time);
+
+  //get seconsd, add offset, make it a possible seconds value
+  i = ((time->millisecond/1000) + offset) % 60;
+
+  alarmspec.alrmr = (((uint32_t)(RTC_ByteToBcd2(i))) | \
+		     ((uint32_t)(0x31) << 24)        | \
+		     ((uint32_t)0x80808000)); 
+
+  rtcSetAlarm(rtcp, 0, &alarmspec);
+}
+
 void cmd_rtcSet(BaseSequentialStream *chp, int argc, char *argv[]) {
   //  int32_t i;
   RTCDateTime time;
@@ -75,8 +179,8 @@ void cmd_rtcRead(BaseSequentialStream *chp, int argc, char *argv[]) {
   (void)argc;
   rtcGetTime(&RTCD1, &time);
   rtcConvertDateTimeToStructTm(&time, &ltime, NULL);
-  asctime_r(&ltime,time_string);
-  chprintf(chp,"%s\n\r",time_string);  
+  //  asctime_r(&ltime,time_string);
+  //chprintf(chp,"%s\n\r",time_string);  
 }
 
 static void anabiosis(void) {

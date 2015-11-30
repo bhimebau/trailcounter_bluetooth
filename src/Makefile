@@ -124,6 +124,7 @@ CSRC = $(STARTUPSRC) \
        console.c \
        clock.c \
        ../STM32F30x_StdPeriph_Driver/src/stm32f30x_flash.c \
+       ../STM32F30x_StdPeriph_Driver/src/stm32f30x_pwr.c \
        flash_data.c \
        adxl362.c \
        main.c
