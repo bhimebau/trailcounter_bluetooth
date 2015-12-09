@@ -165,7 +165,7 @@ int main(void) {
    */
   //chEvtRegister(&shell_terminated, &tel, 0);
  
-  //shelltp1 = shellCreate(&shell_cfg1, sizeof(waShell), NORMALPRIO);
+  // shelltp1 = shellCreate(&shell_cfg1, sizeof(waShell), NORMALPRIO);
   //chThdCreateStatic(waCounterThread, sizeof(waCounterThread), NORMALPRIO+1, counterThread, NULL);
 
 
@@ -175,9 +175,10 @@ int main(void) {
   trailRtcSetAlarm(&RTCD1, 30, &time);
 
   chThdSleepMilliseconds(1000);
+
   while (TRUE){
     /*Shell Dispatcher */
-    //chEvtDispatch(fhandlers, chEvtWaitOne(ALL_EVENTS));
+    // chEvtDispatch(fhandlers, chEvtWaitOne(ALL_EVENTS));
 
     //TODO:
     // rtcSetTime so we are writing proper times
