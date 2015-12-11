@@ -128,7 +128,7 @@ void adxl362_init (void) {
    *  Name:         THRESH_ACT_L
    *  Description:  Holds eight least-significant-bits for thresholding activity detection
    *************/
-  adxl362_write_register(0x20, 0x96);  //was 2C
+  adxl362_write_register(0x20, 0x4B);  //Started at 2C, then 96(12C/2).  
 
   /*************
    *  Address:      0x21
@@ -137,7 +137,7 @@ void adxl362_init (void) {
    *  Description:  Holds three most-significant-bits for thresholding activity detection
    *************/
 
-  adxl362_write_register(0x21, 0);   //was 1.
+  adxl362_write_register(0x21, 0);   //was 1. Then 0. 
 
 
   /*************
