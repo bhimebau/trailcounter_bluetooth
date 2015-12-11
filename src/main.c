@@ -168,10 +168,11 @@ int main(void) {
   // shelltp1 = shellCreate(&shell_cfg1, sizeof(waShell), NORMALPRIO);
   //chThdCreateStatic(waCounterThread, sizeof(waCounterThread), NORMALPRIO+1, counterThread, NULL);
 
-
-  uint32_t hourly_wakeup = (time.millisecond) + (60*60*1000);
+  
+  int alarm_time = (60*10*1000);  //currently 10 minutes
+  uint32_t hourly_wakeup = (time.millisecond) + alarm_time;
   char tomorrow = ((time.dayofweek) % 7) + 1;
-
+  
   trailRtcSetAlarm(&RTCD1, 30, &time);
 
   chThdSleepMilliseconds(1000);
@@ -194,19 +195,15 @@ int main(void) {
       trailRtcSetAlarm(&RTCD1, 30, &time);
       if (time.millisecond > hourly_wakeup) {
 	//make a function for this
-	writeHourlyData(getFirstFreeHourly(), (((time.millisecond/(1000*60*60))<<8) | 
-					       ((time.millisecond/(1000*60))%60)) );
 	writeHourlyData(getFirstFreeHourly(), *(&people_count));
 	people_count = 0;
-	hourly_wakeup += (60*60*1000);
+	hourly_wakeup += alarm_time;
       }
       if (time.dayofweek == tomorrow) {
-	writeHourlyData(getFirstFreeHourly(), (((time.millisecond/(1000*60*60))<<8) | 
-					       ((time.millisecond/(1000*60))%60)) );
 	writeHourlyData(getFirstFreeHourly(), *(&people_count));
 	writeEpochDataWord(getFirstFreeEpoch(), time.day);
 	people_count = 0;
-	hourly_wakeup = (time.millisecond) + (60*60*1000);
+	hourly_wakeup = (time.millisecond) + alarm_time;
 	tomorrow = ((time.dayofweek) % 7) + 1;
       } 
       RESET_ALARM;
