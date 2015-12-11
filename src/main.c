@@ -169,7 +169,7 @@ int main(void) {
   //chThdCreateStatic(waCounterThread, sizeof(waCounterThread), NORMALPRIO+1, counterThread, NULL);
 
   
-  int alarm_time = (60*10*1000);  //currently 10 minutes
+  int alarm_time = (60*5*1000);  //currently 5 minutes
   uint32_t hourly_wakeup = (time.millisecond) + alarm_time;
   char tomorrow = ((time.dayofweek) % 7) + 1;
   
