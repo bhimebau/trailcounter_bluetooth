@@ -34,8 +34,8 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f30x_pwr.h"
+// #include "stm32f30x_rcc.h"
 
-//#include "stm32f30x_rcc.h"
 #define RCC_APB1Periph_PWR               ((uint32_t)0x10000000)
 #define assert_param(x)
 
@@ -101,11 +101,11 @@
   * @param  None
   * @retval None
   */
-void PWR_DeInit(void)
-{
-  RCC_APB1PeriphResetCmd(RCC_APB1Periph_PWR, ENABLE);
-  RCC_APB1PeriphResetCmd(RCC_APB1Periph_PWR, DISABLE);
-}
+/* void PWR_DeInit(void) */
+/* { */
+/*   RCC_APB1PeriphResetCmd(RCC_APB1Periph_PWR, ENABLE); */
+/*   RCC_APB1PeriphResetCmd(RCC_APB1Periph_PWR, DISABLE); */
+/* } */
 
 /**
   * @brief  Enables or disables access to the RTC and backup registers.

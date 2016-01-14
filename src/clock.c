@@ -171,7 +171,8 @@ void cmd_rtcSet(BaseSequentialStream *chp, int argc, char *argv[]) {
 
 void cmd_rtcRead(BaseSequentialStream *chp, int argc, char *argv[]) {
   //  int32_t i;
-  char time_string[50];
+  // char time_string[50];
+  (void) chp;
 
   RTCDateTime time;
   struct tm ltime;
@@ -198,6 +199,8 @@ void cmd_enableWakeup(BaseSequentialStream *chp, int argc, char *argv[]) {
   /* rtcSetAlarm(&RTCD1,0,NULL); */
   /* rtcSetAlarm(&RTCD1,1,NULL); */
  
+  (void) argc;
+  (void) chp;
   static RTCWakeup wakeupspec;
   int wakeupPeriodSec = 1;
   

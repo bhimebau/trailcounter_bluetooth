@@ -76,6 +76,8 @@ static void cmd_stop(BaseSequentialStream *chp, int argc, char *argv[]) {
 }
 
 static void cmd_r_data(BaseSequentialStream *chp, int argc, char *argv[]) {
+  (void) argc;
+  (void) argv;
   adxl362_read_register(0x0B);       /* */
   chprintf(chp, "alarm_called = %d\r\n", alarm_called);
   //RESET_ALARM;
@@ -101,7 +103,7 @@ static const ShellConfig shell_cfg1 = {
   commands
 };
 
-static void termination_handler(eventid_t id) {
+void termination_handler(eventid_t id) {
 
   (void)id;
   chprintf((BaseSequentialStream*)&SD2, "Shell Died\n\r");
@@ -114,16 +116,15 @@ static void termination_handler(eventid_t id) {
   }
 }
 
-static evhandler_t fhandlers[] = {
-  termination_handler
-};
-
+/* static evhandler_t fhandlers[] = { */
+/*   termination_handler */
+/* }; */
 
 /*
  * Application entry point.
  */
 int main(void) {
-  event_listener_t tel;
+  // event_listener_t tel;
   RTCDateTime time;
   struct tm ltime;
 

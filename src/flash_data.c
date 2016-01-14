@@ -53,8 +53,12 @@
 //volatile uint32_t epoch_data[MAX_DAYS] __attribute__((section (".rodata"))) = { [0 ... MAX_DAYS-1] = 0xFFFFFFFF};
 //volatile uint16_t hourly_data[24*MAX_DAYS] __attribute__((section (".rodata"))) = { [0 ... (24*MAX_DAYS)-1] = 0xFFFF};
 
-volatile uint32_t epoch_data[MAX_DAYS] __attribute__((section (".rodata"))) = { [0 ... MAX_DAYS-1] = 0xFFFFFFFF};
-volatile uint16_t hourly_data[2*24*MAX_DAYS] __attribute__((section (".rodata"))) = { [0 ... (24*MAX_DAYS)-1] = 0xFFFF};
+/* volatile uint32_t epoch_data[MAX_DAYS] __attribute__((section (".rodata"))) = { [0 ... MAX_DAYS-1] = 0xFFFFFFFF}; */
+/* volatile uint16_t hourly_data[2*24*MAX_DAYS] __attribute__((section (".rodata"))) = { [0 ... (24*MAX_DAYS)-1] = 0xFFFF}; */
+
+// Adding a specific flash_rw_data section. 
+volatile uint32_t epoch_data[MAX_DAYS] __attribute__((section (".bryce_fdata"))) = { [0 ... MAX_DAYS-1] = 0xFFFFFFFF};
+volatile uint16_t hourly_data[2*24*MAX_DAYS] __attribute__((section (".bryce_fdata"))) = { [0 ... (24*MAX_DAYS)-1] = 0xFFFF};
 
 void writeEpochDataWord(int epoch_array_index, int data) {
   FLASH_Unlock();

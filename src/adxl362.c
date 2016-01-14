@@ -52,9 +52,10 @@ static SPIConfig adxl362_cfg = {
 };
 
 void cmd_reg(BaseSequentialStream *chp, int argc, char *argv[]) {
+  (void) argc;
   (void)argv;
   int i = 0x00;
-  for(i; i<0x2F; i++){
+  for(i=0; i<0x2F; i++){
     chprintf(chp, "Register 0x%x: 0x%x\t",i, adxl362_read_register(i));
     if (!(i%3))     chprintf(chp, "\n\r");
   }
@@ -63,7 +64,7 @@ void cmd_reg(BaseSequentialStream *chp, int argc, char *argv[]) {
 void cmd_xyz(BaseSequentialStream *chp, int argc, char *argv[]) {
 
   (void)argv;(void)argc; (void)argv;
-  int i=0;
+  //int i=0;
   //for(i; i<10; i++){
    while(1){
      //if( adxl362_read_register(0x0B)==0x41 ){
@@ -75,7 +76,7 @@ void cmd_xyz(BaseSequentialStream *chp, int argc, char *argv[]) {
 
 uint8_t adxl362_read_register (uint8_t address) {
   uint8_t command = 0x0B;
-  uint8_t dummy = 0x00;
+  //uint8_t dummy = 0x00;
   uint8_t receive_data;
 
   spiStart(&SPID1, &adxl362_cfg);       /* Setup transfer parameters. */
@@ -421,10 +422,11 @@ void cmd_adxl362_read(BaseSequentialStream *chp, int argc, char *argv[]) {
 
 void cmd_read_all(BaseSequentialStream *chp, int argc, char *argv[]) {
   (void)argv;
+  (void)argc;
   int address = 0x08;
   uint8_t output[3];
   int count=0;
-  for(address; address<0x0B; address++){
+  for(address=0x08; address<0x0B; address++){
     output[count] = adxl362_read_register(address);
     //returns all values of accel
     chprintf(chp, "%d: %d", count, output[count]);
