@@ -1,0 +1,34 @@
+=== ACCURACY TEST 1 (150 DELTA) ==
+index=0,data=1483
+index=1,data=35		ACTUAL : 92
+index=2,data=65  	ACTUAL :118 
+ Dec 11 14:42:11 2015
+
+ Dec 11 14:42:18 2015
+
+ ---- Conclusion: NSE (not sensitive enough)
+
+
+== ACCURACY TEST 2 (75 DELTA) ==
+
+index=0,data=1801
+index=1,data=57		ACTUAL : 37
+index=2,data=175        ACTUAL : 57
+
+-- Conclusion: TS (too sensitive)
+
+Dec 11 15:30:18 2015
+
+
+== ACCURACY TEST 3 (115 DELTA)index=0,data=1801 ==
+
+index=0,data=727
+index=1,data=869
+index=2,data=12		ACTUAL : 23
+index=3,data=4		ACTUAL : 9
+index=4,data=1245
+
+Dec 11 16:08:24 2015
+
+ ---- Conclusion: NSE
+
