@@ -170,8 +170,8 @@ void cmd_rtcSet(BaseSequentialStream *chp, int argc, char *argv[]) {
 }
 
 void cmd_rtcRead(BaseSequentialStream *chp, int argc, char *argv[]) {
-  //  int32_t i;
-  // char time_string[50];
+  int32_t i;
+  char time_string[50];
   (void) chp;
 
   RTCDateTime time;
@@ -180,8 +180,8 @@ void cmd_rtcRead(BaseSequentialStream *chp, int argc, char *argv[]) {
   (void)argc;
   rtcGetTime(&RTCD1, &time);
   rtcConvertDateTimeToStructTm(&time, &ltime, NULL);
-  //  asctime_r(&ltime,time_string);
-  //chprintf(chp,"%s\n\r",time_string);  
+  asctime_r(&ltime,time_string);
+  chprintf(chp,"%s\n\r",time_string);  
 }
 
 static void anabiosis(void) {

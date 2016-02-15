@@ -45,8 +45,8 @@
 /* SPI configuration, sets up PortA Bit 8 as the chip select for the adxl362 */
 static SPIConfig adxl362_cfg = {
   NULL,
-  GPIOB,
-  6,
+  GPIOC,
+  5,
   SPI_CR1_BR_2 | SPI_CR1_BR_1 | SPI_CR1_BR_0, 
   0
 };
@@ -107,8 +107,10 @@ void adxl362_init (void) {
   palSetPadMode(GPIOA, 5, PAL_MODE_ALTERNATE(5));     /* SCK. */
   palSetPadMode(GPIOA, 6, PAL_MODE_ALTERNATE(5));     /* MISO.*/
   palSetPadMode(GPIOA, 7, PAL_MODE_ALTERNATE(5));     /* MOSI.*/
-  palSetPadMode(GPIOB, 6, PAL_MODE_OUTPUT_PUSHPULL);  /* adxl362 chip select */
-  palSetPad(GPIOB, 6);                                /* Deassert the adxl362 chip select */
+  //  palSetPadMode(GPIOB, 6, PAL_MODE_OUTPUT_PUSHPULL);  /* adxl362 chip select */
+  //  palSetPad(GPIOB, 6);                                /* Deassert the adxl362 chip select */
+  palSetPadMode(GPIOC, 5, PAL_MODE_OUTPUT_PUSHPULL);  /* adxl362 chip select */
+  palSetPad(GPIOC, 5);                                /* Deassert the adxl362 chip select */
 
 
   //TODO:  play with activity/inactivity thresholds
