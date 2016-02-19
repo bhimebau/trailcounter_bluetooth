@@ -449,9 +449,8 @@
  *          should be invoked from here.
  * @note    This macro can be used to activate a power saving mode.
  */
-#define CH_CFG_IDLE_ENTER_HOOK() {                                       \
-}
-
+/* #define CH_CFG_IDLE_ENTER_HOOK() {mcu_sleep();} */
+#define CH_CFG_IDLE_ENTER_HOOK() {}
 //  SCB->SCR &= (uint32_t)~((uint32_t)SCB_SCR_SLEEPDEEP_Msk);		\
 //  __WFI();								\
 
@@ -463,8 +462,8 @@
  *          should be invoked from here.
  * @note    This macro can be used to deactivate a power saving mode.
  */
-#define CH_CFG_IDLE_LEAVE_HOOK() {                                          \
-}
+/* #define CH_CFG_IDLE_LEAVE_HOOK() {mcu_wake();} */
+#define CH_CFG_IDLE_LEAVE_HOOK() {}
 
 /**
  * @brief   Idle Loop hook.

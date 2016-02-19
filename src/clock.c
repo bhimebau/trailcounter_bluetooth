@@ -43,6 +43,7 @@
 #include "stm32f30x_flash.h"
 #include "flash_data.h"
 #include "clock.h"
+#include "led.h"
 #include <string.h>
 #include <stdio.h>
 #include <stdarg.h>
@@ -79,32 +80,89 @@ static void extcb1(EXTDriver *extp, expchannel_t channel) {
   chSysUnlockFromISR();
 }
 
+/* Callback for button press */
+static void buttoncb(EXTDriver *extp, expchannel_t channel) {
+  (void)extp;
+  (void)channel;
+  chSysLockFromISR();
+  led_on();
+  chSysUnlockFromISR();
+}
+
+// STM32F303 EXT Interrupt Interface 
 EXTConfig trailExtcfg = {
   {
+    // (0)  Bit 0 
     {EXT_CH_MODE_DISABLED, NULL},
-    // Enable interrupt on PA1 from the accelerometer
+    // (1) Bit 1 Enable interrupt on PA1 from the accelerometer
     {EXT_CH_MODE_RISING_EDGE | EXT_CH_MODE_AUTOSTART | EXT_MODE_GPIOA, extcb},
+    // (2) Bit 2
     {EXT_CH_MODE_DISABLED, NULL},
+    // (3) Bit 3
     {EXT_CH_MODE_DISABLED, NULL},
+    // (4) Bit 4
     {EXT_CH_MODE_DISABLED, NULL},
+    // (5) Bit 5
     {EXT_CH_MODE_DISABLED, NULL},
+    // (6) Bit 6
     {EXT_CH_MODE_DISABLED, NULL},
+    // (7) Bit 7 Enable falling edge of button. 
+    {EXT_CH_MODE_FALLING_EDGE | EXT_CH_MODE_AUTOSTART | EXT_MODE_GPIOC, buttoncb},
+    // (8) Bit 8
     {EXT_CH_MODE_DISABLED, NULL},
+    // (9) Bit 9
     {EXT_CH_MODE_DISABLED, NULL},
+    // (10) Bit 10
     {EXT_CH_MODE_DISABLED, NULL},
+    // (11) Bit 11
     {EXT_CH_MODE_DISABLED, NULL},
+    // (12) Bit 12
     {EXT_CH_MODE_DISABLED, NULL},
+    // (13) Bit 13
     {EXT_CH_MODE_DISABLED, NULL},
+    // (14) Bit 14
     {EXT_CH_MODE_DISABLED, NULL},
+    // (15) Bit 15
     {EXT_CH_MODE_DISABLED, NULL},
+    // (16) PVD Output
     {EXT_CH_MODE_DISABLED, NULL},
-    {EXT_CH_MODE_DISABLED, NULL},
-    // Enable interrupt from the RTC alarm
+    // (17) RTC Alarm: Enable interrupt from the RTC alarm
     {EXT_CH_MODE_RISING_EDGE | EXT_CH_MODE_AUTOSTART | EXT_MODE_GPIOA , extcb1},
+    // (18) USB FS Wakeup
     {EXT_CH_MODE_DISABLED, NULL},
+    // (19) RTC Tamper and Timestamps
     {EXT_CH_MODE_DISABLED, NULL},
+    // (20) RTC Wakeup 
     {EXT_CH_MODE_DISABLED, NULL},
+    // (21) Comparator 1 output
     {EXT_CH_MODE_DISABLED, NULL},
+    // (22) Comparator 2 output
+    {EXT_CH_MODE_DISABLED, NULL},
+    // (23) 12C1 Wakeup
+    {EXT_CH_MODE_DISABLED, NULL},
+    // (24) I2C2 Wakeup 
+    {EXT_CH_MODE_DISABLED, NULL},
+    // (25) USART1 Wakeup
+    {EXT_CH_MODE_DISABLED, NULL},
+    // (26) USART2 Wakeup
+    {EXT_CH_MODE_DISABLED, NULL},
+    // (27) Reserved
+    {EXT_CH_MODE_DISABLED, NULL},
+    // (28) USART3 Wakeup
+    {EXT_CH_MODE_DISABLED, NULL},
+    // (29) Comparator 3 output
+    {EXT_CH_MODE_DISABLED, NULL},
+    // (30) Comparator 4 output 
+    {EXT_CH_MODE_DISABLED, NULL},
+    // (31) Comparator 5 output 
+    {EXT_CH_MODE_DISABLED, NULL},
+    // (32) Comparator 6 output 
+    {EXT_CH_MODE_DISABLED, NULL},
+    // (33) Comparator 7 output 
+    {EXT_CH_MODE_DISABLED, NULL},
+    // (34) UART 4 wakeup
+    {EXT_CH_MODE_DISABLED, NULL},
+    // (35) UART 5 wakeup 
     {EXT_CH_MODE_DISABLED, NULL}
   }
 };
@@ -170,7 +228,7 @@ void cmd_rtcSet(BaseSequentialStream *chp, int argc, char *argv[]) {
 }
 
 void cmd_rtcRead(BaseSequentialStream *chp, int argc, char *argv[]) {
-  int32_t i;
+  //  int32_t i;
   char time_string[50];
   (void) chp;
 
@@ -184,14 +242,14 @@ void cmd_rtcRead(BaseSequentialStream *chp, int argc, char *argv[]) {
   chprintf(chp,"%s\n\r",time_string);  
 }
 
-static void anabiosis(void) {
-  chSysLock();
-  SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
-  PWR->CR  |= (PWR_CR_PDDS | PWR_CR_LPDS | PWR_CR_CSBF | PWR_CR_CWUF);
-  RTC->ISR &= ~(RTC_ISR_ALRBF | RTC_ISR_ALRAF | RTC_ISR_WUTF | RTC_ISR_TAMP1F |
-                RTC_ISR_TSOVF | RTC_ISR_TSF);
-  __WFI();
-}
+/* static void anabiosis(void) { */
+/*   chSysLock(); */
+/*   SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk; */
+/*   PWR->CR  |= (PWR_CR_PDDS | PWR_CR_LPDS | PWR_CR_CSBF | PWR_CR_CWUF); */
+/*   RTC->ISR &= ~(RTC_ISR_ALRBF | RTC_ISR_ALRAF | RTC_ISR_WUTF | RTC_ISR_TAMP1F | */
+/*                 RTC_ISR_TSOVF | RTC_ISR_TSF); */
+/*   __WFI(); */
+/* } */
 
 void cmd_enableWakeup(BaseSequentialStream *chp, int argc, char *argv[]) {
   /* RTCAlarm alarmspec; */

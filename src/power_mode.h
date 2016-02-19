@@ -35,7 +35,12 @@
 /* Code: */
 
 void power_enter_sleep_mode(void);
+void mcu_sleep(void);
+void mcu_wake(void);
+void DeepSleepDisableI(bool);
+void SleepNextIdleI(bool clock_init);
 
-
+extern int ClockInited;
+extern int SleepThreadCounter;
 
 /* power_mode.h ends here */

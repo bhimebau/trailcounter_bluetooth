@@ -39,7 +39,7 @@
 
 void button_init(void) {
   palSetPadMode(GPIOC, 7, PAL_MODE_INPUT_PULLUP);
-  palSetPad(GPIOC, 9);
+  // palSetPad(GPIOC, 9);
 }
 
 uint8_t button_read(void) {
