@@ -1,42 +1,42 @@
-/* flash_data.c --- 
- * 
+/* flash_data.c ---
+ *
  * Filename: flash_data.c
- * Description: 
+ * Description:
  * Author: Bryce Himebaugh
- * Maintainer: 
+ * Maintainer:
  * Created: Fri Sep 25 17:00:38 2015
- * Last-Updated: 
- *           By: 
+ * Last-Updated:
+ *           By:
  *     Update #: 0
- * Keywords: 
- * Compatibility: 
- * 
+ * Keywords:
+ * Compatibility:
+ *
  */
 
-/* Commentary: 
- * 
- * 
- * 
+/* Commentary:
+ *
+ *
+ *
  */
 
 /* Change log:
- * 
- * 
+ *
+ *
  */
 
-/* Copyright (c) 2004-2007 The Trustees of Indiana University and 
- * Indiana University Research and Technology Corporation.  
- * 
- * All rights reserved. 
- * 
- * Additional copyrights may follow 
+/* Copyright (c) 2004-2007 The Trustees of Indiana University and
+ * Indiana University Research and Technology Corporation.
+ *
+ * All rights reserved.
+ *
+ * Additional copyrights may follow
  */
 
 /* Code: */
 #include "ch.h"
 #include "hal.h"
 #include "test.h"
-#include "shell.h" 
+#include "shell.h"
 #include "chprintf.h"
 #include <chstreams.h>
 #include "console.h"
@@ -56,7 +56,7 @@
 /* volatile uint32_t epoch_data[MAX_DAYS] __attribute__((section (".rodata"))) = { [0 ... MAX_DAYS-1] = 0xFFFFFFFF}; */
 /* volatile uint16_t hourly_data[2*24*MAX_DAYS] __attribute__((section (".rodata"))) = { [0 ... (24*MAX_DAYS)-1] = 0xFFFF}; */
 
-// Adding a specific flash_rw_data section. 
+// Adding a specific flash_rw_data section.
 volatile uint32_t epoch_data[MAX_DAYS] __attribute__((section (".bryce_fdata"))) = { [0 ... MAX_DAYS-1] = 0xFFFFFFFF};
 volatile uint16_t hourly_data[2*24*MAX_DAYS] __attribute__((section (".bryce_fdata"))) = { [0 ... (24*MAX_DAYS)-1] = 0xFFFF};
 
@@ -80,7 +80,7 @@ int getFirstFreeEpoch(void) {
     if (epoch_data[i] == 0xFFFFFFFF) {
       break;
     }
-  } 
+  }
   return i;
 }
 
@@ -91,7 +91,7 @@ int getFirstFreeHourly(void) {
     if (hourly_data[i] == 0xFFFF) {
       break;
     }
-  } 
+  }
   return i;
 }
 
@@ -102,9 +102,9 @@ int printEpochData(void) {
       break;
     }
     else {
-      chprintf((BaseSequentialStream*)&SD2,"index=%d,data=%d\n\r",i,epoch_data[i]);
+      chprintf((BaseSequentialStream*)&SD2,"index=%d,data=%d\n",i,epoch_data[i]);
     }
-  } 
+  }
   return i;
 }
 
@@ -115,9 +115,9 @@ int printHourlyData(void) {
       break;
     }
     else {
-      chprintf((BaseSequentialStream*)&SD2,"index=%d,data=%d\n\r",i,hourly_data[i]);
+      chprintf((BaseSequentialStream*)&SD2,"index=%d,data=%d\n",i,hourly_data[i]);
     }
-  } 
+  }
   return i;
 }
 

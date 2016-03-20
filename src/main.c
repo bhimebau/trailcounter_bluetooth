@@ -1,41 +1,41 @@
-/* main.c --- 
- * 
+/* main.c ---
+ *
  * Filename: main.c
- * Description: 
+ * Description:
  * Author: Bryce Himebaugh
- * Maintainer: 
+ * Maintainer:
  * Created: Sun Sep 20 09:32:19 2015
- * Last-Updated: 
- *           By: 
+ * Last-Updated:
+ *           By:
  *     Update #: 0
- * Keywords: 
- * Compatibility: 
- * 
+ * Keywords:
+ * Compatibility:
+ *
  */
 
-/* Commentary: 
- * 
- * 
- * 
+/* Commentary:
+ *
+ *
+ *
  */
 
 /* Change log:
- * 
- * 
+ *
+ *
  */
 
-/* Copyright (c) 2014-2015 Analog Computing Solutions  
- * 
- * All rights reserved. 
- * 
- * Additional copyrights may follow 
+/* Copyright (c) 2014-2015 Analog Computing Solutions
+ *
+ * All rights reserved.
+ *
+ * Additional copyrights may follow
  */
 
 /* Code: */
 #include "ch.h"
 #include "hal.h"
 #include "test.h"
-#include "shell.h" 
+#include "shell.h"
 #include "chprintf.h"
 #include <chstreams.h>
 #include "console.h"
@@ -52,7 +52,7 @@
 #include <time.h>
 
 static virtual_timer_t periodic_tim_int;
-static semaphore_t time2run; 
+static semaphore_t time2run;
 
 #define UNUSED(x) (void)(x)
 
@@ -74,8 +74,8 @@ static THD_FUNCTION(PeriodicTask,arg) {
   while (TRUE) {
     chSemWait(&time2run);
     // chprintf((BaseSequentialStream*)&SD2,"T");
-    PWR_EnterSleepMode(PWR_SLEEPEntry_WFI); 
-    //    power_enter_sleep_mode();
+    PWR_EnterSleepMode(PWR_SLEEPEntry_WFI);
+    // power_enter_sleep_mode();
     // chprintf((BaseSequentialStream*)&SD2,"S");
   }
 }
@@ -89,28 +89,27 @@ static thread_t *countertp1;
 static void cmd_myecho(BaseSequentialStream *chp, int argc, char *argv[]) {
   int32_t i;
 
-  (void)argv;
-
-  for (i=0;i<argc;i++) {
+  for (i = 0; i < argc; i++) {
     chprintf(chp, "%s\n\r", argv[i]);
   }
   //chprintf(chp, "%d\n\r", global_track);
 }
 
 static void cmd_stop(BaseSequentialStream *chp, int argc, char *argv[]) {
-  (void)chp; (void)argc; (void)argv; 
+  (void)argc;
+  (void)argv;
 
   chprintf(chp, "stopping...\r\n");
   chThdSleepMilliseconds(200);
 
   PWR_EnterSTOPMode(((uint32_t)0x00000001), ((uint8_t)0x01));
- 
 }
 
 static void cmd_r_data(BaseSequentialStream *chp, int argc, char *argv[]) {
   (void) argc;
   (void) argv;
-  adxl362_read_register(0x0B);       /* */
+
+  adxl362_read_register(0x0B);
   chprintf(chp, "alarm_called = %d\r\n", alarm_called);
   //RESET_ALARM;
 }
@@ -136,13 +135,14 @@ static const ShellConfig shell_cfg1 = {
 };
 
 void termination_handler(eventid_t id) {
-
   (void)id;
+
   chprintf((BaseSequentialStream*)&SD2, "Shell Died\n\r");
 
   if (shelltp1 && chThdTerminatedX(shelltp1)) {
     chThdWait(shelltp1);
-    chprintf((BaseSequentialStream*)&SD2, "Restarting from termination handler\n\r");
+    chprintf((BaseSequentialStream*)&SD2,
+      "Restarting from termination handler\n\r");
     chThdSleepMilliseconds(100);
     shelltp1 = shellCreate(&shell_cfg1, sizeof(waShell), NORMALPRIO);
   }
@@ -182,12 +182,12 @@ int main(void) {
 
   //print flash, init accel
   printHourlyData();
-  
+
   //get/convert/print current set time
   rtcGetTime(&RTCD1, &time);
   rtcConvertDateTimeToStructTm(&time,&ltime, NULL);
   chprintf((BaseSequentialStream*)&SD2,"%s\n\r",asctime(&ltime));
-  
+
   //initialize and enable external interrupts
   trailRtcInitAlarmSystem();
   RESET_ALARM;
@@ -202,30 +202,31 @@ int main(void) {
   //  chThdSleepMilliseconds(1000);
   chVTObjectInit(&periodic_tim_int); // Initialize the periodic timer
   chVTSet(&periodic_tim_int, MS2ST(2000), periodic_int_func, NULL);
-  
+
   //chThdSleepMilliseconds(5000);
 
 
-  /* Initialize the command shell */ 
+  /* Initialize the command shell */
   // shellInit();
-  /* 
+  /*
    *  setup to listen for the shell_terminated event. This setup will be stored in the tel  * event listner structure in item 0
    */
   // chEvtRegister(&shell_terminated, &tel, 0);
- 
+
   shelltp1 = shellCreate(&shell_cfg1, sizeof(waShell), NORMALPRIO);
   //chThdRelease(shelltp1);
   // chThdCreateStatic(waCounterThread, sizeof(waCounterThread), NORMALPRIO+1, counterThread, NULL);
-  chThdCreateStatic(waPeriodicTask, sizeof(waPeriodicTask), NORMALPRIO+1, PeriodicTask, NULL);
+  chThdCreateStatic(waPeriodicTask, sizeof(waPeriodicTask), NORMALPRIO+1,
+    PeriodicTask, NULL);
 
   //chThdRelease(countertp1);
-  
+
   /* int alarm_time = (60*5*1000);  //currently 5 minutes */
   /* uint32_t hourly_wakeup = (time.millisecond) + alarm_time; */
   /* char tomorrow = ((time.dayofweek) % 7) + 1; */
-  
+
   // trailRtcSetAlarm(&RTCD1, 30, &time);
-  
+
   while(TRUE) {
     //     chEvtDispatch(fhandlers, chEvtWaitOne(ALL_EVENTS));
     chThdSleepMilliseconds(4000);

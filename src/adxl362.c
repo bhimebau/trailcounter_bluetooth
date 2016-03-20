@@ -1,35 +1,35 @@
-/* adxl362.c --- 
- * 
+/* adxl362.c ---
+ *
  * Filename: adxl362.c
- * Description: 
+ * Description:
  * Author: Bryce Himebaugh
- * Maintainer: 
+ * Maintainer:
  * Created: Thu Oct  1 15:28:36 2015
- * Last-Updated: 
- *           By: 
+ * Last-Updated:
+ *           By:
  *     Update #: 0
- * Keywords: 
- * Compatibility: 
- * 
+ * Keywords:
+ * Compatibility:
+ *
  */
 
-/* Commentary: 
- * 
- * 
- * 
+/* Commentary:
+ *
+ *
+ *
  */
 
 /* Change log:
- * 
- * 
+ *
+ *
  */
 
-/* Copyright (c) 2004-2007 The Trustees of Indiana University and 
- * Indiana University Research and Technology Corporation.  
- * 
- * All rights reserved. 
- * 
- * Additional copyrights may follow 
+/* Copyright (c) 2004-2007 The Trustees of Indiana University and
+ * Indiana University Research and Technology Corporation.
+ *
+ * All rights reserved.
+ *
+ * Additional copyrights may follow
  */
 
 /* Code: */
@@ -47,36 +47,43 @@ static SPIConfig adxl362_cfg = {
   NULL,
   GPIOC,
   5,
-  SPI_CR1_BR_2 | SPI_CR1_BR_1 | SPI_CR1_BR_0, 
+  SPI_CR1_BR_2 | SPI_CR1_BR_1 | SPI_CR1_BR_0,
   0
 };
 
+// Prints the value of all registers from 0x00 to 0x2F.
 void cmd_reg(BaseSequentialStream *chp, int argc, char *argv[]) {
   (void) argc;
-  (void)argv;
-  int i = 0x00;
-  for(i=0; i<0x2F; i++){
-    chprintf(chp, "Register 0x%x: 0x%x\t",i, adxl362_read_register(i));
-    if (!(i%3))     chprintf(chp, "\n\r");
+  (void) argv;
+
+  int i;
+  for(i = 0x00; i < 0x2F; i++){
+    chprintf(chp, "Register 0x%02x: 0x%02x\t", i, adxl362_read_register(i));
+    if ((i % 3) == 0) {
+      chprintf(chp, "\n\r");
+    }
   }
 }
 
+// Infinitely prints x, y, z coordinate values and activity level.
 void cmd_xyz(BaseSequentialStream *chp, int argc, char *argv[]) {
+  (void) argc;
+  (void) argv;
 
-  (void)argv;(void)argc; (void)argv;
-  //int i=0;
-  //for(i; i<10; i++){
-   while(1){
-     //if( adxl362_read_register(0x0B)==0x41 ){
-     // chprintf(chp, "INTERRUPT /n/r");
-     //  }*/
-    chprintf(chp, "X: %d, Y:%d, Z:%d ACT:%x \r\n",  adxl362_read_register(0x08), adxl362_read_register(0x09),  adxl362_read_register(0x0A), adxl362_read_register(0x0B) );
-     }
+  while(1){
+    // if( adxl362_read_register(0x0B)==0x41 ){
+    //   chprintf(chp, "INTERRUPT /n/r");
+    // }
+    chprintf(chp, "X: %d, Y:%d, Z:%d ACT:%x \r\n",
+      adxl362_read_register(0x08),
+      adxl362_read_register(0x09),
+      adxl362_read_register(0x0A),
+      adxl362_read_register(0x0B));
+    }
 }
 
 uint8_t adxl362_read_register (uint8_t address) {
   uint8_t command = 0x0B;
-  //uint8_t dummy = 0x00;
   uint8_t receive_data;
 
   spiStart(&SPID1, &adxl362_cfg);       /* Setup transfer parameters. */
@@ -94,14 +101,15 @@ void adxl362_write_register (uint16_t address, uint8_t data) {
   spiStart(&SPID1, &adxl362_cfg);      /* Setup transfer parameters. */
   spiSelect(&SPID1);                   /* Slave Select assertion.    */
   spiSend(&SPID1, 1, &command);        /* Write Command              */
-  spiSend(&SPID1, 1, &address);        /* Address                    */ 
+  spiSend(&SPID1, 1, &address);        /* Address                    */
   spiSend(&SPID1, 1, &data);           /* Data                       */
   spiUnselect(&SPID1);                 /* Slave Select de-assertion. */
 }
 
+
+// Initializes adxl, but also importantly sets activity level threshold.
 void adxl362_init (void) {
   //Read 0x0B status bit to reset interrupt
-
 
   // Pin Initializations
   palSetPadMode(GPIOA, 5, PAL_MODE_ALTERNATE(5));     /* SCK. */
@@ -111,7 +119,6 @@ void adxl362_init (void) {
   //  palSetPad(GPIOB, 6);                                /* Deassert the adxl362 chip select */
   palSetPadMode(GPIOC, 5, PAL_MODE_OUTPUT_PUSHPULL);  /* adxl362 chip select */
   palSetPad(GPIOC, 5);                                /* Deassert the adxl362 chip select */
-
 
   //TODO:  play with activity/inactivity thresholds
   //TODO:  compare linked vs default modes vs LOOP(current)
@@ -131,7 +138,7 @@ void adxl362_init (void) {
    *  Name:         THRESH_ACT_L
    *  Description:  Holds eight least-significant-bits for thresholding activity detection
    *************/
-  adxl362_write_register(0x20, 0x5A);  //Started at 2C, then 96(12C/2).  4B was too sensitive. 73 was too high. 
+  adxl362_write_register(0x20, 0x5A);  //Started at 2C, then 96(12C/2).  4B was too sensitive. 73 was too high.
 
   /*************
    *  Address:      0x21
@@ -140,7 +147,7 @@ void adxl362_init (void) {
    *  Description:  Holds three most-significant-bits for thresholding activity detection
    *************/
 
-  adxl362_write_register(0x21, 0);   //was 1. Then 0. 
+  adxl362_write_register(0x21, 0);   //was 1. Then 0.
 
 
   /*************
@@ -150,7 +157,7 @@ void adxl362_init (void) {
    *  Description:  The amount of time that activity must persist to trigger activity detection
    *                0x00 or 0x01 both only require a single sample to be above threshold
    *************/
-  adxl362_write_register(0x22, 0xA);  //10 Samples  
+  adxl362_write_register(0x22, 0xA);  //10 Samples
 
   /*************
    *  Address:      0x23
@@ -158,7 +165,7 @@ void adxl362_init (void) {
    *  Name:         THRESH_INACT_L
    *  Description:  Holds eight least-significant bits for thresholding inactivity detection
    *************/
-  adxl362_write_register(0x23, 0x50);  
+  adxl362_write_register(0x23, 0x50);
 
 
   /*************
@@ -168,41 +175,41 @@ void adxl362_init (void) {
    *  Description:  Holds three most-significant bits for thresholding inactivity detection
    *************/
 
-  adxl362_write_register(0x24, 0);   
+  adxl362_write_register(0x24, 0);
 
   /*************
    *  Address:      0x25
    *  Reset:        0x00
    *  Name:         TIME_INACT_L
-   *  Description:  The eight least-significant bits corresponding to the amount of time 
+   *  Description:  The eight least-significant bits corresponding to the amount of time
    *                that inactivity must persist to trigger inactivity detection
    *************/
 
   //set to zero because we are trying not to use it (probably still does something)
-  adxl362_write_register(0x25, 0);  
-  //adxl362_write_register(0x25, 0xC8);   
+  adxl362_write_register(0x25, 0);
+  //adxl362_write_register(0x25, 0xC8);
 
   /*************
    *  Address:      0x26
    *  Reset:        0x00
    *  Name:         TIME_INACT_H
-   *  Description:  The eight most-significant bits corresponding to the amount of time 
+   *  Description:  The eight most-significant bits corresponding to the amount of time
    *                that inactivity must persist to trigger inactivity detection
    *************/
 
-  adxl362_write_register(0x26, 0);  
+  adxl362_write_register(0x26, 0);
 
   /*************
    *  Address:      0x27
    *  Reset:        0x00
    *  Name:         ACT_INACT_CTL
-   *  Description:  [7:6] Unused. 
+   *  Description:  [7:6] Unused.
    *                [5:4] LINK/LOOP:
    *                        0X - Default Mode (Activity and Inactivity are both enabled
-   *                             interrupts must be acknowledges by host Processor by 
+   *                             interrupts must be acknowledges by host Processor by
    *                             reading STATUS register. Autosleep disabled.)
-   *                      
-   *                        01 - Linked Mode (Act and Inact linked sequesntially such that 
+   *
+   *                        01 - Linked Mode (Act and Inact linked sequesntially such that
    *                             only one is enabled at a given time. Must be ack'd by Host
    *                             processor. Bit 0(ACT_EN) and 1(INACT_EN) must be 1.
    *
@@ -213,37 +220,37 @@ void adxl362_init (void) {
    *                [3]   INACT_REF:
    *                        1 = inactivity in referenced mode. (movement is tracked from current
    *                        position, so it can be any axis)
-   *                        0 = inactivity in absolute mode. (Movement is tracked on a specific 
+   *                        0 = inactivity in absolute mode. (Movement is tracked on a specific
    *                        position.)
    *
-   *                [2]   INACT_EN: 
+   *                [2]   INACT_EN:
    *                        1 = enables inactivity (underthreshold) functionality.
-   *          
+   *
    *                [1]   ACT_REF:
    *                        1 = activity in referenced mode. (movement is tracked from current
    *                        position, so it can be any axis)
-   *                        0 = activity in absolute mode. (Movement is tracked on a specific 
+   *                        0 = activity in absolute mode. (Movement is tracked on a specific
    *                        position.)
    *
-   *                [0]   ACT_EN: 
+   *                [0]   ACT_EN:
    *                        1 = enables activity (overthreshold) functionality.
    *
-   *                
+   *
    *************/
 
   //Using loop mode, commented is attempt at default w/o inactivity
-  adxl362_write_register(0x27, 0x3F); 
-  //adxl362_write_register(0x27, 0x03); 
+  adxl362_write_register(0x27, 0x3F);
+  //adxl362_write_register(0x27, 0x03);
 
 
   /*************
    *  Address:      0x28
    *  Reset:        0x00
    *  Name:         FIF0_CONTROL
-   *  Description:  
+   *  Description:
    *               [7:4] -  UNUSED
    *
-   *               [3] - AH:     
+   *               [3] - AH:
    *                       Above Half, This bit is MASB of the FIFO_SAMPLES register allowing
    *                       FIFO samples a range of 0 to 511.
    *
@@ -263,11 +270,10 @@ void adxl362_init (void) {
    *  Address:      0x29
    *  Reset:        0x80
    *  Name:         FIFO_SAMPLES
-   *  Description:  Specifies number of samples to store in FIFO. The MSB of this value is  
+   *  Description:  Specifies number of samples to store in FIFO. The MSB of this value is
    *                the AH bit in the FIFO_CONTROL[3]. 0x80 avoids triggering FIFO watermark.
    *************/
-
-  adxl362_write_register(0x29, 0x80); 
+  adxl362_write_register(0x29, 0x80);
 
   /*************
    *  Address:      0x2A
@@ -277,11 +283,11 @@ void adxl362_init (void) {
    *
    *                [7] - INT_LOW:
    *                       1=INT1 pin active low.
-   *                
+   *
    *                [6] - AWAKE:
    *                       1=maps awake status to INT1 pin.
    *
-   *                [5] - INACT: 
+   *                [5] - INACT:
    *                       1=maps inactivity status to INT1 pin.
    *
    *                [4] - ACT:
@@ -299,7 +305,7 @@ void adxl362_init (void) {
    *                [0] - DATA_READY:
    *                       1 = maps data ready status to INT1 pin.
    *************/
- 
+
   adxl362_write_register(0x2A, 0x40); //maps ONLY awake status.
 
   /*************
@@ -310,11 +316,11 @@ void adxl362_init (void) {
    *
    *                [7] - INT_LOW:
    *                       1=INT2 pin active low.
-   *                
+   *
    *                [6] - AWAKE:
    *                       1=maps awake status to INT2 pin.
    *
-   *                [5] - INACT: 
+   *                [5] - INACT:
    *                       1=maps inactivity status to INT2 pin.
    *
    *                [4] - ACT:
@@ -338,29 +344,29 @@ void adxl362_init (void) {
    *  Address:      0x2C
    *  Reset:        0x13
    *  Name:         FILTER_CTL
-   *  Description:  
+   *  Description:
    *                [7:6] - RANGE:
    *                      00 = +- 2g(reset default)
    *                      01 = +- 4g
    *                      1X = +- 8g
    *
    *                  [5] - RES: reserved
-   *                        
+   *
    *                  [4] - HALF_BW:
-   *                      1 = bandwidth of antialiasing filters is 1/4 of the ODR for more 
+   *                      1 = bandwidth of antialiasing filters is 1/4 of the ODR for more
    *                       conservative filtering.
    *                      0 = bandwidth is set to 1/2 the ODR for wider bandwidth.
-   *                  
+   *
    *                  [3] - EXT_SAMPLE:
-   *                      1 = the INT2 pin is used for external conversion timing control. 
+   *                      1 = the INT2 pin is used for external conversion timing control.
    *
    *                [2:0] - ODR (Output Data Rate):
-   *                    000 = 12.5 Hz      
-   *                    001 = 25 Hz      
-   *                    010 = 50 Hz      
-   *                    011 = 100 Hz (reset default)      
-   *                    100 = 200 Hz      
-   *              101...111 = 400 Hz      
+   *                    000 = 12.5 Hz
+   *                    001 = 25 Hz
+   *                    010 = 50 Hz
+   *                    011 = 100 Hz (reset default)
+   *                    100 = 200 Hz
+   *              101...111 = 400 Hz
    *
    *************/
   adxl362_write_register(0x2C, 0x13); // 1/4 ODR, 100Hz
@@ -383,7 +389,7 @@ void adxl362_init (void) {
    *                     11 = reserved.
    *
    *                 [3] - WAKEUP:
-   *                      1 = the part operates in wake-up Mode.    
+   *                      1 = the part operates in wake-up Mode.
    *
    *                 [2] - AUTOSLEEP:
    *                      1 = autosleep is enabled, and the device enters wake-up mode automatically
@@ -405,26 +411,25 @@ void adxl362_init (void) {
    *  Description:  [7:1] UNUSED
    *                  [0] SelfTest, 1 = a self test force is applied to axes.
    *************/
+  adxl362_write_register(0x2E, 0);
 
-  adxl362_write_register(0x2E, 0); 
-  
 }
 
 void cmd_adxl362_read(BaseSequentialStream *chp, int argc, char *argv[]) {
-  (void)argv;
   int address = 0x00;
   if (argc == 1) {
     atoh(argv[0],&address);
     chprintf(chp,"0x%02x\n\r",adxl362_read_register(address));
   }
   else {
-    chprintf(chp, "%d ERR\n\r", argc);
+    chprintf(chp, "Incorrect number of arguments: %d\n\r", argc);
   }
 }
 
 void cmd_read_all(BaseSequentialStream *chp, int argc, char *argv[]) {
-  (void)argv;
-  (void)argc;
+  (void) argc;
+  (void) argv;
+
   int address = 0x08;
   uint8_t output[3];
   int count=0;
@@ -438,6 +443,7 @@ void cmd_read_all(BaseSequentialStream *chp, int argc, char *argv[]) {
 
 void cmd_adxl362_write(BaseSequentialStream *chp, int argc, char *argv[]) {
   (void)argv;
+
   int address = 0x00;
   int data = 0x00;
   if (argc == 2) {
