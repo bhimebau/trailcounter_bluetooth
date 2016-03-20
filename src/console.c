@@ -1,34 +1,34 @@
-/* console.c --- 
- * 
+/* console.c ---
+ *
  * Filename: console.c
- * Description: 
+ * Description:
  * Author: Bryce Himebaugh
- * Maintainer: 
+ * Maintainer:
  * Created: Sun Sep 20 10:59:52 2015
- * Last-Updated: 
- *           By: 
+ * Last-Updated:
+ *           By:
  *     Update #: 0
- * Keywords: 
- * Compatibility: 
- * 
+ * Keywords:
+ * Compatibility:
+ *
  */
 
-/* Commentary: 
- * 
- * 
- * 
+/* Commentary:
+ *
+ *
+ *
  */
 
 /* Change log:
- * 
- * 
+ *
+ *
  */
 
-/* Copyright (c) 2014-2015 Analog Computing Solutions  
- * 
- * All rights reserved. 
- * 
- * Additional copyrights may follow 
+/* Copyright (c) 2014-2015 Analog Computing Solutions
+ *
+ * All rights reserved.
+ *
+ * Additional copyrights may follow
  */
 
 /* Code: */
@@ -42,7 +42,7 @@
  */
 
 void console_init(void) {
-  sdStart(&SD2, NULL); 
+  sdStart(&SD2, NULL);
   //  palSetPadMode(GPIOC, 4, PAL_MODE_ALTERNATE(7));
   //  palSetPadMode(GPIOC, 5, PAL_MODE_ALTERNATE(7));
   palSetPadMode(GPIOA, 2, PAL_MODE_ALTERNATE(7));

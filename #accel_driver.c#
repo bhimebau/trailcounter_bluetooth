@@ -20,5 +20,3 @@ static const I2CConfig i2c_config = {
 
 
 void i2c_init(){
-
-  
