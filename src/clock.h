@@ -1,38 +1,11 @@
-/* clock.h --- 
- *
- * Filename: clock.h
- * Description:
- * Author: Bryce Himebaugh
- * Maintainer:
- * Created: Fri Sep 25 16:36:16 2015
- * Last-Updated:
- *           By:
- *     Update #: 0
- * Keywords:
- * Compatibility:
- *
- */
+/*
+  Copyright (c) 2004-2016 The Trustees of Indiana University and Indiana
+  University Research and Technology Corporation.
 
-/* Commentary:
- *
- *
- *
- */
+  All rights reserved.
 
-/* Change log:
- *
- *
- */
-
-/* Copyright (c) 2004-2007 The Trustees of Indiana University and
- * Indiana University Research and Technology Corporation.
- *
- * All rights reserved.
- *
- * Additional copyrights may follow
- */
-
-/* Code: */
+  Additional copyrights may follow.
+*/
 
 #include "ch.h"
 #include "hal.h"
@@ -59,6 +32,3 @@ void cmd_rtcSet(BaseSequentialStream *chp, int argc, char *argv[]);
 void cmd_rtcRead(BaseSequentialStream *chp, int argc, char *argv[]);
 void cmd_enableWakeup(BaseSequentialStream *chp, int argc, char *argv[]);
 void cmd_sleep(BaseSequentialStream *chp, int argc, char *argv[]);
-
-
-/* clock.h ends here */

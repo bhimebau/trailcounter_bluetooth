@@ -1,38 +1,27 @@
-/* atoh.c ---
- *
- * Filename: atoh.c
- * Description:
- * Author: Bryce Himebaugh
- * Maintainer:
- * Created: Mon Feb  2 10:38:00 2015
- * Last-Updated: 
- *           By:
- *     Update #: 0
- * Keywords:
- * Compatibility:
- *
- */
+/*
+  Copyright (c) 2004-2016 The Trustees of Indiana University and Indiana
+  University Research and Technology Corporation.
 
-/* Commentary:
- *
- *
- *
- */
+  All rights reserved.
 
-/* Change log:
- *
- *
- */
+  Additional copyrights may follow.
+*/
 
-/* Copyright (c) 2004-2007 The Trustees of Indiana University and
- * Indiana University Research and Technology Corporation.
- *
- * All rights reserved.
- *
- * Additional copyrights may follow
- */
+/*
+  Authors: bhimebau
 
-/* Code: */
+  Function to convert a hexidecimal string to an int value.  Any of the
+  following are valid inputs:
+
+  0x123
+  0x12345678
+  123
+  12345678
+  0X123
+  0xaBcD123
+  etc
+*/
+
 /* #include "ch.h" */
 /* #include "chprintf.h" */
 
@@ -74,6 +63,3 @@ int atoh(char *p, int *value) {
   *value = tmp;
   return(ret_val);
 }
-
-
-/* atoh.c ends here */

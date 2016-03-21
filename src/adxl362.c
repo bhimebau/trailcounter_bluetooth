@@ -1,38 +1,17 @@
-/* adxl362.c ---
- *
- * Filename: adxl362.c
- * Description:
- * Author: Bryce Himebaugh
- * Maintainer:
- * Created: Thu Oct  1 15:28:36 2015
- * Last-Updated:
- *           By:
- *     Update #: 0
- * Keywords:
- * Compatibility:
- *
- */
+/*
+  Copyright (c) 2004-2016 The Trustees of Indiana University and Indiana
+  University Research and Technology Corporation.
 
-/* Commentary:
- *
- *
- *
- */
+  All rights reserved.
 
-/* Change log:
- *
- *
- */
+  Additional copyrights may follow.
+*/
 
-/* Copyright (c) 2004-2007 The Trustees of Indiana University and
- * Indiana University Research and Technology Corporation.
- *
- * All rights reserved.
- *
- * Additional copyrights may follow
- */
+/*
+  Authors: bhimebau
 
-/* Code: */
+  Accelerometer driver and functions.
+*/
 
 #include "ch.h"
 #include "hal.h"
@@ -121,7 +100,7 @@ void adxl362_init (void) {
   palSetPad(GPIOC, 5);                                /* Deassert the adxl362 chip select */
 
   //TODO:  play with activity/inactivity thresholds
-  //TODO:  compare linked vs default modes vs LOOP(current)
+  //TODO:  compare linked vs default modes vs LOOP (current)
   //TODO:  compare relative to absolute measurements
   //TODO:  play with all of this (for understanding)
 
@@ -455,6 +434,3 @@ void cmd_adxl362_write(BaseSequentialStream *chp, int argc, char *argv[]) {
     chprintf(chp, "%d ERR\n\r", argc);
   }
 }
-
-
-/* adxl362.c ends here */

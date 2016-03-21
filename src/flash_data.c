@@ -1,38 +1,18 @@
-/* flash_data.c ---
- *
- * Filename: flash_data.c
- * Description:
- * Author: Bryce Himebaugh
- * Maintainer:
- * Created: Fri Sep 25 17:00:38 2015
- * Last-Updated:
- *           By:
- *     Update #: 0
- * Keywords:
- * Compatibility:
- *
- */
+/*
+  Copyright (c) 2004-2016 The Trustees of Indiana University and Indiana
+  University Research and Technology Corporation.
 
-/* Commentary:
- *
- *
- *
- */
+  All rights reserved.
 
-/* Change log:
- *
- *
- */
+  Additional copyrights may follow.
+*/
 
-/* Copyright (c) 2004-2007 The Trustees of Indiana University and
- * Indiana University Research and Technology Corporation.
- *
- * All rights reserved.
- *
- * Additional copyrights may follow
- */
+/*
+  Authors: bhimebau
 
-/* Code: */
+  Functions to write accelerometer and time data to flash.
+*/
+
 #include "ch.h"
 #include "hal.h"
 #include "test.h"
@@ -120,5 +100,3 @@ int printHourlyData(void) {
   }
   return i;
 }
-
-/* flash_data.c ends here */

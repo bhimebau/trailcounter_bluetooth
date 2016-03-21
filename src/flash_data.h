@@ -1,38 +1,11 @@
-/* flash_data.h ---
- *
- * Filename: flash_data.h
- * Description:
- * Author: Bryce Himebaugh
- * Maintainer:
- * Created: Mon Sep 28 10:33:04 2015
- * Last-Updated:
- *           By:
- *     Update #: 0
- * Keywords:
- * Compatibility:
- *
- */
+/*
+  Copyright (c) 2004-2016 The Trustees of Indiana University and Indiana
+  University Research and Technology Corporation.
 
-/* Commentary:
- *
- *
- *
- */
+  All rights reserved.
 
-/* Change log:
- *
- *
- */
-
-/* Copyright (c) 2004-2007 The Trustees of Indiana University and
- * Indiana University Research and Technology Corporation.
- *
- * All rights reserved.
- *
- * Additional copyrights may follow
- */
-
-/* Code: */
+  Additional copyrights may follow.
+*/
 
 #define MAX_DAYS 1000
 
@@ -45,5 +18,3 @@ int getFirstFreeEpoch(void);
 int getFirstFreeHourly(void);
 int printEpochData(void);
 int printHourlyData(void);
-
-/* flash_data.h ends here */

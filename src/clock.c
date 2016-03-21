@@ -1,38 +1,18 @@
-/* clock.c ---
- *
- * Filename: clock.c
- * Description:
- * Author: Bryce Himebaugh
- * Maintainer:
- * Created: Fri Sep 25 16:26:06 2015
- * Last-Updated:
- *           By:
- *     Update #: 0
- * Keywords:
- * Compatibility:
- *
- */
+/*
+  Copyright (c) 2004-2016 The Trustees of Indiana University and Indiana
+  University Research and Technology Corporation.
 
-/* Commentary:
- *
- *
- *
- */
+  All rights reserved.
 
-/* Change log:
- *
- *
- */
+  Additional copyrights may follow.
+*/
 
-/* Copyright (c) 2004-2007 The Trustees of Indiana University and
- * Indiana University Research and Technology Corporation.
- *
- * All rights reserved.
- *
- * Additional copyrights may follow
- */
+/*
+  Authors: bhimebau
 
-/* Code: */
+  Driver file for realtime clock.
+*/
+
 #include "ch.h"
 #include "hal.h"
 #include "test.h"
@@ -49,7 +29,7 @@
 #include <time.h>
 
 
-// Implementation of External Interrupts
+// Begin Implementation of External Interrupts
 
 volatile int alarm_called;
 volatile uint16_t people_count;
@@ -219,5 +199,3 @@ void cmd_sleep(BaseSequentialStream *chp, int argc, char *argv[]) {
   chThdSleepMilliseconds(200);
   anabiosis();
 }
-
-/* clock.c ends here */

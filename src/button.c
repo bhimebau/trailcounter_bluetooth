@@ -1,38 +1,18 @@
-/* button.c ---
- *
- * Filename: button.c
- * Description:
- * Author: Bryce Himebaugh
- * Maintainer:
- * Created: Thu Feb  4 14:55:05 2016
- * Last-Updated:
- *           By:
- *     Update #: 0
- * Keywords:
- * Compatibility:
- *
- */
+/*
+  Copyright (c) 2004-2016 The Trustees of Indiana University and Indiana
+  University Research and Technology Corporation.
 
-/* Commentary:
- *
- *
- *
- */
+  All rights reserved.
 
-/* Change log:
- *
- *
- */
+  Additional copyrights may follow.
+*/
 
-/* Copyright (c) 2004-2007 The Trustees of Indiana University and
- * Indiana University Research and Technology Corporation.
- *
- * All rights reserved.
- *
- * Additional copyrights may follow
- */
+/*
+  Authors: bhimebau
 
-/* Code: */
+  Driver file for user button.
+*/
+
 #include "ch.h"
 #include "hal.h"
 #include "button.h"
@@ -45,5 +25,3 @@ void button_init(void) {
 uint8_t button_read(void) {
   return(palReadPad(GPIOC,7));
 }
-
-/* button.c ends here */

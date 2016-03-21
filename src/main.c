@@ -1,37 +1,18 @@
-/* main.c ---
- *
- * Filename: main.c
- * Description:
- * Author: Bryce Himebaugh
- * Maintainer:
- * Created: Sun Sep 20 09:32:19 2015
- * Last-Updated:
- *           By:
- *     Update #: 0
- * Keywords:
- * Compatibility:
- *
- */
+/*
+  Copyright (c) 2004-2016 The Trustees of Indiana University and Indiana
+  University Research and Technology Corporation.
 
-/* Commentary:
- *
- *
- *
- */
+  All rights reserved.
 
-/* Change log:
- *
- *
- */
+  Additional copyrights may follow.
+*/
 
-/* Copyright (c) 2014-2015 Analog Computing Solutions
- *
- * All rights reserved.
- *
- * Additional copyrights may follow
- */
+/*
+  Authors: bhimebau
 
-/* Code: */
+  Primary initializations and console functions.
+*/
+
 #include "ch.h"
 #include "hal.h"
 #include "test.h"
@@ -51,8 +32,8 @@
 #include <stdarg.h>
 #include <time.h>
 
-static virtual_timer_t periodic_tim_int;
-static semaphore_t time2run;
+static virtual_timer_t periodic_time_interval;
+static semaphore_t time_to_run_semaphore;
 
 #define UNUSED(x) (void)(x)
 
@@ -72,7 +53,7 @@ static THD_FUNCTION(PeriodicTask,arg) {
   UNUSED(arg);
   // chprintf((BaseSequentialStream*)&SD2,"G");
   while (TRUE) {
-    chSemWait(&time2run);
+    chSemWait(&time_to_run_semaphore);
     // chprintf((BaseSequentialStream*)&SD2,"T");
     PWR_EnterSleepMode(PWR_SLEEPEntry_WFI);
     // power_enter_sleep_mode();
@@ -99,7 +80,7 @@ static void cmd_stop(BaseSequentialStream *chp, int argc, char *argv[]) {
   (void)argc;
   (void)argv;
 
-  chprintf(chp, "stopping...\r\n");
+  chprintf(chp, "stopping...\n");
   chThdSleepMilliseconds(200);
 
   PWR_EnterSTOPMode(((uint32_t)0x00000001), ((uint8_t)0x01));
@@ -110,7 +91,7 @@ static void cmd_r_data(BaseSequentialStream *chp, int argc, char *argv[]) {
   (void) argv;
 
   adxl362_read_register(0x0B);
-  chprintf(chp, "alarm_called = %d\r\n", alarm_called);
+  chprintf(chp, "alarm_called = %d\n", alarm_called);
   //RESET_ALARM;
 }
 
@@ -124,7 +105,7 @@ static const ShellCommand commands[] = {
   {"accelwrite", cmd_adxl362_write},
   {"accelread", cmd_adxl362_read},
   {"xyz", cmd_xyz},
-  {"[A", cmd_r_data},
+  {"rdata", cmd_r_data},
   {"allreg",cmd_reg},
   {NULL, NULL}
 };
@@ -148,10 +129,10 @@ void termination_handler(eventid_t id) {
   }
 }
 
-static void periodic_int_func(void *arg) {
+static void periodic_interval_func(void *arg) {
   chSysLockFromISR();
-  //  chVTSetI(&periodic_tim_int,MS2ST(2000),periodic_int_func,NULL);
-  chSemSignalI(&time2run);
+  // chVTSetI(&periodic_time_interval,MS2ST(2000),periodic_interval_func,NULL);
+  chSemSignalI(&time_to_run_semaphore);
   chSysUnlockFromISR();
 }
 
@@ -177,31 +158,37 @@ int main(void) {
   halInit();
   chSysInit();
 
-  // Board Specific Initilizations
-  console_init();
+  // Initialize serial for the console.
+  console_serial_init();
 
-  //print flash, init accel
+  // Print hourly data from flash.
   printHourlyData();
 
-  //get/convert/print current set time
+  // Get/convert/print current set time.
   rtcGetTime(&RTCD1, &time);
   rtcConvertDateTimeToStructTm(&time,&ltime, NULL);
   chprintf((BaseSequentialStream*)&SD2,"%s\n\r",asctime(&ltime));
 
-  //initialize and enable external interrupts
+  // Initialize and enable external interrupts via rtc.
   trailRtcInitAlarmSystem();
   RESET_ALARM;
   people_count = 0;
 
+  // Init accelerometer.
   adxl362_init();
+
   led_init();
   button_init();
+
+  // Turn off board led which is used for debugging.
   led_off();
 
-  chSemObjectInit(&time2run,0);
+  chSemObjectInit(&time_to_run_semaphore,0);
   //  chThdSleepMilliseconds(1000);
-  chVTObjectInit(&periodic_tim_int); // Initialize the periodic timer
-  chVTSet(&periodic_tim_int, MS2ST(2000), periodic_int_func, NULL);
+
+  // Initialize the periodic timer
+  chVTObjectInit(&periodic_time_interval);
+  chVTSet(&periodic_time_interval, MS2ST(2000), periodic_interval_func, NULL);
 
   //chThdSleepMilliseconds(5000);
 
@@ -280,6 +267,3 @@ int main(void) {
   return (0);
 
 }
-
-
-/* main.c ends here */

@@ -1,37 +1,10 @@
-/* console.h --- 
- *
- * Filename: console.h
- * Description:
- * Author: Bryce Himebaugh
- * Maintainer:
- * Created: Sun Sep 20 11:09:36 2015
- * Last-Updated:
- *           By:
- *     Update #: 0
- * Keywords:
- * Compatibility:
- *
- */
+/*
+  Copyright (c) 2004-2016 The Trustees of Indiana University and Indiana
+  University Research and Technology Corporation.
 
-/* Commentary:
- *
- *
- *
- */
+  All rights reserved.
 
-/* Change log:
- *
- *
- */
+  Additional copyrights may follow.
+*/
 
-/* Copyright (c) 2014-2015 Analog Computing Solutions
- *
- * All rights reserved.
- *
- * Additional copyrights may follow
- */
-
-/* Code: */
-void console_init(void);
-
-/* console.h ends here */
+void console_serial_init(void);

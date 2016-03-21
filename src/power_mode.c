@@ -1,38 +1,19 @@
-/* power_mode.c ---
- *
- * Filename: power_mode.c
- * Description:
- * Author: Bryce Himebaugh
- * Maintainer:
- * Created: Mon Feb 15 10:07:26 2016
- * Last-Updated:
- *           By:
- *     Update #: 0
- * Keywords:
- * Compatibility:
- *
- */
+/*
+  Copyright (c) 2004-2016 The Trustees of Indiana University and Indiana
+  University Research and Technology Corporation.
 
-/* Commentary:
- *
- *
- *
- */
+  All rights reserved.
 
-/* Change log:
- *
- *
- */
+  Additional copyrights may follow.
+*/
 
-/* Copyright (c) 2004-2007 The Trustees of Indiana University and
- * Indiana University Research and Technology Corporation.
- *
- * All rights reserved.
- *
- * Additional copyrights may follow
- */
+/*
+  Authors: bhimebau
 
-/* Code: */
+  Driver and functions for managing system power mode.  Currently only used to
+  enter sleep.
+*/
+
 #include "ch.h"
 #include "hal.h"
 
@@ -40,5 +21,3 @@ void power_enter_sleep_mode(void) {
   SCB->SCR &= (uint32_t)~((uint32_t)SCB_SCR_SLEEPDEEP_Msk);
   __WFI();
 }
-
-/* power_mode.c ends here */

@@ -1,38 +1,19 @@
-/* led.c ---
- *
- * Filename: led.c
- * Description:
- * Author: Bryce Himebaugh
- * Maintainer:
- * Created: Thu Feb  4 14:55:05 2016
- * Last-Updated:
- *           By:
- *     Update #: 0
- * Keywords:
- * Compatibility:
- *
- */
+/*
+  Copyright (c) 2004-2016 The Trustees of Indiana University and Indiana
+  University Research and Technology Corporation.
 
-/* Commentary:
- *
- *
- *
- */
+  All rights reserved.
 
-/* Change log:
- *
- *
- */
+  Additional copyrights may follow.
+*/
 
-/* Copyright (c) 2004-2007 The Trustees of Indiana University and
- * Indiana University Research and Technology Corporation.
- *
- * All rights reserved.
- *
- * Additional copyrights may follow
- */
+/*
+  Authors: bhimebau
 
-/* Code: */
+  Driver for on device led, mainly used to debug timing and as a simplistic
+  status check.
+*/
+
 #include "ch.h"
 #include "hal.h"
 #include "led.h"
@@ -49,6 +30,3 @@ void led_on(void) {
 void led_off(void) {
   palClearPad(GPIOC, 9);
 }
-
-
-/* led.c ends here */
